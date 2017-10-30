@@ -1,12 +1,11 @@
 import { HitTestResult } from 'common/HitTestResult';
 import { Path, SerializablePath } from 'common/Path';
 import { Point } from 'common/Point';
-import { Polygon, SerializablePolygon } from 'common/Polygon';
 import { Renderer } from 'Renderer';
 
 export interface SerializableLayer {
   name: string;
-  paths: (SerializablePath | SerializablePolygon)[];
+  paths: SerializablePath[];
 }
 
 export class Layer {
@@ -58,14 +57,7 @@ export class Layer {
     this.paths.splice(0, this.paths.length);
 
     serializableLayer.paths.forEach(serializablePath => {
-      let pathOrPolygon: Path | Polygon;
-      if (!serializablePath.closed) {
-        pathOrPolygon = Path.fromSerializablePath(serializablePath);
-      } else {
-        pathOrPolygon = Polygon.fromSerializablePolygon(<SerializablePolygon>serializablePath);
-      }
-
-      this.paths.push(pathOrPolygon);
+      this.paths.push(Path.fromSerializablePath(serializablePath));
     });
   }
 }

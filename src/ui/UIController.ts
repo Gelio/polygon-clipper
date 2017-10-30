@@ -3,7 +3,6 @@ import { LEX } from 'LEX';
 import { Renderer } from 'Renderer';
 import { Stage } from 'Stage';
 
-import { UIConditionController } from 'ui/conditions/UIConditionController';
 import { MousePositionTransformer } from 'ui/MousePositionTransformer';
 import { NewPolygonUIController } from 'ui/NewPolygonUIController';
 import { PathDraggingService } from 'ui/PathDraggingService';
@@ -12,8 +11,6 @@ import { PointInserterService } from 'ui/PointInserterService';
 import { PointRemoverService } from 'ui/PointRemoverService';
 import { PointSyncService } from 'ui/PointSyncService';
 import { UIService } from 'ui/UIService';
-
-import { ConditionMatcher } from 'conditions/ConditionMatcher';
 
 import { EventAggregator } from 'events/EventAggregator';
 import { LineClickEvent } from 'events/LineClickEvent';
@@ -71,7 +68,6 @@ export class UIController {
     this.createPointInserterService();
     this.createPointRemoverService();
     this.createPointSyncService();
-    this.createUIConditionController();
     this.createPathDraggingService();
 
     this.uiServices.forEach(uiService => uiService.init());
@@ -191,16 +187,6 @@ export class UIController {
     });
 
     this.uiServices.push(pointInserterService);
-  }
-
-  private createUIConditionController() {
-    const uiConditionController = new UIConditionController({
-      eventAggregator: this.eventAggregator,
-      applicationUIContainer: this.applicationUIContainer,
-      conditionMatcher: new ConditionMatcher()
-    });
-
-    this.uiServices.push(uiConditionController);
   }
 
   private createPathDraggingService() {

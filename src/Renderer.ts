@@ -4,8 +4,6 @@ import { Line } from 'common/Line';
 import { LineProperties } from 'common/LineProperties';
 import { Path } from 'common/Path';
 import { Point } from 'common/Point';
-import { Polygon } from 'common/Polygon';
-import { LineCondition } from 'conditions/LineCondition';
 import { LineRasterizer } from 'line-rasterizer/LineRasterizer';
 
 import { configuration } from 'configuration';
@@ -59,10 +57,6 @@ export class Renderer {
     for (const line of path.getLineIterator()) {
       this.drawLine(line, pathLineProperties);
     }
-
-    if (path instanceof Polygon) {
-      this.drawLineConditions(path.getLineConditions());
-    }
   }
 
   public fillText(text: string, x: number, y: number): void;
@@ -98,14 +92,5 @@ export class Renderer {
 
     this.setFillColor(lineProperties.color);
     rasterizedLinePoints.forEach(point => this.drawPoint(point));
-  }
-
-  private drawLineConditions(lineConditions: LineCondition[]) {
-    lineConditions.forEach(lineCondition => {
-      this.fillText(
-        lineCondition.getLabel(),
-        Point.add(lineCondition.line.getMiddlePoint(), configuration.lineConditionLabelOffset)
-      );
-    });
   }
 }
