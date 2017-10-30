@@ -1,7 +1,8 @@
-# Recedit
+# Polygon clipper
 
-Recedit is a web application that allows you to create rectangles and other polygons inside
-an HTML canvas in your browser.
+Polygon clipper is a web application that allows you to create polygons inside an HTML canvas
+in your browser, clip them (using Sutherland-Hodgman's algorithm) and use HeightMap
+and NormalMap for fancy rendering.
 
 It is written in Typescript and uses custom methods for drawing lines using the Bresenham's algorithm.
 
