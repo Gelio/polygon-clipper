@@ -9,8 +9,12 @@ const classNames = {
   BLOCK: 'image-select-dialog__block',
   BLOCK_TITLE: 'image-select-dialog__block-title',
   PRESET_IMAGES_CONTAINER: 'image-select-dialog__preset-images-container',
-  SELECTED_IMAGE: 'image-select-dialog__image--selected'
+  SELECTED_IMAGE: 'image-select-dialog__image--selected',
+  CUSTOM_IMAGE: 'image-select-dialog__custom-image',
+  BOTTOM_BUTTONS: 'image-select-dialog__bottom-buttons'
 };
+
+// TODO: make blocks foldable
 
 export class ImageSelectDialog extends HTMLElement implements DialogBox {
   private _presetImageUrls: string[];
@@ -21,9 +25,15 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
 
   private presetImagesListContainer: HTMLDivElement;
   private customImageContainer: HTMLDivElement;
+  private customFileInput: HTMLInputElement;
+  private customImage: HTMLImageElement;
+
   private bottomButtonsContainer: HTMLDivElement;
+  private cancelButton: HTMLButtonElement;
+  private confirmButton: HTMLButtonElement;
 
   private _selectedImage: HTMLImageElement;
+  private _wasCancelled = false;
 
   constructor(presetImageUrls: string[]) {
     super();
@@ -32,12 +42,15 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
 
     this.classList.add(classNames.DIALOG);
 
+    this.onSelectableImageClick = this.onSelectableImageClick.bind(this);
+    this.showCustomImage = this.showCustomImage.bind(this);
+    this.onCancelButtonClick = this.onCancelButtonClick.bind(this);
+    this.onConfirmButtonClick = this.onConfirmButtonClick.bind(this);
+
     this.createHeader();
     this.createPresetImagesList();
     this.createCustomImagePicker();
     this.createBottomButtons();
-
-    this.onPresetImageClick = this.onPresetImageClick.bind(this);
   }
 
   public static get observedAttributes() {
@@ -53,27 +66,43 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
     this.heading.innerText = value;
   }
 
+  public get wasCancelled() {
+    return this._wasCancelled;
+  }
+
   public get presetImageUrls() {
     return this._presetImageUrls;
   }
 
   public get selectedImage() {
-    return null;
+    return this._selectedImage;
   }
 
   public connectedCallback() {
+    this._wasCancelled = true;
+
     this.appendChild(this.header);
     this.appendChild(this.presetImagesListContainer);
     this.appendChild(this.customImageContainer);
     this.appendChild(this.bottomButtonsContainer);
 
+    this.cancelButton.addEventListener('click', this.onCancelButtonClick);
+    this.confirmButton.addEventListener('click', this.onConfirmButtonClick);
+    this.customFileInput.addEventListener('change', this.showCustomImage);
+    this.customImage.addEventListener('click', this.onSelectableImageClick);
+
     this.presetImagesListContainer.querySelectorAll('img')
-      .forEach(image => image.addEventListener('click', this.onPresetImageClick));
+      .forEach(image => image.addEventListener('click', this.onSelectableImageClick));
   }
 
   public disconnectedCallback() {
     this.presetImagesListContainer.querySelectorAll('img')
-      .forEach(image => image.removeEventListener('click', this.onPresetImageClick));
+      .forEach(image => image.removeEventListener('click', this.onSelectableImageClick));
+    this.customFileInput.removeEventListener('change', this.showCustomImage);
+    this.customImage.removeEventListener('click', this.onSelectableImageClick);
+
+    this.cancelButton.removeEventListener('click', this.onCancelButtonClick);
+    this.confirmButton.removeEventListener('click', this.onConfirmButtonClick);
 
     this.removeChild(this.header);
     this.removeChild(this.presetImagesListContainer);
@@ -120,11 +149,52 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
     this.customImageContainer = this.createBlock();
     const blockTitle = this.createBlockTitle('Select custom image');
     this.customImageContainer.appendChild(blockTitle);
+
+    this.customFileInput = document.createElement('input');
+    this.customFileInput.type = 'file';
+    this.customFileInput.accept = 'image/*';
+    this.customImageContainer.appendChild(this.customFileInput);
+
+    this.customImage = document.createElement('img');
+    this.customImage.classList.add(classNames.CUSTOM_IMAGE);
+    this.customImageContainer.appendChild(this.customImage);
+  }
+
+  private showCustomImage() {
+    if (this.customFileInput.files && this.customFileInput.files[0]) {
+      const reader = new FileReader();
+
+      reader.onload = e => {
+        // tslint:disable-next-line no-any
+        this.customImage.src = (<any>e.target).result;
+        this.selectImage(this.customImage);
+      };
+
+      reader.readAsDataURL(this.customFileInput.files[0]);
+    }
   }
 
   private createBottomButtons() {
     this.bottomButtonsContainer = document.createElement('div');
-    this.bottomButtonsContainer.innerText = 'Bottom buttons';
+    this.bottomButtonsContainer.classList.add(classNames.BOTTOM_BUTTONS);
+
+    this.cancelButton = document.createElement('button');
+    this.cancelButton.innerText = 'Cancel';
+
+    this.confirmButton = document.createElement('button');
+    this.confirmButton.innerText = 'Confirm';
+
+    this.bottomButtonsContainer.appendChild(this.cancelButton);
+    this.bottomButtonsContainer.appendChild(this.confirmButton);
+  }
+
+  private onCancelButtonClick() {
+    this.close();
+  }
+
+  private onConfirmButtonClick() {
+    this._wasCancelled = false;
+    this.close();
   }
 
   private createBlock() {
@@ -153,7 +223,7 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
     return container;
   }
 
-  private onPresetImageClick(event: MouseEvent) {
+  private onSelectableImageClick(event: MouseEvent) {
     if (!event.srcElement) {
       return;
     }

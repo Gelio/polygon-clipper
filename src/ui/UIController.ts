@@ -1,3 +1,4 @@
+import { ImageDownloader } from 'common/ImageDownloader';
 import { configuration } from 'configuration';
 import { LEX } from 'LEX';
 import { Renderer } from 'Renderer';
@@ -33,6 +34,7 @@ export class UIController {
   private readonly renderer: Renderer;
   private readonly stage: Stage;
   private readonly eventAggregator: EventAggregator;
+  private readonly imageDownloader: ImageDownloader;
 
   private mousePositionTransformer: MousePositionTransformer;
   private applicationUIContainer: HTMLElement;
@@ -41,11 +43,13 @@ export class UIController {
   private newPolygonUIController: NewPolygonUIController;
   private pathDraggingService: PathDraggingService;
 
+
   constructor(dependencies: UIControllerDependencies) {
     this.canvas = dependencies.canvas;
     this.renderer = dependencies.renderer;
     this.stage = dependencies.stage;
     this.eventAggregator = dependencies.eventAggregator;
+    this.imageDownloader = new ImageDownloader();
 
     this.onClick = this.onClick.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
@@ -188,7 +192,8 @@ export class UIController {
 
   private createInputDataService() {
     const inputDataService = new InputDataService({
-      eventAggregator: this.eventAggregator
+      eventAggregator: this.eventAggregator,
+      imageDownloader: this.imageDownloader
     });
 
     this.uiServices.push(inputDataService);
