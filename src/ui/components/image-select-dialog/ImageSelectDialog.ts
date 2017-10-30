@@ -1,5 +1,7 @@
 import 'ui/components/image-select-dialog/ImageSelectDialog.scss';
 
+import { DialogBox } from 'ui/components/DialogBox';
+
 const classNames = {
   DIALOG: 'image-select-dialog',
   HEADER: 'image-select-dialog__header',
@@ -10,7 +12,7 @@ const classNames = {
   SELECTED_IMAGE: 'image-select-dialog__image--selected'
 };
 
-export class ImageSelectDialog extends HTMLElement {
+export class ImageSelectDialog extends HTMLElement implements DialogBox {
   private _presetImageUrls: string[];
   // private _selectedImage: Blob;
 
@@ -77,6 +79,14 @@ export class ImageSelectDialog extends HTMLElement {
     this.removeChild(this.presetImagesListContainer);
     this.removeChild(this.customImageContainer);
     this.removeChild(this.bottomButtonsContainer);
+  }
+
+  public canClose() {
+    return true;
+  }
+
+  public close() {
+    this.dispatchEvent(new CustomEvent('close'));
   }
 
   private createHeader() {

@@ -3,6 +3,7 @@ import { EventAggregator } from 'events/EventAggregator';
 import { UIService } from 'ui/UIService';
 
 import { ImageSelectDialog } from 'ui/components/image-select-dialog/ImageSelectDialog';
+import { DialogOverlay } from 'ui/components/dialog-overlay/DialogOverlay';
 
 interface SerializationServiceDependencies {
   eventAggregator: EventAggregator;
@@ -10,6 +11,7 @@ interface SerializationServiceDependencies {
 
 export class InputDataService implements UIService {
   private inputDataContainer: HTMLElement;
+  private dialogOverlay: DialogOverlay;
   private popupContainer: HTMLElement;
   private eventAggregator: EventAggregator;
 
@@ -37,13 +39,18 @@ export class InputDataService implements UIService {
 
   public init() {
     const inputDataContainer = document.getElementById('input-data-container');
-
     if (!inputDataContainer) {
       throw new Error('Input data container not found');
     }
 
     this.inputDataContainer = inputDataContainer;
     this.inputDataContainer.appendChild(this.openBackgroundTextureDialogButton);
+
+    const dialogOverlay = document.querySelector('app-dialog-overlay');
+    if (!dialogOverlay) {
+      throw new Error('Dialog overlay not found');
+    }
+    this.dialogOverlay = <DialogOverlay>dialogOverlay;
 
     this.openBackgroundTextureDialogButton.addEventListener('click', this.openBackgroundTextureDialog);
   }
@@ -54,6 +61,7 @@ export class InputDataService implements UIService {
   }
 
   private openBackgroundTextureDialog() {
-    this.inputDataContainer.appendChild(this.backgroundTextureDialog);
+    this.dialogOverlay.showDialog(this.backgroundTextureDialog);
+    this.backgroundTextureDialog.addEventListener('close', () => console.log('Texture closed'));
   }
 }

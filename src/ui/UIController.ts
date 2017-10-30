@@ -17,6 +17,7 @@ import { UIService } from 'ui/UIService';
 import { EventAggregator } from 'events/EventAggregator';
 import { LineClickEvent } from 'events/LineClickEvent';
 
+import 'ui/components/dialog-overlay/DialogOverlay';
 import 'ui/components/instructions/InstructionsButton';
 import 'ui/components/instructions/InstructionsDialog';
 
