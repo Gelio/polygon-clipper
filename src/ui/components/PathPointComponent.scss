@@ -1,0 +1,17 @@
+.application-ui__vertex {
+  border: solid 1px black;
+  width: 10px;
+  height: 10px;
+  position: absolute;
+
+  transform: translate(-50%, -50%);
+
+  &:active {
+    border-color: red;
+    border-width: 2px;
+  }
+}
+
+.application-ui__vertex--initial {
+  background-color: rgb(0, 81, 255);
+}

@@ -1,0 +1,35 @@
+app-condition-picker {
+  transform: translate(5px, -50%);
+  position: absolute;
+
+  padding: 0.6em;
+  border: solid 1px #222;
+  border-radius: 10px;
+  background-color: #e2e2e2;
+
+  box-shadow: 2px 2px 5px black;
+  z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.condition-elements-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  * {
+    margin-bottom: 5px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.condition-picker__close-button {
+  margin: -2px -2px 3px 0;
+  align-self: flex-end;
+  font-size: 10px;
+}

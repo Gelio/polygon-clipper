@@ -1,0 +1,62 @@
+{
+  "name": "polygon-clipper",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:Gelio/polygon-clipper.git",
+  "author": "Grzegorz Rozdzialik <voreny.gelio@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@webcomponents/webcomponentsjs": "^1.0.14",
+    "normalize.css": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^21.1.2",
+    "copy-webpack-plugin": "^4.1.1",
+    "css-loader": "^0.28.7",
+    "eslint": "^4.8.0",
+    "extract-text-webpack-plugin": "^3.0.1",
+    "gh-pages": "^1.0.0",
+    "jest": "^21.2.1",
+    "node-sass": "^4.5.3",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.19.0",
+    "ts-jest": "^21.1.0",
+    "ts-loader": "^2.3.7",
+    "tslint": "^5.7.0",
+    "tslint-loader": "^3.5.3",
+    "tslint-microsoft-contrib": "^5.0.1",
+    "typescript": "^2.5.3",
+    "webpack": "^3.6.0",
+    "webpack-dev-server": "^2.9.1"
+  },
+  "scripts": {
+    "start": "npm run serve:dev",
+    "deploy": "gh-pages -d dist",
+    "serve:dev": "webpack-dev-server",
+    "build:dev": "webpack",
+    "build:prod": "webpack -p",
+    "watch:dev": "webpack -w",
+    "watch:prod": "webpack -w -p",
+    "lint": "tslint -p .",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json"
+    ],
+    "moduleDirectories": [
+      "src",
+      "node_modules"
+    ]
+  }
+}
