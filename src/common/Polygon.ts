@@ -3,7 +3,6 @@ import { Path } from 'common/Path';
 import { Point } from 'common/Point';
 import { configuration } from 'configuration';
 
-
 export class Polygon extends Path {
   constructor(path: Path);
   constructor(vertices: Point[], lineProperties: LineProperties);
