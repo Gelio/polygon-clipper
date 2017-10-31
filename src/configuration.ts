@@ -22,9 +22,9 @@ const configuration = {
     'https://s2.dmcdn.net/Ub1O8/1280x720-mCQ.jpg',
     // tslint:disable-next-line
     'https://media1.popsugar-assets.com/files/thumbor/YX-2J4ndcYxiFDtqpJ0Ed8NkMfM/fit-in/2048xorig/filters:format_auto-!!-:strip_icc-!!-/2014/08/08/878/n/1922507/9ed5cdef48c5ef69_thumb_temp_image32304521407524949/i/Funny-Cat-GIFs.jpg'
-  ]
+  ],
+  presetHeightMaps: ['images/height-maps/brick_heightmap.png'],
+  presetNormalMaps: ['images/normal-maps/brick_normalmap.png', 'images/normal-maps/normal_map.jpg']
 };
 
-export {
-  configuration
-};
+export { configuration };
