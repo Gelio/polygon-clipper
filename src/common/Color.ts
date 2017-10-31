@@ -11,4 +11,17 @@ export class Color {
 
     this.fillStyle = `rgb(${this.r}, ${this.g}, ${this.b})`;
   }
+
+  public static fromHexString(hexString: string) {
+    console.log(hexString);
+    const redPart = hexString.slice(1, 3);
+    const greenPart = hexString.slice(3, 5);
+    const bluePart = hexString.slice(5, 7);
+
+    const red = parseInt(redPart, 16);
+    const green = parseInt(greenPart, 16);
+    const blue = parseInt(bluePart, 16);
+
+    return new Color(red, green, blue);
+  }
 }

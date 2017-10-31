@@ -14,11 +14,8 @@ const classNames = {
   BOTTOM_BUTTONS: 'image-select-dialog__bottom-buttons'
 };
 
-// TODO: make blocks foldable
-
 export class ImageSelectDialog extends HTMLElement implements DialogBox {
   private _presetImageUrls: string[];
-  // private _selectedImage: Blob;
 
   private header: HTMLElement;
   private heading: HTMLHeadingElement;

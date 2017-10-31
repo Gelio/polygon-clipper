@@ -1,12 +1,13 @@
 import { EventAggregator } from 'events/EventAggregator';
 import { NewBackgroundTexture } from 'events/input-data/NewBackgroundTexture';
 import { NewHeightMap } from 'events/input-data/NewHeightMap';
-// import { NewLightColor } from 'events/input-data/NewLightColor';
+import { NewLightColor } from 'events/input-data/NewLightColor';
 import { NewNormalMap } from 'events/input-data/NewNormalMap';
 
 import { configuration } from 'configuration';
 import { UIService } from 'ui/UIService';
 
+import { ColorSelectDialog } from 'ui/components/color-select-dialog/ColorSelectDialog';
 import { DialogOverlay } from 'ui/components/dialog-overlay/DialogOverlay';
 import { ImageSelectDialog } from 'ui/components/image-select-dialog/ImageSelectDialog';
 
@@ -26,6 +27,9 @@ export class InputDataService implements UIService {
   private openBackgroundTextureDialogButton: HTMLButtonElement;
   private backgroundTextureDialog: ImageSelectDialog;
 
+  private openLightColorDialogButton: HTMLButtonElement;
+  private lightColorDialog: ColorSelectDialog;
+
   private openHeightMapDialogButton: HTMLButtonElement;
   private heightMapDialog: ImageSelectDialog;
 
@@ -37,6 +41,7 @@ export class InputDataService implements UIService {
     this.imageDownloader = dependencies.imageDownloader;
 
     this.setupBackgroundTextureDialog();
+    this.setupLightColorDialog();
     this.setupNormalMapDialog();
     this.setupHeightMapDialog();
   }
@@ -49,6 +54,7 @@ export class InputDataService implements UIService {
 
     this.inputDataContainer = inputDataContainer;
     this.inputDataContainer.appendChild(this.openBackgroundTextureDialogButton);
+    this.inputDataContainer.appendChild(this.openLightColorDialogButton);
     this.inputDataContainer.appendChild(this.openNormalMapDialogButton);
     this.inputDataContainer.appendChild(this.openHeightMapDialogButton);
 
@@ -63,24 +69,27 @@ export class InputDataService implements UIService {
       this.openBackgroundTextureDialog
     );
 
-    this.openNormalMapDialogButton.addEventListener(
-      'click',
-      this.openNormalMapDialog
-    );
+    this.openLightColorDialogButton.addEventListener('click', this.openLightColorDialog);
 
-    this.openHeightMapDialogButton.addEventListener(
-      'click',
-      this.openHeightMapDialog
-    );
+    this.openNormalMapDialogButton.addEventListener('click', this.openNormalMapDialog);
+
+    this.openHeightMapDialogButton.addEventListener('click', this.openHeightMapDialog);
   }
 
   public destroy() {
     // tslint:disable-next-line
     this.inputDataContainer.innerHTML = '';
 
-    this.openBackgroundTextureDialogButton.removeEventListener('click', this.openBackgroundTextureDialog);
+    this.openBackgroundTextureDialogButton.removeEventListener(
+      'click',
+      this.openBackgroundTextureDialog
+    );
     this.backgroundTextureDialog.removeEventListener('close', this.onBackgroundTextureDialogClosed);
     this.backgroundTextureDialog.close();
+
+    this.openLightColorDialogButton.removeEventListener('close', this.openLightColorDialog);
+    this.lightColorDialog.removeEventListener('close', this.onLightColorDialogClosed);
+    this.lightColorDialog.close();
 
     this.openHeightMapDialogButton.removeEventListener('click', this.openHeightMapDialog);
     this.heightMapDialog.removeEventListener('close', this.onHeightMapDialogClosed);
@@ -122,7 +131,31 @@ export class InputDataService implements UIService {
   // #endregion
 
   // #region Light color dialog
-  // TODO
+  private setupLightColorDialog() {
+    this.openLightColorDialogButton = document.createElement('button');
+    this.openLightColorDialogButton.innerText = 'Select light color';
+
+    this.lightColorDialog = new ColorSelectDialog();
+    this.lightColorDialog.name = 'Light color';
+
+    this.openLightColorDialog = this.openLightColorDialog.bind(this);
+    this.onLightColorDialogClosed = this.onLightColorDialogClosed.bind(this);
+  }
+
+  private openLightColorDialog() {
+    this.dialogOverlay.showDialog(this.lightColorDialog);
+    this.lightColorDialog.addEventListener('close', this.onLightColorDialogClosed);
+  }
+
+  private async onLightColorDialogClosed() {
+    if (this.lightColorDialog.wasCancelled) {
+      return;
+    }
+
+    const lightColor = this.lightColorDialog.selectedColor;
+    this.eventAggregator.dispatchEvent(new NewLightColor(lightColor));
+    console.log('New light color', lightColor);
+  }
   // #endregion
 
   // #region Normal map dialog
