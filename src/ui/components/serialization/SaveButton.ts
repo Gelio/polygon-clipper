@@ -34,8 +34,6 @@ export class SaveButton extends HTMLElement {
     const serializableObject = polygonLayer.toSerializableObject();
 
     const serializedData = JSON.stringify(serializableObject);
-    console.log(serializableObject);
-    console.log(serializedData);
     prompt('Copy the data', serializedData);
   }
 }
