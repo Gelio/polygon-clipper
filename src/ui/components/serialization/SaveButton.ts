@@ -1,7 +1,6 @@
 import { LEX } from 'LEX';
 import { Stage } from 'Stage';
 
-
 export interface SaveButtonDependencies {
   stage: Stage;
 }
@@ -35,7 +34,6 @@ export class SaveButton extends HTMLElement {
     const serializableObject = polygonLayer.toSerializableObject();
 
     const serializedData = JSON.stringify(serializableObject);
-    console.log(serializedData);
     prompt('Copy the data', serializedData);
   }
 }

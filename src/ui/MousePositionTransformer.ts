@@ -6,7 +6,12 @@ export class MousePositionTransformer {
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
+
     this.updateCanvasOffset();
+
+    setInterval(() => {
+      this.updateCanvasOffset();
+    }, 1000);
   }
 
   public updateCanvasOffset() {

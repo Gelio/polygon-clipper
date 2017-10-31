@@ -15,9 +15,14 @@ const configuration = {
   lineDeviationAllowanceInDegrees: 20,
   canvasFont: '30pt serif',
   lineConditionLabelOffset: new Point(5, 0),
-  removeConditionsWhenInsertingPoints: true
+  removeConditionsWhenInsertingPoints: true,
+  presetBackgroundTextures: [
+    'images/backgrounds/Funny-Cat-Face.jpg',
+    'images/backgrounds/hqdefault.jpg'
+  ],
+  presetHeightMaps: ['images/height-maps/brick_heightmap.png'],
+  presetNormalMaps: ['images/normal-maps/brick_normalmap.png', 'images/normal-maps/normal_map.jpg'],
+  presetLightColor: COLORS.WHITE
 };
 
-export {
-  configuration
-};
+export { configuration };

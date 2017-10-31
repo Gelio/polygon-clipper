@@ -1,8 +1,10 @@
+import { ImageDownloader } from 'common/ImageDownloader';
 import { configuration } from 'configuration';
 import { LEX } from 'LEX';
 import { Renderer } from 'Renderer';
 import { Stage } from 'Stage';
 
+import { InputDataService } from 'ui/InputDataService';
 import { MousePositionTransformer } from 'ui/MousePositionTransformer';
 import { NewPolygonUIController } from 'ui/NewPolygonUIController';
 import { PathDraggingService } from 'ui/PathDraggingService';
@@ -10,21 +12,22 @@ import { PointDraggingService } from 'ui/PointDraggingService';
 import { PointInserterService } from 'ui/PointInserterService';
 import { PointRemoverService } from 'ui/PointRemoverService';
 import { PointSyncService } from 'ui/PointSyncService';
+import { SerializationService } from 'ui/SerializationService';
 import { UIService } from 'ui/UIService';
 
 import { EventAggregator } from 'events/EventAggregator';
 import { LineClickEvent } from 'events/LineClickEvent';
 
+import 'ui/components/dialog-overlay/DialogOverlay';
 import 'ui/components/instructions/InstructionsButton';
 import 'ui/components/instructions/InstructionsDialog';
-import { LoadButton } from 'ui/components/serialization/LoadButton';
-import { SaveButton } from 'ui/components/serialization/SaveButton';
 
 interface UIControllerDependencies {
   canvas: HTMLCanvasElement;
   renderer: Renderer;
   stage: Stage;
   eventAggregator: EventAggregator;
+  imageDownloader: ImageDownloader;
 }
 
 export class UIController {
@@ -32,10 +35,10 @@ export class UIController {
   private readonly renderer: Renderer;
   private readonly stage: Stage;
   private readonly eventAggregator: EventAggregator;
+  private readonly imageDownloader: ImageDownloader;
 
   private mousePositionTransformer: MousePositionTransformer;
   private applicationUIContainer: HTMLElement;
-  private serializationContainer: HTMLElement;
 
   private readonly uiServices: UIService[] = [];
   private newPolygonUIController: NewPolygonUIController;
@@ -46,6 +49,7 @@ export class UIController {
     this.renderer = dependencies.renderer;
     this.stage = dependencies.stage;
     this.eventAggregator = dependencies.eventAggregator;
+    this.imageDownloader = dependencies.imageDownloader;
 
     this.onClick = this.onClick.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
@@ -69,10 +73,10 @@ export class UIController {
     this.createPointRemoverService();
     this.createPointSyncService();
     this.createPathDraggingService();
+    this.createSerializationService();
+    this.createInputDataService();
 
     this.uiServices.forEach(uiService => uiService.init());
-
-    this.addSerializationButtons();
   }
 
   public destroy() {
@@ -81,29 +85,6 @@ export class UIController {
 
     this.uiServices.forEach(uiService => uiService.destroy());
     this.uiServices.splice(0, this.uiServices.length);
-
-    // tslint:disable-next-line
-    this.serializationContainer.innerHTML = '';
-  }
-
-  private addSerializationButtons() {
-    const serializationContainer = document.getElementById('serialization-container');
-    if (!serializationContainer) {
-      throw new Error('Serialization container not found');
-    }
-
-    this.serializationContainer = serializationContainer;
-
-    const loadButton = new LoadButton({
-      eventAggregator: this.eventAggregator,
-      stage: this.stage
-    });
-    const saveButton = new SaveButton({
-      stage: this.stage
-    });
-
-    this.serializationContainer.appendChild(loadButton);
-    this.serializationContainer.appendChild(saveButton);
   }
 
   private onMouseDown(event: MouseEvent) {
@@ -198,5 +179,23 @@ export class UIController {
     });
 
     this.uiServices.push(this.pathDraggingService);
+  }
+
+  private createSerializationService() {
+    const serializationService = new SerializationService({
+      eventAggregator: this.eventAggregator,
+      stage: this.stage
+    });
+
+    this.uiServices.push(serializationService);
+  }
+
+  private createInputDataService() {
+    const inputDataService = new InputDataService({
+      eventAggregator: this.eventAggregator,
+      imageDownloader: this.imageDownloader
+    });
+
+    this.uiServices.push(inputDataService);
   }
 }
