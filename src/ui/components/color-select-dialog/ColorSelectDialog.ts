@@ -54,6 +54,10 @@ export class ColorSelectDialog extends HTMLElement implements DialogBox {
     return Color.fromHexString(this.colorInput.value);
   }
 
+  public set selectedColor(color: Color) {
+    this.colorInput.value = color.toHexString();
+  }
+
   public connectedCallback() {
     this._wasCancelled = true;
 

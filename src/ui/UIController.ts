@@ -27,6 +27,7 @@ interface UIControllerDependencies {
   renderer: Renderer;
   stage: Stage;
   eventAggregator: EventAggregator;
+  imageDownloader: ImageDownloader;
 }
 
 export class UIController {
@@ -43,13 +44,12 @@ export class UIController {
   private newPolygonUIController: NewPolygonUIController;
   private pathDraggingService: PathDraggingService;
 
-
   constructor(dependencies: UIControllerDependencies) {
     this.canvas = dependencies.canvas;
     this.renderer = dependencies.renderer;
     this.stage = dependencies.stage;
     this.eventAggregator = dependencies.eventAggregator;
-    this.imageDownloader = new ImageDownloader();
+    this.imageDownloader = dependencies.imageDownloader;
 
     this.onClick = this.onClick.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);

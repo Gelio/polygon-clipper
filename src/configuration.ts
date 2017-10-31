@@ -17,14 +17,12 @@ const configuration = {
   lineConditionLabelOffset: new Point(5, 0),
   removeConditionsWhenInsertingPoints: true,
   presetBackgroundTextures: [
-    'https://www.petmd.com/sites/default/files/scared-kitten-shutterstock_191443322.jpg',
-    'https://www.petfinder.com/wp-content/uploads/2012/11/152964589-welcome-home-new-cat-632x475.jpg',
-    'https://s2.dmcdn.net/Ub1O8/1280x720-mCQ.jpg',
-    // tslint:disable-next-line
-    'https://media1.popsugar-assets.com/files/thumbor/YX-2J4ndcYxiFDtqpJ0Ed8NkMfM/fit-in/2048xorig/filters:format_auto-!!-:strip_icc-!!-/2014/08/08/878/n/1922507/9ed5cdef48c5ef69_thumb_temp_image32304521407524949/i/Funny-Cat-GIFs.jpg'
+    'images/backgrounds/Funny-Cat-Face.jpg',
+    'images/backgrounds/hqdefault.jpg'
   ],
   presetHeightMaps: ['images/height-maps/brick_heightmap.png'],
-  presetNormalMaps: ['images/normal-maps/brick_normalmap.png', 'images/normal-maps/normal_map.jpg']
+  presetNormalMaps: ['images/normal-maps/brick_normalmap.png', 'images/normal-maps/normal_map.jpg'],
+  presetLightColor: COLORS.WHITE
 };
 
 export { configuration };

@@ -2,6 +2,7 @@ import { EventAggregator } from 'events/EventAggregator';
 import { NewBackgroundTexture } from 'events/input-data/NewBackgroundTexture';
 import { NewHeightMap } from 'events/input-data/NewHeightMap';
 import { NewLightColor } from 'events/input-data/NewLightColor';
+import { NewLightVersorType } from 'events/input-data/NewLightVersorType';
 import { NewNormalMap } from 'events/input-data/NewNormalMap';
 
 import { configuration } from 'configuration';
@@ -12,6 +13,7 @@ import { DialogOverlay } from 'ui/components/dialog-overlay/DialogOverlay';
 import { ImageSelectDialog } from 'ui/components/image-select-dialog/ImageSelectDialog';
 
 import { ImageDownloader } from 'common/ImageDownloader';
+import { LightVersorType } from 'common/LightVersorType';
 
 interface SerializationServiceDependencies {
   eventAggregator: EventAggregator;
@@ -30,6 +32,9 @@ export class InputDataService implements UIService {
   private openLightColorDialogButton: HTMLButtonElement;
   private lightColorDialog: ColorSelectDialog;
 
+  private lightVersorContainer: HTMLElement;
+  private lightVersorSelect: HTMLSelectElement;
+
   private openHeightMapDialogButton: HTMLButtonElement;
   private heightMapDialog: ImageSelectDialog;
 
@@ -41,6 +46,7 @@ export class InputDataService implements UIService {
     this.imageDownloader = dependencies.imageDownloader;
 
     this.setupBackgroundTextureDialog();
+    this.setupLightVersorSelect();
     this.setupLightColorDialog();
     this.setupNormalMapDialog();
     this.setupHeightMapDialog();
@@ -57,6 +63,7 @@ export class InputDataService implements UIService {
     this.inputDataContainer.appendChild(this.openLightColorDialogButton);
     this.inputDataContainer.appendChild(this.openNormalMapDialogButton);
     this.inputDataContainer.appendChild(this.openHeightMapDialogButton);
+    this.inputDataContainer.appendChild(this.lightVersorContainer);
 
     const dialogOverlay = document.querySelector('app-dialog-overlay');
     if (!dialogOverlay) {
@@ -68,12 +75,10 @@ export class InputDataService implements UIService {
       'click',
       this.openBackgroundTextureDialog
     );
-
     this.openLightColorDialogButton.addEventListener('click', this.openLightColorDialog);
-
     this.openNormalMapDialogButton.addEventListener('click', this.openNormalMapDialog);
-
     this.openHeightMapDialogButton.addEventListener('click', this.openHeightMapDialog);
+    this.lightVersorSelect.addEventListener('change', this.onLightVersorSelectChange);
   }
 
   public destroy() {
@@ -98,6 +103,8 @@ export class InputDataService implements UIService {
     this.openNormalMapDialogButton.removeEventListener('click', this.openNormalMapDialog);
     this.normalMapDialog.removeEventListener('close', this.onNormalMapDialogClosed);
     this.normalMapDialog.close();
+
+    this.lightVersorSelect.removeEventListener('change', this.onLightVersorSelectChange);
   }
 
   // #region Background texture dialog
@@ -126,7 +133,6 @@ export class InputDataService implements UIService {
     const imageData = await this.imageDownloader.imageToImageData(selectedImage);
 
     this.eventAggregator.dispatchEvent(new NewBackgroundTexture(imageData));
-    console.log('New background texture', imageData);
   }
   // #endregion
 
@@ -137,6 +143,7 @@ export class InputDataService implements UIService {
 
     this.lightColorDialog = new ColorSelectDialog();
     this.lightColorDialog.name = 'Light color';
+    this.lightColorDialog.selectedColor = configuration.presetLightColor;
 
     this.openLightColorDialog = this.openLightColorDialog.bind(this);
     this.onLightColorDialogClosed = this.onLightColorDialogClosed.bind(this);
@@ -154,7 +161,6 @@ export class InputDataService implements UIService {
 
     const lightColor = this.lightColorDialog.selectedColor;
     this.eventAggregator.dispatchEvent(new NewLightColor(lightColor));
-    console.log('New light color', lightColor);
   }
   // #endregion
 
@@ -185,11 +191,47 @@ export class InputDataService implements UIService {
     const imageData = await this.imageDownloader.imageToImageData(selectedImage);
 
     this.eventAggregator.dispatchEvent(new NewNormalMap(imageData));
-    console.log('New normal map texture', imageData);
   }
   // #endregion
 
-  // TODO: light wersor
+  // #region Light versor select
+  private setupLightVersorSelect() {
+    this.lightVersorContainer = document.createElement('div');
+
+    const label = document.createElement('label');
+    label.setAttribute('for', 'light-wersor-select');
+    this.lightVersorContainer.appendChild(label);
+
+    this.lightVersorSelect = document.createElement('select');
+    const constantVersorOption = document.createElement('option');
+    constantVersorOption.innerText = 'Constant ([0, 0, 1])';
+    constantVersorOption.value = 'constant';
+
+    const movingVersorOption = document.createElement('option');
+    movingVersorOption.innerText = 'Circling above the screen';
+    movingVersorOption.value = 'circling';
+
+    this.lightVersorSelect.appendChild(constantVersorOption);
+    this.lightVersorSelect.appendChild(movingVersorOption);
+
+    this.lightVersorContainer.appendChild(this.lightVersorSelect);
+
+    this.onLightVersorSelectChange = this.onLightVersorSelectChange.bind(this);
+  }
+
+  private onLightVersorSelectChange() {
+    const value = this.lightVersorSelect.value;
+    const versorTypes: { [name: string]: LightVersorType } = {
+      constant: LightVersorType.Constant,
+      circling: LightVersorType.Circling
+    };
+
+    const versorType = versorTypes[value];
+
+    this.eventAggregator.dispatchEvent(new NewLightVersorType(versorType));
+  }
+
+  // #endregion
 
   // #region Height map dialog
   private setupHeightMapDialog() {
@@ -218,7 +260,6 @@ export class InputDataService implements UIService {
     const imageData = await this.imageDownloader.imageToImageData(selectedImage);
 
     this.eventAggregator.dispatchEvent(new NewHeightMap(imageData));
-    console.log('New height map texture', imageData);
   }
   // #endregion
 }
