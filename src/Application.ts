@@ -3,7 +3,6 @@ import { Layer } from 'common/Layer';
 import { EventAggregator } from 'events/EventAggregator';
 import { LEX } from 'LEX';
 
-import { LineRasterizer } from 'line-rasterizer/LineRasterizer';
 import { PolygonFiller } from 'polygon-filler/PolygonFiller';
 
 import { InputDataInitializer } from 'InputDataInitializer';
@@ -33,7 +32,6 @@ export class Application {
     });
 
     this.renderer = new Renderer({
-      lineRasterizer: new LineRasterizer(),
       canvas: this.canvas,
       polygonFiller: this.polygonFiller
     });
@@ -51,8 +49,6 @@ export class Application {
   }
 
   public async init() {
-    console.log('Initialization');
-
     const polygonLayer = new Layer(LEX.POLYGON_LAYER_NAME);
     this.stage.layers.push(polygonLayer);
 
@@ -67,7 +63,6 @@ export class Application {
     });
 
     await inputDataInitializer.init();
-    console.log('Initialiation complete');
   }
 
   public destroy() {

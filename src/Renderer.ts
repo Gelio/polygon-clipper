@@ -1,4 +1,3 @@
-import { Color } from 'common/Color';
 import { COLORS } from 'common/COLORS';
 import { Line } from 'common/Line';
 import { LineProperties } from 'common/LineProperties';
@@ -6,21 +5,18 @@ import { Path } from 'common/Path';
 import { Point } from 'common/Point';
 import { Polygon } from 'common/Polygon';
 
-import { LineRasterizer } from 'line-rasterizer/LineRasterizer';
 import { PolygonFiller } from 'polygon-filler/PolygonFiller';
 
 import { configuration } from 'configuration';
 
 interface RendererDependencies {
   canvas: HTMLCanvasElement;
-  lineRasterizer: LineRasterizer;
   polygonFiller: PolygonFiller;
 }
 
 export class Renderer {
   private canvas: HTMLCanvasElement;
   private renderingContext: CanvasRenderingContext2D;
-  private lineRasterizer: LineRasterizer;
   private polygonFiller: PolygonFiller;
 
   constructor(dependencies: RendererDependencies) {
@@ -33,7 +29,6 @@ export class Renderer {
     this.renderingContext = context;
     this.renderingContext.font = configuration.canvasFont;
 
-    this.lineRasterizer = dependencies.lineRasterizer;
     this.polygonFiller = dependencies.polygonFiller;
     this.polygonFiller.injectCanvasRenderingContext(this.renderingContext);
 
