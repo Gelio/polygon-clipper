@@ -12,6 +12,7 @@ import { UIService } from 'ui/UIService';
 import { EventAggregator } from 'events/EventAggregator';
 import { PointClickEvent } from 'events/PointClickEvent';
 import { RenderEvent } from 'events/RenderEvent';
+import { RenderFinishedEvent } from 'events/RenderFinishedEvent';
 import { SyncComponentsEvent } from 'events/ui/SyncComponentsEvent';
 
 interface NewPolygonUIControllerDependencies {
@@ -36,6 +37,8 @@ export class NewPolygonUIController implements UIService {
   private readonly pathLayer = new Layer(LEX.PATH_LAYER_NAME);
   private readonly polygonLayer: Layer;
 
+  private lastMousePosition: Point;
+
   constructor(dependencies: NewPolygonUIControllerDependencies) {
     this.applicationUIContainer = dependencies.applicationUIContainer;
     this.canvas = dependencies.canvas;
@@ -49,40 +52,37 @@ export class NewPolygonUIController implements UIService {
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onPointClick = this.onPointClick.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
+    this.drawNewLineGuide = this.drawNewLineGuide.bind(this);
   }
 
   public init() {
     this.stage.layers.push(this.pathLayer);
     this.startNewUnfinishedPath();
-
-    this.canvas.addEventListener('mousemove', this.onMouseMove);
-    window.addEventListener('keydown', this.onKeyDown);
-    this.eventAggregator.addEventListener(PointClickEvent.eventType, this.onPointClick);
   }
 
   public destroy() {
-    this.canvas.removeEventListener('mousemove', this.onMouseMove);
-    window.removeEventListener('keydown', this.onKeyDown);
-    this.eventAggregator.removeEventListener(PointClickEvent.eventType, this.onPointClick);
+    this.removeEventListeners();
     this.stage.removeLayer(this.pathLayer);
   }
 
   public addNewPoint(point: Point) {
     this.unfinishedPath.addVertex(point);
     this.dispatchUpdateUIEvents();
+
+    if (this.unfinishedPath.getVerticesCount() === 1) {
+      this.lastMousePosition = point;
+      this.addEventListeners();
+    }
   }
 
   private onMouseMove(event: MouseEvent) {
-    const unfinishedPathVerticesCount = this.unfinishedPath.getVerticesCount();
-    if (unfinishedPathVerticesCount === 0) {
-      return;
-    }
-
-    const lastPoint = this.unfinishedPath.getVertex(unfinishedPathVerticesCount - 1);
     this.eventAggregator.dispatchEvent(new RenderEvent());
+    this.lastMousePosition = this.mousePositionTransformer.getPointFromMouseEvent(event);
+  }
 
-    const point = this.mousePositionTransformer.getPointFromMouseEvent(event);
-    this.renderer.drawLine(lastPoint, point, configuration.newLinePreviewProperties);
+  private drawNewLineGuide() {
+    const lastPoint = this.unfinishedPath.getVertex(this.unfinishedPath.getVerticesCount() - 1);
+    this.renderer.drawLine(lastPoint, this.lastMousePosition, configuration.newLinePreviewProperties);
   }
 
   private onPointClick(event: PointClickEvent) {
@@ -103,6 +103,7 @@ export class NewPolygonUIController implements UIService {
   private startNewUnfinishedPath() {
     this.unfinishedPath = new Path([], configuration.newPolygonLineProperties);
     this.pathLayer.paths.push(this.unfinishedPath);
+    this.removeEventListeners();
   }
 
   private closePath() {
@@ -135,5 +136,19 @@ export class NewPolygonUIController implements UIService {
       default:
         break;
     }
+  }
+
+  private addEventListeners() {
+    this.canvas.addEventListener('mousemove', this.onMouseMove);
+    this.eventAggregator.addEventListener(RenderFinishedEvent.name, this.drawNewLineGuide);
+    window.addEventListener('keydown', this.onKeyDown);
+    this.eventAggregator.addEventListener(PointClickEvent.eventType, this.onPointClick);
+  }
+
+  private removeEventListeners() {
+    this.canvas.removeEventListener('mousemove', this.onMouseMove);
+    this.eventAggregator.removeEventListener(RenderFinishedEvent.name, this.drawNewLineGuide);
+    window.removeEventListener('keydown', this.onKeyDown);
+    this.eventAggregator.removeEventListener(PointClickEvent.eventType, this.onPointClick);
   }
 }
