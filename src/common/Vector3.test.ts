@@ -1,3 +1,4 @@
+import { Color } from 'common/Color';
 import { Vector3 } from 'common/Vector3';
 
 describe('Vector3', () => {
@@ -9,13 +10,13 @@ describe('Vector3', () => {
     it('should normalize a vector', () => {
       const vector = new Vector3(1, 2, 3);
 
-      vector.normalize();
+      const normalized = vector.normalize();
 
-      expect(Math.abs(vector.x - 0.26)).toBeLessThan(0.1);
-      expect(Math.abs(vector.y - 0.53)).toBeLessThan(0.1);
-      expect(Math.abs(vector.z - 0.80)).toBeLessThan(0.1);
+      expect(Math.abs(normalized.x - 0.26)).toBeLessThan(0.1);
+      expect(Math.abs(normalized.y - 0.53)).toBeLessThan(0.1);
+      expect(Math.abs(normalized.z - 0.80)).toBeLessThan(0.1);
 
-      expect(Math.abs(vector.getLength() - 1)).toBeLessThan(0.1);
+      expect(Math.abs(normalized.getLength() - 1)).toBeLessThan(0.1);
     });
   });
 
@@ -47,11 +48,11 @@ describe('Vector3', () => {
     it('should be correct', () => {
       const v = new Vector3(1, 1, 1);
 
-      v.invert();
+      const inverted = v.invert();
 
-      expect(v.x).toEqual(-1);
-      expect(v.y).toEqual(-1);
-      expect(v.z).toEqual(-1);
+      expect(inverted.x).toEqual(-1);
+      expect(inverted.y).toEqual(-1);
+      expect(inverted.z).toEqual(-1);
     });
   });
 
@@ -75,6 +76,30 @@ describe('Vector3', () => {
       const correctCosine = 0.2236;
 
       expect(Math.abs(cosine - correctCosine)).toBeLessThan(0.1);
+    });
+  });
+
+  describe('toColor', () => {
+    it('should work correctly', () => {
+      const v = new Vector3(0.5, 0.5, 0);
+
+      const color = v.toColor();
+
+      expect(color.r).toEqual(127);
+      expect(color.g).toEqual(127);
+      expect(color.b).toEqual(0);
+    });
+  });
+
+  describe('fromColor', () => {
+    it('should work correctly', () => {
+      const color = new Color(127, 127, 0);
+
+      const v = Vector3.fromColor(color);
+
+      expect(Math.abs(v.x - 0.5)).toBeLessThan(0.1);
+      expect(Math.abs(v.y - 0.5)).toBeLessThan(0.1);
+      expect(v.z).toEqual(0);
     });
   });
 });

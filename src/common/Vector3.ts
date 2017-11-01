@@ -1,5 +1,7 @@
 import { Color } from 'common/Color';
 
+const MAX_COLOR = 255;
+
 export class Vector3 {
   public x: number;
   public y: number;
@@ -12,7 +14,7 @@ export class Vector3 {
   }
 
   public static fromColor(color: Color): Vector3 {
-    return new Vector3(color.r, color.g, color.b);
+    return new Vector3(color.r / MAX_COLOR, color.g / MAX_COLOR, color.b / MAX_COLOR);
   }
 
   public static add(v1: Vector3, v2: Vector3): Vector3 {
@@ -44,15 +46,17 @@ export class Vector3 {
   }
 
   public toColor(): Color {
-    return new Color(this.x, this.y, this.z);
+    const r = Math.floor(this.x * MAX_COLOR);
+    const g = Math.floor(this.y * MAX_COLOR);
+    const b = Math.floor(this.z * MAX_COLOR);
+
+    return new Color(r, g, b);
   }
 
   public normalize() {
     const length = this.getLength();
 
-    this.x /= length;
-    this.y /= length;
-    this.z /= length;
+    return new Vector3(this.x / length, this.y / length, this.z / length);
   }
 
   public getLength() {
@@ -64,8 +68,6 @@ export class Vector3 {
   }
 
   public invert() {
-    this.x *= -1;
-    this.y *= -1;
-    this.z *= -1;
+    return new Vector3(-this.x, -this.y, -this.z);
   }
 }
