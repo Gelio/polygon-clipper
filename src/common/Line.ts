@@ -45,4 +45,15 @@ export class Line {
   public getLength() {
     return Point.getDistanceBetween(this.p1, this.p2);
   }
+
+  public getDirection(p: Point) {
+    const direction = Point.crossProduct(Point.subtract(this.p2, this.p1), Point.subtract(p, this.p1));
+    if (Math.abs(direction) < 0.00000001) {
+      return 0;
+    } else if (direction > 0) {
+      return 1;
+    } else {
+      return -1;
+    }
+  }
 }

@@ -14,6 +14,7 @@ import { PointSyncService } from 'ui/PointSyncService';
 import { SerializationService } from 'ui/SerializationService';
 
 import { ImageDownloader } from 'services/ImageDownloader';
+import { PolygonClipper } from 'services/PolygonClipper';
 import { Service } from 'services/Service';
 
 import { EventAggregator } from 'events/EventAggregator';
@@ -22,6 +23,7 @@ import { LineClickEvent } from 'events/LineClickEvent';
 import 'ui/components/dialog-overlay/DialogOverlay';
 import 'ui/components/instructions/InstructionsButton';
 import 'ui/components/instructions/InstructionsDialog';
+import { PolygonClippingService } from 'ui/PolygonClippingService';
 
 interface UIControllerDependencies {
   canvas: HTMLCanvasElement;
@@ -29,6 +31,7 @@ interface UIControllerDependencies {
   stage: Stage;
   eventAggregator: EventAggregator;
   imageDownloader: ImageDownloader;
+  polygonClipper: PolygonClipper;
 }
 
 export class UIController implements Service {
@@ -37,6 +40,7 @@ export class UIController implements Service {
   private readonly stage: Stage;
   private readonly eventAggregator: EventAggregator;
   private readonly imageDownloader: ImageDownloader;
+  private readonly polygonClipper: PolygonClipper;
 
   private mousePositionTransformer: MousePositionTransformer;
   private applicationUIContainer: HTMLElement;
@@ -44,6 +48,7 @@ export class UIController implements Service {
   private readonly uiServices: Service[] = [];
   private newPolygonUIController: NewPolygonUIController;
   private pathDraggingService: PathDraggingService;
+  private polygonClippingService: PolygonClippingService;
 
   constructor(dependencies: UIControllerDependencies) {
     this.canvas = dependencies.canvas;
@@ -51,6 +56,7 @@ export class UIController implements Service {
     this.stage = dependencies.stage;
     this.eventAggregator = dependencies.eventAggregator;
     this.imageDownloader = dependencies.imageDownloader;
+    this.polygonClipper = dependencies.polygonClipper;
 
     this.onClick = this.onClick.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
@@ -76,6 +82,7 @@ export class UIController implements Service {
     this.createPathDraggingService();
     this.createSerializationService();
     this.createInputDataService();
+    this.createPolygonClippingService();
 
     this.uiServices.forEach(uiService => uiService.init());
   }
@@ -106,6 +113,10 @@ export class UIController implements Service {
     }
 
     const point = this.mousePositionTransformer.getPointFromMouseEvent(event);
+
+    if (event.shiftKey) {
+      return this.polygonClippingService.clipPolygons(point);
+    }
 
     const hitTestResult = this.stage.hitTest(point);
 
@@ -199,5 +210,15 @@ export class UIController implements Service {
     });
 
     this.uiServices.push(inputDataService);
+  }
+
+  private createPolygonClippingService() {
+    this.polygonClippingService = new PolygonClippingService({
+      polygonClipper: this.polygonClipper,
+      eventAggregator: this.eventAggregator,
+      polygonLayer: this.stage.findLayerByName(LEX.POLYGON_LAYER_NAME)
+    });
+
+    this.uiServices.push(this.polygonClippingService);
   }
 }
