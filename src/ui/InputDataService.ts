@@ -200,6 +200,7 @@ export class InputDataService implements UIService {
 
     const label = document.createElement('label');
     label.setAttribute('for', 'light-wersor-select');
+    label.innerText = 'Light versor: ';
     this.lightVersorContainer.appendChild(label);
 
     this.lightVersorSelect = document.createElement('select');

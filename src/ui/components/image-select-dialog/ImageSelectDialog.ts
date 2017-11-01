@@ -25,6 +25,10 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
   private customFileInput: HTMLInputElement;
   private customImage: HTMLImageElement;
 
+  private customColorContainer: HTMLDivElement;
+  private customColorInput: HTMLInputElement;
+  private customColorImage: HTMLImageElement;
+
   private bottomButtonsContainer: HTMLDivElement;
   private cancelButton: HTMLButtonElement;
   private confirmButton: HTMLButtonElement;
@@ -43,10 +47,12 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
     this.showCustomImage = this.showCustomImage.bind(this);
     this.onCancelButtonClick = this.onCancelButtonClick.bind(this);
     this.onConfirmButtonClick = this.onConfirmButtonClick.bind(this);
+    this.onCustomColorInputChange = this.onCustomColorInputChange.bind(this);
 
     this.createHeader();
     this.createPresetImagesList();
     this.createCustomImagePicker();
+    this.createCustomColorPicker();
     this.createBottomButtons();
   }
 
@@ -81,12 +87,15 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
     this.appendChild(this.header);
     this.appendChild(this.presetImagesListContainer);
     this.appendChild(this.customImageContainer);
+    this.appendChild(this.customColorContainer);
     this.appendChild(this.bottomButtonsContainer);
 
     this.cancelButton.addEventListener('click', this.onCancelButtonClick);
     this.confirmButton.addEventListener('click', this.onConfirmButtonClick);
     this.customFileInput.addEventListener('change', this.showCustomImage);
     this.customImage.addEventListener('click', this.onSelectableImageClick);
+    this.customColorInput.addEventListener('change', this.onCustomColorInputChange);
+    this.customColorImage.addEventListener('click', this.onSelectableImageClick);
 
     this.presetImagesListContainer.querySelectorAll('img')
       .forEach(image => image.addEventListener('click', this.onSelectableImageClick));
@@ -97,6 +106,8 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
       .forEach(image => image.removeEventListener('click', this.onSelectableImageClick));
     this.customFileInput.removeEventListener('change', this.showCustomImage);
     this.customImage.removeEventListener('click', this.onSelectableImageClick);
+    this.customColorInput.removeEventListener('change', this.onCustomColorInputChange);
+    this.customColorImage.removeEventListener('click', this.onSelectableImageClick);
 
     this.cancelButton.removeEventListener('click', this.onCancelButtonClick);
     this.confirmButton.removeEventListener('click', this.onConfirmButtonClick);
@@ -104,6 +115,7 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
     this.removeChild(this.header);
     this.removeChild(this.presetImagesListContainer);
     this.removeChild(this.customImageContainer);
+    this.removeChild(this.customColorContainer);
     this.removeChild(this.bottomButtonsContainer);
   }
 
@@ -169,6 +181,36 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
 
       reader.readAsDataURL(this.customFileInput.files[0]);
     }
+  }
+
+  private createCustomColorPicker() {
+    this.customColorContainer = this.createBlock();
+    const title = this.createBlockTitle('Custom solid color');
+    this.customColorContainer.appendChild(title);
+
+    this.customColorInput = document.createElement('input');
+    this.customColorInput.type = 'color';
+    this.customColorContainer.appendChild(this.customColorInput);
+
+    this.customColorImage = new Image(20, 20);
+    this.customColorContainer.appendChild(this.customColorImage);
+  }
+
+  private onCustomColorInputChange() {
+    const canvas = document.createElement('canvas');
+    canvas.width = this.customColorImage.width;
+    canvas.height = this.customColorImage.height;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      throw new Error('Cannot get canvas drawing context');
+    }
+
+    ctx.fillStyle = this.customColorInput.value;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    this.customColorImage.src = canvas.toDataURL();
+    this.selectImage(this.customColorImage);
   }
 
   private createBottomButtons() {
