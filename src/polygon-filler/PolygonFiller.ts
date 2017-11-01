@@ -251,7 +251,6 @@ export class PolygonFiller implements Service {
 
   private onNewLightVersor(event: NewLightVersorEvent) {
     const lightVersor = event.payload;
-    console.log('New light versor', lightVersor);
 
     this.fillWorker.postMessage({
       type: FillWorkerMessageType.LightVersor,
