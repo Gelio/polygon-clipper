@@ -14,6 +14,9 @@ import {
 import { ActiveEdge } from 'polygon-filler/ActiveEdge';
 import { AppFillData } from 'polygon-filler/AppFillData';
 import { FillStrip } from 'polygon-filler/FillStrip';
+import { FillWorkerMessageType } from 'polygon-filler/FillWorkerMessageType';
+
+const FILL_WORKER_URL = 'fillWorker.js';
 
 interface PolygonFillerDependencies {
   eventAggregator: EventAggregator;
@@ -24,7 +27,8 @@ export class PolygonFiller {
   private readonly eventAggregator: EventAggregator;
   private readonly canvas: HTMLCanvasElement;
   private renderingContext: CanvasRenderingContext2D;
-  private canvasImageData: ImageData;
+
+  private fillWorker: Worker;
 
   private readonly fillData: AppFillData = {
     backgroundTexture: new ImageData(1, 1),
@@ -43,6 +47,7 @@ export class PolygonFiller {
     this.onNewLightColor = this.onNewLightColor.bind(this);
     this.onNewLightVersorType = this.onNewLightVersorType.bind(this);
     this.onNewNormalMap = this.onNewNormalMap.bind(this);
+    this.onFillWorkerMessage = this.onFillWorkerMessage.bind(this);
   }
 
   public injectCanvasRenderingContext(renderingContext: CanvasRenderingContext2D) {
@@ -60,6 +65,11 @@ export class PolygonFiller {
     eventAggregator.addEventListener(NewLightColorEvent.eventType, this.onNewLightColor);
     eventAggregator.addEventListener(NewLightVersorTypeEvent.eventType, this.onNewLightVersorType);
     eventAggregator.addEventListener(NewNormalMapEvent.eventType, this.onNewNormalMap);
+
+    this.fillWorker = new Worker(FILL_WORKER_URL);
+    this.sendAppFillDataToWorker();
+
+    this.fillWorker.addEventListener('message', this.onFillWorkerMessage);
   }
 
   public destroy() {
@@ -76,9 +86,74 @@ export class PolygonFiller {
       this.onNewLightVersorType
     );
     eventAggregator.removeEventListener(NewNormalMapEvent.eventType, this.onNewNormalMap);
+    this.fillWorker.removeEventListener('message', this.onFillWorkerMessage);
+    this.fillWorker.terminate();
   }
 
-  public fillPolygon(polygon: Polygon) {
+  public fillPolygons(polygons: Polygon[]) {
+    const fillWorker = this.fillWorker;
+
+    fillWorker.postMessage({
+      type: FillWorkerMessageType.StartFill
+    });
+
+    polygons.forEach(polygon => this.fillPolygon(polygon));
+
+    return new Promise((resolve, reject) => {
+      function onMessage() {
+        resolve();
+        removeEventListeners();
+      }
+
+      function onError(error: ErrorEvent) {
+        reject(error);
+        removeEventListeners();
+      }
+
+      function removeEventListeners() {
+        fillWorker.removeEventListener('message', onMessage);
+        fillWorker.removeEventListener('error', onError);
+      }
+
+      fillWorker.addEventListener('message', onMessage);
+      fillWorker.addEventListener('error', onError);
+
+      fillWorker.postMessage({
+        type: FillWorkerMessageType.EndFill
+      });
+    });
+  }
+
+  private onFillWorkerMessage(event: MessageEvent) {
+    this.renderArrayBuffer(event.data);
+  }
+
+  private renderArrayBuffer(arrayBuffer: ArrayBuffer) {
+    const uint8Array = new Uint8ClampedArray(arrayBuffer);
+    const imageData = new ImageData(uint8Array, this.canvas.width, this.canvas.height);
+
+    this.renderingContext.putImageData(imageData, 0, 0);
+  }
+
+  private fillPolygon(polygon: Polygon) {
+    const fillStrips = this.getPolygonFillStrips(polygon);
+
+    this.fillWorker.postMessage({
+      type: FillWorkerMessageType.FillStrips,
+      fillStrips
+    });
+  }
+
+  private sendAppFillDataToWorker() {
+    this.fillWorker.postMessage({
+      type: FillWorkerMessageType.InitialData,
+      width: this.canvas.width,
+      height: this.canvas.height,
+      appFillData: this.fillData
+    });
+  }
+
+  private getPolygonFillStrips(polygon: Polygon): FillStrip[] {
     const vertices = polygon.getVertices();
     const verticesCount = polygon.getVerticesCount();
 
@@ -93,8 +168,6 @@ export class PolygonFiller {
     const activeEdgeTable: ActiveEdge[] = [];
     let k = 0;
     let previousY = yMin;
-
-    this.canvasImageData = this.renderingContext.getImageData(0, 0, this.canvas.width, this.canvas.height);
 
     const fillStrips: FillStrip[] = [];
 
@@ -149,42 +222,36 @@ export class PolygonFiller {
       previousY = y;
     }
 
-    const worker = new Worker('fillWorker.js');
-
-    worker.onmessage = (e) => {
-      const renderedCanvasImageData: ImageData = e.data;
-      this.renderingContext.putImageData(renderedCanvasImageData, 0, 0);
-    };
-
-    worker.postMessage({
-      appFillData: this.fillData,
-      canvasImageData: this.canvasImageData,
-      fillStrips
-    });
+    return fillStrips;
   }
 
   private onNewBackgroundTexture(event: NewBackgroundTextureEvent) {
     this.fillData.backgroundTexture = event.payload;
+    this.sendAppFillDataToWorker();
     event.handled = true;
   }
 
   private onNewHeightMap(event: NewHeightMapEvent) {
     this.fillData.heightMap = event.payload;
+    this.sendAppFillDataToWorker();
     event.handled = true;
   }
 
   private onNewLightColor(event: NewLightColorEvent) {
     this.fillData.lightColor = event.payload;
+    this.sendAppFillDataToWorker();
     event.handled = true;
   }
 
   private onNewLightVersorType(event: NewLightVersorTypeEvent) {
     this.fillData.lightVersorType = event.payload;
+    this.sendAppFillDataToWorker();
     event.handled = true;
   }
 
   private onNewNormalMap(event: NewNormalMapEvent) {
     this.fillData.normalMap = event.payload;
+    this.sendAppFillDataToWorker();
     event.handled = true;
   }
 }
