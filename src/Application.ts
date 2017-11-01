@@ -62,7 +62,8 @@ export class Application {
 
     const inputDataInitializer = new InputDataInitializer({
       eventAggregator: this.eventAggregator,
-      imageDownloader: this.imageDownloader
+      imageDownloader: this.imageDownloader,
+      polygonLayer
     });
 
     await inputDataInitializer.init();
