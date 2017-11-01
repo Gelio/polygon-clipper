@@ -6,6 +6,7 @@ import {
   NewLightVersorTypeEvent,
   NewNormalMapEvent
 } from 'events/input-data';
+import { RenderEvent } from 'events/RenderEvent';
 
 import { configuration } from 'configuration';
 import { UIService } from 'ui/UIService';
@@ -135,6 +136,7 @@ export class InputDataService implements UIService {
     const imageData = await this.imageDownloader.imageToImageData(selectedImage);
 
     this.eventAggregator.dispatchEvent(new NewBackgroundTextureEvent(imageData));
+    this.eventAggregator.dispatchEvent(new RenderEvent());
   }
   // #endregion
 
@@ -163,6 +165,7 @@ export class InputDataService implements UIService {
 
     const lightColor = this.lightColorDialog.selectedColor;
     this.eventAggregator.dispatchEvent(new NewLightColorEvent(lightColor));
+    this.eventAggregator.dispatchEvent(new RenderEvent());
   }
   // #endregion
 
@@ -193,6 +196,7 @@ export class InputDataService implements UIService {
     const imageData = await this.imageDownloader.imageToImageData(selectedImage);
 
     this.eventAggregator.dispatchEvent(new NewNormalMapEvent(imageData));
+    this.eventAggregator.dispatchEvent(new RenderEvent());
   }
   // #endregion
 
@@ -232,6 +236,7 @@ export class InputDataService implements UIService {
     const versorType = versorTypes[value];
 
     this.eventAggregator.dispatchEvent(new NewLightVersorTypeEvent(versorType));
+    this.eventAggregator.dispatchEvent(new RenderEvent());
   }
 
   // #endregion
@@ -263,6 +268,7 @@ export class InputDataService implements UIService {
     const imageData = await this.imageDownloader.imageToImageData(selectedImage);
 
     this.eventAggregator.dispatchEvent(new NewHeightMapEvent(imageData));
+    this.eventAggregator.dispatchEvent(new RenderEvent());
   }
   // #endregion
 }
