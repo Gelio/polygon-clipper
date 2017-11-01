@@ -190,13 +190,21 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
 
     this.customColorInput = document.createElement('input');
     this.customColorInput.type = 'color';
+    this.customColorInput.value = '#000000';
     this.customColorContainer.appendChild(this.customColorInput);
 
     this.customColorImage = new Image(20, 20);
     this.customColorContainer.appendChild(this.customColorImage);
+
+    this.setCustomColorImageColor();
   }
 
   private onCustomColorInputChange() {
+    this.setCustomColorImageColor();
+    this.selectImage(this.customColorImage);
+  }
+
+  private setCustomColorImageColor() {
     const canvas = document.createElement('canvas');
     canvas.width = this.customColorImage.width;
     canvas.height = this.customColorImage.height;
@@ -210,7 +218,6 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     this.customColorImage.src = canvas.toDataURL();
-    this.selectImage(this.customColorImage);
   }
 
   private createBottomButtons() {
