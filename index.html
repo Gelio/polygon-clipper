@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polygon clipper</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <header class="app-header">
+    <h1 class="app-name">Polygon clipper</h1>
+    <app-instructions-button></app-instructions-button>
+    <span id="serialization-container" class="serialization-container"></span>
+
+    <div id="input-data-container" class="input-data-container"></div>
+  </header>
+
+  <div class="main-container">
+    <main class="canvas-wrapper">
+      <canvas id="main-canvas" class="main-canvas" width="800" height="600"></canvas>
+      <div class="application-ui" id="application-ui"></div>
+    </main>
+  </div>
+
+  <footer class="footer">
+    Created by Grzegorz Rozdzialik @ 2017
+  </footer>
+
+  <app-dialog-overlay></app-dialog-overlay>
+
+  <script src="bundle.js"></script>
+</body>
+
+</html>
