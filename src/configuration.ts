@@ -22,7 +22,13 @@ const configuration = {
   ],
   presetHeightMaps: ['images/height-maps/brick_heightmap.png'],
   presetNormalMaps: ['images/normal-maps/brick_normalmap.png', 'images/normal-maps/normal_map.jpg'],
-  presetLightColor: COLORS.WHITE
+  presetLightColor: COLORS.WHITE,
+  circlingLight: {
+    lapTime: 10 * 1000,
+    interval: 50,
+    height: 50,
+    distance: 50
+  }
 };
 
 export { configuration };

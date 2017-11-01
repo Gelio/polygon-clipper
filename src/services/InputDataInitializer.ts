@@ -11,12 +11,14 @@ import { SyncComponentsEvent } from 'events/ui/SyncComponentsEvent';
 
 import { configuration } from 'configuration';
 
-import { ImageDownloader } from 'common/ImageDownloader';
 import { Layer } from 'common/Layer';
 import { LightVersorType } from 'common/LightVersorType';
 import { LineProperties } from 'common/LineProperties';
 import { Point } from 'common/Point';
 import { Polygon } from 'common/Polygon';
+
+import { ImageDownloader } from 'services/ImageDownloader';
+import { Service } from 'services/Service';
 
 interface InputDataInitializerDependencies {
   eventAggregator: EventAggregator;
@@ -24,7 +26,7 @@ interface InputDataInitializerDependencies {
   polygonLayer: Layer;
 }
 
-export class InputDataInitializer {
+export class InputDataInitializer implements Service {
   private readonly eventAggregator: EventAggregator;
   private readonly imageDownloader: ImageDownloader;
   private readonly polygonLayer: Layer;
@@ -61,6 +63,10 @@ export class InputDataInitializer {
     this.eventAggregator.dispatchEvent(new NewLightColorEvent(configuration.presetLightColor));
     this.eventAggregator.dispatchEvent(new NewLightVersorTypeEvent(LightVersorType.Constant));
     this.eventAggregator.dispatchEvent(new RenderEvent());
+  }
+
+  public destroy() {
+    // Nothing to destroy here
   }
 
   private addInitialPolygons() {

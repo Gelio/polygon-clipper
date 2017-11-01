@@ -1,4 +1,3 @@
-import { ImageDownloader } from 'common/ImageDownloader';
 import { configuration } from 'configuration';
 import { LEX } from 'LEX';
 import { Renderer } from 'Renderer';
@@ -13,7 +12,9 @@ import { PointInserterService } from 'ui/PointInserterService';
 import { PointRemoverService } from 'ui/PointRemoverService';
 import { PointSyncService } from 'ui/PointSyncService';
 import { SerializationService } from 'ui/SerializationService';
-import { UIService } from 'ui/UIService';
+
+import { ImageDownloader } from 'services/ImageDownloader';
+import { Service } from 'services/Service';
 
 import { EventAggregator } from 'events/EventAggregator';
 import { LineClickEvent } from 'events/LineClickEvent';
@@ -30,7 +31,7 @@ interface UIControllerDependencies {
   imageDownloader: ImageDownloader;
 }
 
-export class UIController {
+export class UIController implements Service {
   private readonly canvas: HTMLCanvasElement;
   private readonly renderer: Renderer;
   private readonly stage: Stage;
@@ -40,7 +41,7 @@ export class UIController {
   private mousePositionTransformer: MousePositionTransformer;
   private applicationUIContainer: HTMLElement;
 
-  private readonly uiServices: UIService[] = [];
+  private readonly uiServices: Service[] = [];
   private newPolygonUIController: NewPolygonUIController;
   private pathDraggingService: PathDraggingService;
 

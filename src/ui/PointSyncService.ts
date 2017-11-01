@@ -1,7 +1,7 @@
 import { Path } from 'common/Path';
 import { Point } from 'common/Point';
+import { Service } from 'services/Service';
 import { Stage } from 'Stage';
-import { UIService } from 'ui/UIService';
 
 import { PathPointComponent } from 'ui/components/PathPointComponent';
 import { MousePositionTransformer } from 'ui/MousePositionTransformer';
@@ -21,7 +21,7 @@ interface PathPoint {
   point: Point;
 }
 
-export class PointSyncService implements UIService {
+export class PointSyncService implements Service {
   private readonly stage: Stage;
   private pathPointComponents: PathPointComponent[] = [];
   private readonly container: HTMLElement;

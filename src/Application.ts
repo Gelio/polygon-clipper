@@ -1,13 +1,15 @@
-import { ImageDownloader } from 'common/ImageDownloader';
 import { Layer } from 'common/Layer';
 import { EventAggregator } from 'events/EventAggregator';
 import { LEX } from 'LEX';
+import { ImageDownloader } from 'services/ImageDownloader';
 
 import { PolygonFiller } from 'polygon-filler/PolygonFiller';
 
-import { InputDataInitializer } from 'InputDataInitializer';
 import { Renderer } from 'Renderer';
 import { Stage } from 'Stage';
+
+import { InputDataInitializer } from 'services/InputDataInitializer';
+import { LightSimulator } from 'services/LightSimulator';
 
 import { UIController } from 'ui/UIController';
 
@@ -20,9 +22,12 @@ export class Application {
   private uiController: UIController;
   private stage: Stage;
   private eventAggregator: EventAggregator;
-  private imageDownloader: ImageDownloader;
+
   private polygonFiller: PolygonFiller;
   private polygonLayer: Layer;
+
+  private imageDownloader: ImageDownloader;
+  private lightSimulator: LightSimulator;
 
   private isRendering = false;
   private isNextRenderQueued = false;
@@ -33,6 +38,9 @@ export class Application {
     this.imageDownloader = new ImageDownloader();
     this.polygonFiller = new PolygonFiller({
       canvas: this.canvas,
+      eventAggregator: this.eventAggregator
+    });
+    this.lightSimulator = new LightSimulator({
       eventAggregator: this.eventAggregator
     });
 
@@ -59,6 +67,7 @@ export class Application {
     this.stage.layers.push(this.polygonLayer);
 
     this.polygonFiller.init();
+    this.lightSimulator.init();
     this.uiController.init();
     this.addEventListeners();
 
@@ -73,6 +82,7 @@ export class Application {
 
   public destroy() {
     this.polygonFiller.destroy();
+    this.lightSimulator.destroy();
     this.uiController.destroy();
     this.removeEventListeners();
   }

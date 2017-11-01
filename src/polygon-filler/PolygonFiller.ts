@@ -7,6 +7,7 @@ import {
   NewBackgroundTextureEvent,
   NewHeightMapEvent,
   NewLightColorEvent,
+  NewLightVersorEvent,
   NewLightVersorTypeEvent,
   NewNormalMapEvent
 } from 'events/input-data';
@@ -16,6 +17,8 @@ import { AppFillData } from 'polygon-filler/AppFillData';
 import { FillStrip } from 'polygon-filler/FillStrip';
 import { FillWorkerMessageType } from 'polygon-filler/FillWorkerMessageType';
 
+import { Service } from 'services/Service';
+
 const FILL_WORKER_URL = 'fillWorker.js';
 
 interface PolygonFillerDependencies {
@@ -23,7 +26,7 @@ interface PolygonFillerDependencies {
   canvas: HTMLCanvasElement;
 }
 
-export class PolygonFiller {
+export class PolygonFiller implements Service {
   private readonly eventAggregator: EventAggregator;
   private readonly canvas: HTMLCanvasElement;
   private renderingContext: CanvasRenderingContext2D;
@@ -45,6 +48,7 @@ export class PolygonFiller {
     this.onNewBackgroundTexture = this.onNewBackgroundTexture.bind(this);
     this.onNewHeightMap = this.onNewHeightMap.bind(this);
     this.onNewLightColor = this.onNewLightColor.bind(this);
+    this.onNewLightVersor = this.onNewLightVersor.bind(this);
     this.onNewLightVersorType = this.onNewLightVersorType.bind(this);
     this.onNewNormalMap = this.onNewNormalMap.bind(this);
     this.onFillWorkerMessage = this.onFillWorkerMessage.bind(this);
@@ -63,6 +67,7 @@ export class PolygonFiller {
     );
     eventAggregator.addEventListener(NewHeightMapEvent.eventType, this.onNewHeightMap);
     eventAggregator.addEventListener(NewLightColorEvent.eventType, this.onNewLightColor);
+    eventAggregator.addEventListener(NewLightVersorEvent.eventType, this.onNewLightVersor);
     eventAggregator.addEventListener(NewLightVersorTypeEvent.eventType, this.onNewLightVersorType);
     eventAggregator.addEventListener(NewNormalMapEvent.eventType, this.onNewNormalMap);
 
@@ -81,6 +86,7 @@ export class PolygonFiller {
     );
     eventAggregator.removeEventListener(NewHeightMapEvent.eventType, this.onNewHeightMap);
     eventAggregator.removeEventListener(NewLightColorEvent.eventType, this.onNewLightColor);
+    eventAggregator.removeEventListener(NewLightVersorEvent.eventType, this.onNewLightVersor);
     eventAggregator.removeEventListener(
       NewLightVersorTypeEvent.eventType,
       this.onNewLightVersorType
@@ -146,7 +152,7 @@ export class PolygonFiller {
 
   private sendAppFillDataToWorker() {
     this.fillWorker.postMessage({
-      type: FillWorkerMessageType.InitialData,
+      type: FillWorkerMessageType.FillData,
       width: this.canvas.width,
       height: this.canvas.height,
       appFillData: this.fillData
@@ -241,6 +247,19 @@ export class PolygonFiller {
     this.fillData.lightColor = event.payload;
     this.sendAppFillDataToWorker();
     event.handled = true;
+  }
+
+  private onNewLightVersor(event: NewLightVersorEvent) {
+    const lightVersor = event.payload;
+
+    this.fillWorker.postMessage({
+      type: FillWorkerMessageType.LightVersor,
+      versor: {
+        x: lightVersor.x,
+        y: lightVersor.y,
+        z: lightVersor.z
+      }
+    });
   }
 
   private onNewLightVersorType(event: NewLightVersorTypeEvent) {
