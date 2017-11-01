@@ -1,30 +1,43 @@
 import { EventAggregator } from 'events/EventAggregator';
-import { NewBackgroundTexture } from 'events/input-data/NewBackgroundTexture';
-import { NewHeightMap } from 'events/input-data/NewHeightMap';
-import { NewLightColor } from 'events/input-data/NewLightColor';
-import { NewLightVersorType } from 'events/input-data/NewLightVersorType';
-import { NewNormalMap } from 'events/input-data/NewNormalMap';
+import {
+  NewBackgroundTextureEvent,
+  NewHeightMapEvent,
+  NewLightColorEvent,
+  NewLightVersorTypeEvent,
+  NewNormalMapEvent
+} from 'events/input-data';
+import { RenderEvent } from 'events/RenderEvent';
+import { SyncComponentsEvent } from 'events/ui/SyncComponentsEvent';
 
 import { configuration } from 'configuration';
 
 import { ImageDownloader } from 'common/ImageDownloader';
+import { Layer } from 'common/Layer';
 import { LightVersorType } from 'common/LightVersorType';
+import { LineProperties } from 'common/LineProperties';
+import { Point } from 'common/Point';
+import { Polygon } from 'common/Polygon';
 
 interface InputDataInitializerDependencies {
   eventAggregator: EventAggregator;
   imageDownloader: ImageDownloader;
+  polygonLayer: Layer;
 }
 
 export class InputDataInitializer {
   private readonly eventAggregator: EventAggregator;
   private readonly imageDownloader: ImageDownloader;
+  private readonly polygonLayer: Layer;
 
   constructor(dependencies: InputDataInitializerDependencies) {
     this.eventAggregator = dependencies.eventAggregator;
     this.imageDownloader = dependencies.imageDownloader;
+    this.polygonLayer = dependencies.polygonLayer;
   }
 
   public async init() {
+    this.addInitialPolygons();
+
     const imagesToDownload: HTMLImageElement[] = [];
 
     const backgroundTextureImage = new Image();
@@ -42,10 +55,34 @@ export class InputDataInitializer {
       imagesToDownload.map(image => this.imageDownloader.imageToImageData(image))
     );
 
-    this.eventAggregator.dispatchEvent(new NewBackgroundTexture(downloadedImageData[0]));
-    this.eventAggregator.dispatchEvent(new NewNormalMap(downloadedImageData[1]));
-    this.eventAggregator.dispatchEvent(new NewHeightMap(downloadedImageData[2]));
-    this.eventAggregator.dispatchEvent(new NewLightColor(configuration.presetLightColor));
-    this.eventAggregator.dispatchEvent(new NewLightVersorType(LightVersorType.Constant));
+    this.eventAggregator.dispatchEvent(new NewBackgroundTextureEvent(downloadedImageData[0]));
+    this.eventAggregator.dispatchEvent(new NewNormalMapEvent(downloadedImageData[1]));
+    this.eventAggregator.dispatchEvent(new NewHeightMapEvent(downloadedImageData[2]));
+    this.eventAggregator.dispatchEvent(new NewLightColorEvent(configuration.presetLightColor));
+    this.eventAggregator.dispatchEvent(new NewLightVersorTypeEvent(LightVersorType.Constant));
+    this.eventAggregator.dispatchEvent(new RenderEvent());
+  }
+
+  private addInitialPolygons() {
+    const points1 = [
+      new Point(94, 93),
+      new Point(69, 386),
+      new Point(190, 525),
+      new Point(664, 364)
+    ];
+    const polygon1 = new Polygon(points1, LineProperties.getDefault());
+
+    const points2 = [
+      new Point(777, 142),
+      new Point(700, 50),
+      new Point(433, 34),
+      new Point(404, 156),
+      new Point(527, 263),
+      new Point(750, 350)
+    ];
+    const polygon2 = new Polygon(points2, LineProperties.getDefault());
+
+    this.polygonLayer.paths.push(polygon1, polygon2);
+    this.eventAggregator.dispatchEvent(new SyncComponentsEvent());
   }
 }

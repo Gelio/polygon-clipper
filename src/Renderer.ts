@@ -1,22 +1,23 @@
-import { Color } from 'common/Color';
 import { COLORS } from 'common/COLORS';
 import { Line } from 'common/Line';
 import { LineProperties } from 'common/LineProperties';
 import { Path } from 'common/Path';
 import { Point } from 'common/Point';
-import { LineRasterizer } from 'line-rasterizer/LineRasterizer';
+import { Polygon } from 'common/Polygon';
+
+import { PolygonFiller } from 'polygon-filler/PolygonFiller';
 
 import { configuration } from 'configuration';
 
 interface RendererDependencies {
   canvas: HTMLCanvasElement;
-  lineRasterizer: LineRasterizer;
+  polygonFiller: PolygonFiller;
 }
 
 export class Renderer {
   private canvas: HTMLCanvasElement;
   private renderingContext: CanvasRenderingContext2D;
-  private lineRasterizer: LineRasterizer;
+  private polygonFiller: PolygonFiller;
 
   constructor(dependencies: RendererDependencies) {
     this.canvas = dependencies.canvas;
@@ -27,8 +28,11 @@ export class Renderer {
 
     this.renderingContext = context;
     this.renderingContext.font = configuration.canvasFont;
-    this.lineRasterizer = dependencies.lineRasterizer;
-    this.setFillColor(COLORS.BLACK);
+
+    this.polygonFiller = dependencies.polygonFiller;
+    this.polygonFiller.injectCanvasRenderingContext(this.renderingContext);
+
+    this.renderingContext.strokeStyle = COLORS.BLACK.fillStyle;
   }
 
   public drawPoint(point: Point) {
@@ -57,6 +61,10 @@ export class Renderer {
     for (const line of path.getLineIterator()) {
       this.drawLine(line, pathLineProperties);
     }
+
+    if (path instanceof Polygon) {
+      this.polygonFiller.fillPolygon(path);
+    }
   }
 
   public fillText(text: string, x: number, y: number): void;
@@ -75,22 +83,16 @@ export class Renderer {
     this.renderingContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  public setFillColor(color: Color) {
-    this.renderingContext.fillStyle = color.fillStyle;
-  }
-
   private drawLineBetweenPoints(
     startPoint: Point,
     endPoint: Point,
     lineProperties: LineProperties
   ) {
-    const rasterizedLinePoints = this.lineRasterizer.rasterizeLine(
-      startPoint,
-      endPoint,
-      lineProperties.thickness
-    );
+    this.renderingContext.strokeStyle = lineProperties.color.fillStyle;
 
-    this.setFillColor(lineProperties.color);
-    rasterizedLinePoints.forEach(point => this.drawPoint(point));
+    this.renderingContext.beginPath();
+    this.renderingContext.moveTo(startPoint.x, startPoint.y);
+    this.renderingContext.lineTo(endPoint.x, endPoint.y);
+    this.renderingContext.stroke();
   }
 }

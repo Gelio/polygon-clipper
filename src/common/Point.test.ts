@@ -1,51 +1,8 @@
-import { Octant } from 'common/Octant';
 import { Point } from 'common/Point';
 
 describe('Point', () => {
   it('should instantiate correctly', () => {
     expect(new Point(1, 2)).toBeDefined();
-  });
-
-  describe('getOctant', () => {
-    it('should work for the first octant', () => {
-      const point = new Point(5, 2);
-      expect(point.getOctant()).toEqual(Octant.First);
-    });
-
-    it('should work for the second octant', () => {
-      const point = new Point(2, 5);
-      expect(point.getOctant()).toEqual(Octant.Second);
-    });
-
-    it('should work for the third octant', () => {
-      const point = new Point(-2, 5);
-      expect(point.getOctant()).toEqual(Octant.Third);
-    });
-
-    it('should work for the fourth octant', () => {
-      const point = new Point(-5, 2);
-      expect(point.getOctant()).toEqual(Octant.Fourth);
-    });
-
-    it('should work for the fifth octant', () => {
-      const point = new Point(-5, -2);
-      expect(point.getOctant()).toEqual(Octant.Fifth);
-    });
-
-    it('should work for the sixth octant', () => {
-      const point = new Point(-2, -5);
-      expect(point.getOctant()).toEqual(Octant.Sixth);
-    });
-
-    it('should work for the seventh octant', () => {
-      const point = new Point(2, -5);
-      expect(point.getOctant()).toEqual(Octant.Seventh);
-    });
-
-    it('should work for the eighth octant', () => {
-      const point = new Point(5, -2);
-      expect(point.getOctant()).toEqual(Octant.Eighth);
-    });
   });
 
   describe('equals', () => {

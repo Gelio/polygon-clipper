@@ -1,5 +1,3 @@
-import { Octant } from 'common/Octant';
-
 type MoveCallback = () => void;
 
 export class Point {
@@ -59,48 +57,6 @@ export class Point {
     }
 
     return this.moveToPoint(pointOrX);
-  }
-
-  public getOctant(): Octant {
-    const x = this.x;
-    const y = this.y;
-    let octant = Octant.First;
-
-    if (y >= 0) {
-      if (x >= 0) {
-        // First quarter
-        if (y <= x) {
-          octant = Octant.First;
-        } else {
-          octant = Octant.Second;
-        }
-      } else {
-        // Second quarter
-        if (y >= -x) {
-          octant = Octant.Third;
-        } else {
-          octant = Octant.Fourth;
-        }
-      }
-    } else {
-      if (x <= 0) {
-        // Third quarter
-        if (y >= x) {
-          octant = Octant.Fifth;
-        } else {
-          octant = Octant.Sixth;
-        }
-      } else {
-        // Fourth quarter
-        if (y < -x) {
-          octant = Octant.Seventh;
-        } else {
-          octant = Octant.Eighth;
-        }
-      }
-    }
-
-    return octant;
   }
 
   public equals(point: Point): boolean {

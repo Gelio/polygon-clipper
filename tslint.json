@@ -26,6 +26,7 @@
       "allow-leading-underscore",
       "ban-keywords"
     ],
-    "no-suspicious-comment": false
+    "no-suspicious-comment": false,
+    "quotemark": [true, "single", "avoid-escape", "avoid-template"]
   }
 }
