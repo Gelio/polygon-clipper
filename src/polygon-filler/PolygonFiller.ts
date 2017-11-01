@@ -11,18 +11,11 @@ import {
   NewNormalMapEvent
 } from 'events/input-data';
 
+import { AppFillData } from 'polygon-filler/AppFillData';
 
 interface PolygonFillerDependencies {
   eventAggregator: EventAggregator;
   canvas: HTMLCanvasElement;
-}
-
-interface AppFillData {
-  backgroundTexture: ImageData;
-  heightMap: ImageData;
-  lightColor: Color;
-  lightVersorType: LightVersorType;
-  normalMap: ImageData;
 }
 
 export class PolygonFiller {
