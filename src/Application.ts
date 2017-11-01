@@ -1,15 +1,17 @@
 import { Layer } from 'common/Layer';
+import { Polygon } from 'common/Polygon';
 import { EventAggregator } from 'events/EventAggregator';
 import { LEX } from 'LEX';
-import { ImageDownloader } from 'services/ImageDownloader';
 
 import { PolygonFiller } from 'polygon-filler/PolygonFiller';
 
 import { Renderer } from 'Renderer';
 import { Stage } from 'Stage';
 
+import { ImageDownloader } from 'services/ImageDownloader';
 import { InputDataInitializer } from 'services/InputDataInitializer';
 import { LightSimulator } from 'services/LightSimulator';
+import { PolygonClipper } from 'services/PolygonClipper';
 
 import { UIController } from 'ui/UIController';
 
@@ -55,7 +57,8 @@ export class Application {
       stage: this.stage,
       canvas: this.canvas,
       eventAggregator: this.eventAggregator,
-      imageDownloader: this.imageDownloader
+      imageDownloader: this.imageDownloader,
+      polygonClipper: new PolygonClipper()
     });
 
     this.onRenderEvent = this.onRenderEvent.bind(this);
@@ -101,7 +104,7 @@ export class Application {
   }
 
   private async render() {
-    await this.polygonFiller.fillPolygons(this.polygonLayer.paths);
+    await this.polygonFiller.fillPolygons(<Polygon[]>this.polygonLayer.paths);
     this.stage.render(this.renderer);
     this.eventAggregator.dispatchEvent(new RenderFinishedEvent());
 

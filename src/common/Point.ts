@@ -1,5 +1,7 @@
 type MoveCallback = () => void;
 
+const EPSILON = 0.1;
+
 export class Point {
   public moveCallback: MoveCallback | null = null;
 
@@ -43,6 +45,18 @@ export class Point {
     }
 
     return angle;
+  }
+
+  public static dotProduct(p1: Point, p2: Point) {
+    return p1.x * p2.x + p1.y * p2.y;
+  }
+
+  public static crossProduct(p1: Point, p2: Point) {
+    return p1.x * p2.y - p1.y * p2.x;
+  }
+
+  public static epsilonEquals(p1: Point, p2: Point) {
+    return Point.getDistanceBetween(p1, p2) <= EPSILON;
   }
 
   public moveTo(point: Point): void;

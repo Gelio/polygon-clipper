@@ -38,6 +38,7 @@ onmessage = (e: MessageEvent) => {
       break;
 
     default:
+      // tslint:disable-next-line no-console
       console.error('Unknown worker message type', messageType);
   }
 };
