@@ -1,6 +1,7 @@
 export enum FillWorkerMessageType {
-  InitialData,
+  FillData,
   StartFill,
   FillStrips,
-  EndFill
+  EndFill,
+  LightVersor
 }
