@@ -24,8 +24,8 @@ const configuration = {
   presetNormalMaps: ['images/normal-maps/brick_normalmap.png', 'images/normal-maps/normal_map.jpg'],
   presetLightColor: COLORS.WHITE,
   circlingLight: {
-    step: 10,
-    interval: 20,
+    lapTime: 10 * 1000,
+    interval: 50,
     height: 50,
     distance: 50
   }

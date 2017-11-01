@@ -13,13 +13,17 @@ interface LightSimulatorDependencies {
 }
 
 export class LightSimulator implements Service {
-  private static readonly stepInRadians = configuration.circlingLight.step / (2 * Math.PI);
-  private static readonly moduloValue = 2 * Math.PI;
+  private static readonly stepInRadians = configuration.circlingLight.interval /
+    configuration.circlingLight.lapTime *
+    2 *
+    Math.PI;
+
+  private static readonly radiansModuloValue = 2 * Math.PI;
 
   private readonly eventAggregator: EventAggregator;
 
   private circlingLightIntervalId: number;
-  private circlingLightRadians = 0;
+  private circlingLightAngle = 0;
 
   constructor(dependencies: LightSimulatorDependencies) {
     this.eventAggregator = dependencies.eventAggregator;
@@ -71,17 +75,17 @@ export class LightSimulator implements Service {
   }
 
   private circlingLightTick() {
-    const x = configuration.circlingLight.distance * Math.cos(this.circlingLightRadians);
-    const y = configuration.circlingLight.distance * Math.sin(this.circlingLightRadians);
+    const x = configuration.circlingLight.distance * Math.cos(this.circlingLightAngle);
+    const y = configuration.circlingLight.distance * Math.sin(this.circlingLightAngle);
 
     const lightVector = new Vector3(x, y, configuration.circlingLight.height);
     const lightVersor = lightVector.normalize();
 
     this.eventAggregator.dispatchEvent(new NewLightVersorEvent(lightVersor));
 
-    this.circlingLightRadians += LightSimulator.stepInRadians;
-    if (this.circlingLightRadians >= LightSimulator.moduloValue) {
-      this.circlingLightRadians -= LightSimulator.moduloValue;
+    this.circlingLightAngle += LightSimulator.stepInRadians;
+    if (this.circlingLightAngle >= LightSimulator.radiansModuloValue) {
+      this.circlingLightAngle -= LightSimulator.radiansModuloValue;
     }
   }
 
