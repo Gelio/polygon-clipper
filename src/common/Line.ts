@@ -48,7 +48,7 @@ export class Line {
 
   public getDirection(p: Point) {
     const direction = Point.crossProduct(Point.subtract(this.p2, this.p1), Point.subtract(p, this.p1));
-    if (Math.abs(direction) < 0.00000001) {
+    if (Math.abs(direction) < 0.0001) {
       return 0;
     } else if (direction > 0) {
       return 1;

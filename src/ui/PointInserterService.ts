@@ -49,9 +49,10 @@ export class PointInserterService implements Service {
     if (previousLineHit.equals(event.payload.line)) {
       const index = event.payload.path.findPointIndex(event.payload.line.p2);
       const newPoint = event.payload.line.getMiddlePoint();
+      const flooredPoint = newPoint.floor();
 
       try {
-        event.payload.path.insertVertex(newPoint, index);
+        event.payload.path.insertVertex(flooredPoint, index);
       } catch (error) {
         return alert(error.message);
       }

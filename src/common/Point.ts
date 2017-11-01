@@ -89,6 +89,10 @@ export class Point {
     return new Point(this.x, this.y);
   }
 
+  public floor() {
+    return new Point(Math.floor(this.x), Math.floor(this.y));
+  }
+
   private moveToPoint(point: Point) {
     return this.moveToCoordinates(point.x, point.y);
   }

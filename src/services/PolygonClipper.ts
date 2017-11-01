@@ -67,7 +67,7 @@ export class PolygonClipper {
     }
 
     // tslint:disable-next-line no-bitwise
-    const roundedPoints = outputWithoutDuplicates.map(point => new Point(~~point.x, ~~point.y));
+    const roundedPoints = outputWithoutDuplicates.map(point => point.floor());
 
     return new Polygon(roundedPoints, subjectPolygon.lineProperties);
   }
