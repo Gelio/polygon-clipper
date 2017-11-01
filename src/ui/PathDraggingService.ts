@@ -3,7 +3,8 @@ import { Point } from 'common/Point';
 import { EventAggregator } from 'events/EventAggregator';
 import { Stage } from 'Stage';
 import { MousePositionTransformer } from 'ui/MousePositionTransformer';
-import { UIService } from 'ui/UIService';
+
+import { Service } from 'services/Service';
 
 import { RenderEvent } from 'events/RenderEvent';
 import { SyncComponentsEvent } from 'events/ui/SyncComponentsEvent';
@@ -15,7 +16,7 @@ interface PathDraggingServiceDependencies {
   mousePositionTransformer: MousePositionTransformer;
 }
 
-export class PathDraggingService implements UIService {
+export class PathDraggingService implements Service {
   private readonly eventAggregator: EventAggregator;
   private readonly stage: Stage;
   private readonly canvas: HTMLCanvasElement;

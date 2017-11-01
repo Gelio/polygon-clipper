@@ -4,14 +4,15 @@ import { Stage } from 'Stage';
 
 import { LoadButton } from 'ui/components/serialization/LoadButton';
 import { SaveButton } from 'ui/components/serialization/SaveButton';
-import { UIService } from 'ui/UIService';
+
+import { Service } from 'services/Service';
 
 interface SerializationServiceDependencies {
   eventAggregator: EventAggregator;
   stage: Stage;
 }
 
-export class SerializationService implements UIService {
+export class SerializationService implements Service {
   private serializationContainer: HTMLElement;
   private eventAggregator: EventAggregator;
   private stage: Stage;

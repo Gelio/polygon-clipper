@@ -9,13 +9,13 @@ import {
 import { RenderEvent } from 'events/RenderEvent';
 
 import { configuration } from 'configuration';
-import { UIService } from 'ui/UIService';
+import { ImageDownloader } from 'services/ImageDownloader';
+import { Service } from 'services/Service';
 
 import { ColorSelectDialog } from 'ui/components/color-select-dialog/ColorSelectDialog';
 import { DialogOverlay } from 'ui/components/dialog-overlay/DialogOverlay';
 import { ImageSelectDialog } from 'ui/components/image-select-dialog/ImageSelectDialog';
 
-import { ImageDownloader } from 'common/ImageDownloader';
 import { LightVersorType } from 'common/LightVersorType';
 
 interface SerializationServiceDependencies {
@@ -23,7 +23,7 @@ interface SerializationServiceDependencies {
   imageDownloader: ImageDownloader;
 }
 
-export class InputDataService implements UIService {
+export class InputDataService implements Service {
   private inputDataContainer: HTMLElement;
   private dialogOverlay: DialogOverlay;
   private eventAggregator: EventAggregator;

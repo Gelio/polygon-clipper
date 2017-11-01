@@ -1,4 +1,4 @@
-export interface UIService {
+export interface Service {
   init(): void;
   destroy(): void;
 }

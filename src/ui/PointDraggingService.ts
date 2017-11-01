@@ -5,7 +5,8 @@ import { configuration } from 'configuration';
 import { EventAggregator } from 'events/EventAggregator';
 import { LEX } from 'LEX';
 import { Stage } from 'Stage';
-import { UIService } from 'ui/UIService';
+
+import { Service } from 'services/Service';
 
 import { FinishPointDragEvent } from 'events/point-drag/FinishPointDragEvent';
 import { PointDragEvent } from 'events/point-drag/PointDragEvent';
@@ -18,7 +19,7 @@ interface PointDraggingServiceDependencies {
   stage: Stage;
 }
 
-export class PointDraggingService implements UIService {
+export class PointDraggingService implements Service {
   private readonly eventAggregator: EventAggregator;
   private readonly stage: Stage;
   private pathGhostLayer: Layer;

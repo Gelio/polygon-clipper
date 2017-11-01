@@ -5,13 +5,13 @@ import { SyncComponentsEvent } from 'events/ui/SyncComponentsEvent';
 
 import { Line } from 'common/Line';
 import { configuration } from 'configuration';
-import { UIService } from 'ui/UIService';
+import { Service } from 'services/Service';
 
 interface PointInserterServiceDependencies {
   eventAggregator: EventAggregator;
 }
 
-export class PointInserterService implements UIService {
+export class PointInserterService implements Service {
   private readonly eventAggregator: EventAggregator;
 
   private previousLineClickTimestamp = 0;
@@ -55,6 +55,8 @@ export class PointInserterService implements UIService {
       } catch (error) {
         return alert(error.message);
       }
+
+      // TODO: fix wrong rendering
       this.eventAggregator.dispatchEvent(new RenderEvent());
       this.eventAggregator.dispatchEvent(new SyncComponentsEvent());
     }
