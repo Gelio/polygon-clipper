@@ -13,6 +13,7 @@ import {
 
 import { ActiveEdge } from 'polygon-filler/ActiveEdge';
 import { AppFillData } from 'polygon-filler/AppFillData';
+import { FillStrip } from 'polygon-filler/FillStrip';
 
 interface PolygonFillerDependencies {
   eventAggregator: EventAggregator;
@@ -95,6 +96,8 @@ export class PolygonFiller {
 
     this.canvasImageData = this.renderingContext.getImageData(0, 0, this.canvas.width, this.canvas.height);
 
+    const fillStrips: FillStrip[] = [];
+
     for (let y = yMin + 1; y <= yMax; y += 1) {
       for (; k < verticesCount; k += 1) {
         const vertexIndex = sortedVertexIndices[k];
@@ -135,46 +138,29 @@ export class PolygonFiller {
         const e2 = activeEdgeTable[i + 1];
 
         // this.renderingContext.fillRect(e1.x, y, e2.x - e1.x, 1);
-        for (let x = e1.x; x <= e2.x; x += 1) {
-          this.putPixel(x, y);
-        }
+        fillStrips.push({
+          y,
+          fromX: e1.x,
+          toX: e2.x
+        });
       }
 
       activeEdgeTable.forEach(edge => edge.nextScanLine());
       previousY = y;
     }
 
-    this.renderingContext.putImageData(this.canvasImageData, 0, 0);
-  }
+    const worker = new Worker('fillWorker.js');
 
-  private putPixel(x: number, y: number) {
-    if (x >= this.canvasImageData.width || y >= this.canvasImageData.height) {
-      return;
-    }
+    worker.onmessage = (e) => {
+      const renderedCanvasImageData: ImageData = e.data;
+      this.renderingContext.putImageData(renderedCanvasImageData, 0, 0);
+    };
 
-    // tslint:disable no-bitwise
-    x = ~~x;
-    y = ~~y;
-    // tslint:enable no-bitwise
-
-    const backgroundTexture = this.fillData.backgroundTexture;
-    const backgroundTextureX = x % backgroundTexture.width;
-    const backgroundTextureY = y % backgroundTexture.height;
-    const backgroundTextureIndex =
-      (backgroundTextureX + backgroundTextureY * backgroundTexture.width) * 4;
-
-    const index = (x + y * this.canvasImageData.width) * 4;
-    this.canvasImageData.data[index] = backgroundTexture.data[backgroundTextureIndex];
-    this.canvasImageData.data[index + 1] = backgroundTexture.data[backgroundTextureIndex + 1];
-    this.canvasImageData.data[index + 2] = backgroundTexture.data[backgroundTextureIndex + 2];
-    this.canvasImageData.data[index + 3] = backgroundTexture.data[backgroundTextureIndex + 3];
-    // this.canvasImageData.data[index] = 0;
-    // this.canvasImageData.data[index + 1] = 0;
-    // this.canvasImageData.data[index + 2] = 0;
-    // this.canvasImageData.data[index + 3] = 255;
-
-    this.renderingContext.fillRect(x, y, 1, 1);
-    // this.renderingContext.putImageData(this.canvasImageData, 0, 0);
+    worker.postMessage({
+      appFillData: this.fillData,
+      canvasImageData: this.canvasImageData,
+      fillStrips
+    });
   }
 
   private onNewBackgroundTexture(event: NewBackgroundTextureEvent) {
