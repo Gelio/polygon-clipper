@@ -4,19 +4,24 @@ import { Line } from 'common/Line';
 import { LineProperties } from 'common/LineProperties';
 import { Path } from 'common/Path';
 import { Point } from 'common/Point';
+import { Polygon } from 'common/Polygon';
+
 import { LineRasterizer } from 'line-rasterizer/LineRasterizer';
+import { PolygonFiller } from 'polygon-filler/PolygonFiller';
 
 import { configuration } from 'configuration';
 
 interface RendererDependencies {
   canvas: HTMLCanvasElement;
   lineRasterizer: LineRasterizer;
+  polygonFiller: PolygonFiller;
 }
 
 export class Renderer {
   private canvas: HTMLCanvasElement;
   private renderingContext: CanvasRenderingContext2D;
   private lineRasterizer: LineRasterizer;
+  private polygonFiller: PolygonFiller;
 
   constructor(dependencies: RendererDependencies) {
     this.canvas = dependencies.canvas;
@@ -27,7 +32,11 @@ export class Renderer {
 
     this.renderingContext = context;
     this.renderingContext.font = configuration.canvasFont;
+
     this.lineRasterizer = dependencies.lineRasterizer;
+    this.polygonFiller = dependencies.polygonFiller;
+    this.polygonFiller.injectCanvasRenderingContext(this.renderingContext);
+
     this.setFillColor(COLORS.BLACK);
   }
 
@@ -56,6 +65,10 @@ export class Renderer {
 
     for (const line of path.getLineIterator()) {
       this.drawLine(line, pathLineProperties);
+    }
+
+    if (path instanceof Polygon) {
+      this.polygonFiller.fillPolygon(path);
     }
   }
 

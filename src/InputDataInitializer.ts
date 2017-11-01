@@ -1,9 +1,11 @@
 import { EventAggregator } from 'events/EventAggregator';
-import { NewBackgroundTexture } from 'events/input-data/NewBackgroundTexture';
-import { NewHeightMap } from 'events/input-data/NewHeightMap';
-import { NewLightColor } from 'events/input-data/NewLightColor';
-import { NewLightVersorType } from 'events/input-data/NewLightVersorType';
-import { NewNormalMap } from 'events/input-data/NewNormalMap';
+import {
+  NewBackgroundTextureEvent,
+  NewHeightMapEvent,
+  NewLightColorEvent,
+  NewLightVersorTypeEvent,
+  NewNormalMapEvent
+} from 'events/input-data';
 
 import { configuration } from 'configuration';
 
@@ -42,10 +44,10 @@ export class InputDataInitializer {
       imagesToDownload.map(image => this.imageDownloader.imageToImageData(image))
     );
 
-    this.eventAggregator.dispatchEvent(new NewBackgroundTexture(downloadedImageData[0]));
-    this.eventAggregator.dispatchEvent(new NewNormalMap(downloadedImageData[1]));
-    this.eventAggregator.dispatchEvent(new NewHeightMap(downloadedImageData[2]));
-    this.eventAggregator.dispatchEvent(new NewLightColor(configuration.presetLightColor));
-    this.eventAggregator.dispatchEvent(new NewLightVersorType(LightVersorType.Constant));
+    this.eventAggregator.dispatchEvent(new NewBackgroundTextureEvent(downloadedImageData[0]));
+    this.eventAggregator.dispatchEvent(new NewNormalMapEvent(downloadedImageData[1]));
+    this.eventAggregator.dispatchEvent(new NewHeightMapEvent(downloadedImageData[2]));
+    this.eventAggregator.dispatchEvent(new NewLightColorEvent(configuration.presetLightColor));
+    this.eventAggregator.dispatchEvent(new NewLightVersorTypeEvent(LightVersorType.Constant));
   }
 }

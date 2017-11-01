@@ -2,7 +2,9 @@ import { ImageDownloader } from 'common/ImageDownloader';
 import { Layer } from 'common/Layer';
 import { EventAggregator } from 'events/EventAggregator';
 import { LEX } from 'LEX';
+
 import { LineRasterizer } from 'line-rasterizer/LineRasterizer';
+import { PolygonFiller } from 'polygon-filler/PolygonFiller';
 
 import { InputDataInitializer } from 'InputDataInitializer';
 import { Renderer } from 'Renderer';
@@ -19,13 +21,23 @@ export class Application {
   private stage: Stage;
   private eventAggregator: EventAggregator;
   private imageDownloader: ImageDownloader;
+  private polygonFiller: PolygonFiller;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
-    this.renderer = new Renderer({ lineRasterizer: new LineRasterizer(), canvas: this.canvas });
-    this.stage = new Stage();
     this.eventAggregator = new EventAggregator();
     this.imageDownloader = new ImageDownloader();
+    this.polygonFiller = new PolygonFiller({
+      canvas: this.canvas,
+      eventAggregator: this.eventAggregator
+    });
+
+    this.renderer = new Renderer({
+      lineRasterizer: new LineRasterizer(),
+      canvas: this.canvas,
+      polygonFiller: this.polygonFiller
+    });
+    this.stage = new Stage();
 
     this.uiController = new UIController({
       renderer: this.renderer,
@@ -44,6 +56,7 @@ export class Application {
     const polygonLayer = new Layer(LEX.POLYGON_LAYER_NAME);
     this.stage.layers.push(polygonLayer);
 
+    this.polygonFiller.init();
     this.uiController.init();
     this.addEventListeners();
 
@@ -57,6 +70,7 @@ export class Application {
   }
 
   public destroy() {
+    this.polygonFiller.destroy();
     this.uiController.destroy();
     this.removeEventListeners();
   }

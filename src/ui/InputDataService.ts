@@ -1,9 +1,11 @@
 import { EventAggregator } from 'events/EventAggregator';
-import { NewBackgroundTexture } from 'events/input-data/NewBackgroundTexture';
-import { NewHeightMap } from 'events/input-data/NewHeightMap';
-import { NewLightColor } from 'events/input-data/NewLightColor';
-import { NewLightVersorType } from 'events/input-data/NewLightVersorType';
-import { NewNormalMap } from 'events/input-data/NewNormalMap';
+import {
+  NewBackgroundTextureEvent,
+  NewHeightMapEvent,
+  NewLightColorEvent,
+  NewLightVersorTypeEvent,
+  NewNormalMapEvent
+} from 'events/input-data';
 
 import { configuration } from 'configuration';
 import { UIService } from 'ui/UIService';
@@ -132,7 +134,7 @@ export class InputDataService implements UIService {
     const selectedImage = this.backgroundTextureDialog.selectedImage;
     const imageData = await this.imageDownloader.imageToImageData(selectedImage);
 
-    this.eventAggregator.dispatchEvent(new NewBackgroundTexture(imageData));
+    this.eventAggregator.dispatchEvent(new NewBackgroundTextureEvent(imageData));
   }
   // #endregion
 
@@ -160,7 +162,7 @@ export class InputDataService implements UIService {
     }
 
     const lightColor = this.lightColorDialog.selectedColor;
-    this.eventAggregator.dispatchEvent(new NewLightColor(lightColor));
+    this.eventAggregator.dispatchEvent(new NewLightColorEvent(lightColor));
   }
   // #endregion
 
@@ -190,7 +192,7 @@ export class InputDataService implements UIService {
     const selectedImage = this.normalMapDialog.selectedImage;
     const imageData = await this.imageDownloader.imageToImageData(selectedImage);
 
-    this.eventAggregator.dispatchEvent(new NewNormalMap(imageData));
+    this.eventAggregator.dispatchEvent(new NewNormalMapEvent(imageData));
   }
   // #endregion
 
@@ -229,7 +231,7 @@ export class InputDataService implements UIService {
 
     const versorType = versorTypes[value];
 
-    this.eventAggregator.dispatchEvent(new NewLightVersorType(versorType));
+    this.eventAggregator.dispatchEvent(new NewLightVersorTypeEvent(versorType));
   }
 
   // #endregion
@@ -260,7 +262,7 @@ export class InputDataService implements UIService {
     const selectedImage = this.heightMapDialog.selectedImage;
     const imageData = await this.imageDownloader.imageToImageData(selectedImage);
 
-    this.eventAggregator.dispatchEvent(new NewHeightMap(imageData));
+    this.eventAggregator.dispatchEvent(new NewHeightMapEvent(imageData));
   }
   // #endregion
 }
