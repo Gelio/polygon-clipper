@@ -37,7 +37,7 @@ export class Renderer {
     this.polygonFiller = dependencies.polygonFiller;
     this.polygonFiller.injectCanvasRenderingContext(this.renderingContext);
 
-    this.setFillColor(COLORS.BLACK);
+    this.renderingContext.strokeStyle = COLORS.BLACK.fillStyle;
   }
 
   public drawPoint(point: Point) {
@@ -88,22 +88,16 @@ export class Renderer {
     this.renderingContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  public setFillColor(color: Color) {
-    this.renderingContext.fillStyle = color.fillStyle;
-  }
-
   private drawLineBetweenPoints(
     startPoint: Point,
     endPoint: Point,
     lineProperties: LineProperties
   ) {
-    const rasterizedLinePoints = this.lineRasterizer.rasterizeLine(
-      startPoint,
-      endPoint,
-      lineProperties.thickness
-    );
+    this.renderingContext.strokeStyle = lineProperties.color.fillStyle;
 
-    this.setFillColor(lineProperties.color);
-    rasterizedLinePoints.forEach(point => this.drawPoint(point));
+    this.renderingContext.beginPath();
+    this.renderingContext.moveTo(startPoint.x, startPoint.y);
+    this.renderingContext.lineTo(endPoint.x, endPoint.y);
+    this.renderingContext.stroke();
   }
 }
