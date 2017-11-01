@@ -25,7 +25,10 @@ export class Path {
 
   public static fromSerializablePath(serializablePath: SerializablePath) {
     const realPoints = serializablePath.vertices.map(vertex => new Point(vertex.x, vertex.y));
-    const realLineProperties = new LineProperties(serializablePath.lineProperties.color, serializablePath.lineProperties.thickness);
+    const realLineProperties = new LineProperties(
+      serializablePath.lineProperties.color,
+      serializablePath.lineProperties.thickness
+    );
     const path = new Path(realPoints, realLineProperties);
     path.closed = serializablePath.closed;
 
@@ -163,5 +166,44 @@ export class Path {
         y: vertex.y
       }))
     };
+  }
+
+  public getNextPointIndex(index: number) {
+    return (index + 1) % this.getVerticesCount();
+  }
+
+  public getNextPoint(point: Point) {
+    const index = this.vertices.indexOf(point);
+    const nextPointIndex = this.getNextPointIndex(index);
+
+    return this.getVertex(nextPointIndex);
+  }
+
+  public getPreviousPointIndex(index: number) {
+    let previousPointIndex = index - 1;
+    if (previousPointIndex < 0) {
+      previousPointIndex = this.getVerticesCount() - 1;
+    }
+
+    return previousPointIndex;
+  }
+
+  public getPreviousPoint(point: Point) {
+    const index = this.vertices.indexOf(point);
+    const previousPointIndex = this.getPreviousPointIndex(index);
+
+    return this.getVertex(previousPointIndex);
+  }
+
+  public moveTo(path: Path) {
+    if (this.getVerticesCount() !== path.getVerticesCount()) {
+      throw new Error('The number of vertices does not match');
+    }
+
+    if (this.closed !== path.closed) {
+      throw new Error("Path's closed state does not match");
+    }
+
+    this.vertices.forEach((point, index) => point.moveTo(path.getVertex(index)));
   }
 }
