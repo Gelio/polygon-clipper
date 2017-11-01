@@ -4,7 +4,7 @@
     "module": "commonjs",
     "target": "es2015",
     "sourceMap": true,
-    "lib": ["dom", "dom.iterable", "es2015"],
+    "lib": ["dom", "dom.iterable", "es2015", "webworker"],
     "baseUrl": "src",
     "strict": true,
     "noUnusedLocals": true,

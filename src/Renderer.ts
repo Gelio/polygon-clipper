@@ -3,7 +3,6 @@ import { Line } from 'common/Line';
 import { LineProperties } from 'common/LineProperties';
 import { Path } from 'common/Path';
 import { Point } from 'common/Point';
-import { Polygon } from 'common/Polygon';
 
 import { PolygonFiller } from 'polygon-filler/PolygonFiller';
 
@@ -60,10 +59,6 @@ export class Renderer {
 
     for (const line of path.getLineIterator()) {
       this.drawLine(line, pathLineProperties);
-    }
-
-    if (path instanceof Polygon) {
-      this.polygonFiller.fillPolygon(path);
     }
   }
 

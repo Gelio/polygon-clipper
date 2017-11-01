@@ -1,0 +1,71 @@
+import { AppFillData } from 'polygon-filler/AppFillData';
+import { FillStrip } from 'polygon-filler/FillStrip';
+import { FillWorkerMessageType } from 'polygon-filler/FillWorkerMessageType';
+
+let appFillData: AppFillData;
+let canvasWidth = 0;
+let canvasHeight = 0;
+let canvasImageData: ImageData;
+
+onmessage = (e: MessageEvent) => {
+  const messageType: FillWorkerMessageType = e.data.type;
+
+  switch (messageType) {
+    case FillWorkerMessageType.InitialData:
+      appFillData = e.data.appFillData;
+      canvasWidth = e.data.width;
+      canvasHeight = e.data.height;
+      break;
+
+    case FillWorkerMessageType.StartFill:
+      canvasImageData = new ImageData(canvasWidth, canvasHeight);
+      break;
+
+    case FillWorkerMessageType.FillStrips:
+      fillStrips(e.data.fillStrips);
+      break;
+
+    case FillWorkerMessageType.EndFill:
+      respond();
+      break;
+
+    default:
+      console.error('Unknown worker message type', messageType);
+  }
+};
+
+function fillStrips(strips: FillStrip[]) {
+  strips.forEach(strip => {
+    for (let x = strip.fromX; x <= strip.toX; x += 1) {
+      putPixel(x, strip.y);
+    }
+  });
+}
+
+function putPixel(x: number, y: number) {
+  if (x >= canvasImageData.width || y >= canvasImageData.height) {
+    return;
+  }
+
+  // tslint:disable no-bitwise
+  x = ~~x;
+  y = ~~y;
+  // tslint:enable no-bitwise
+
+  const backgroundTexture = appFillData.backgroundTexture;
+  const backgroundTextureX = x % backgroundTexture.width;
+  const backgroundTextureY = y % backgroundTexture.height;
+  const backgroundTextureIndex =
+    (backgroundTextureX + backgroundTextureY * backgroundTexture.width) * 4;
+
+  const index = (x + y * canvasImageData.width) * 4;
+  canvasImageData.data[index] = backgroundTexture.data[backgroundTextureIndex];
+  canvasImageData.data[index + 1] = backgroundTexture.data[backgroundTextureIndex + 1];
+  canvasImageData.data[index + 2] = backgroundTexture.data[backgroundTextureIndex + 2];
+  canvasImageData.data[index + 3] = backgroundTexture.data[backgroundTextureIndex + 3];
+}
+
+function respond() {
+  const arrayBuffer = canvasImageData.data.buffer;
+  postMessage(arrayBuffer, [arrayBuffer]);
+}

@@ -8,10 +8,13 @@ const CONFIG = {
 };
 
 module.exports = {
-  entry: './src/index',
+  entry: {
+    bundle: './src/index',
+    fillWorker: './src/workers/PolygonFillWorker'
+  },
   output: {
     path: CONFIG.distPath,
-    filename: 'bundle.js'
+    filename: '[name].js'
   },
   devServer: {
     contentBase: CONFIG.distPath
