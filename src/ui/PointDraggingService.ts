@@ -17,16 +17,19 @@ import { SyncComponentsEvent } from 'events/ui/SyncComponentsEvent';
 interface PointDraggingServiceDependencies {
   eventAggregator: EventAggregator;
   stage: Stage;
+  canvas: HTMLCanvasElement;
 }
 
 export class PointDraggingService implements Service {
   private readonly eventAggregator: EventAggregator;
   private readonly stage: Stage;
+  private readonly canvas: HTMLCanvasElement;
   private pathGhostLayer: Layer;
 
   constructor(dependencies: PointDraggingServiceDependencies) {
     this.eventAggregator = dependencies.eventAggregator;
     this.stage = dependencies.stage;
+    this.canvas = dependencies.canvas;
 
     this.onStartPointDrag = this.onStartPointDrag.bind(this);
     this.onFinishPointDrag = this.onFinishPointDrag.bind(this);
@@ -90,7 +93,22 @@ export class PointDraggingService implements Service {
       }
     }
 
-    component.point.moveTo(newPosition);
+    let x = newPosition.x;
+    let y = newPosition.y;
+
+    if (x < 0) {
+      x = 0;
+    } else if (x >= this.canvas.width) {
+      x = this.canvas.width - 1;
+    }
+
+    if (y < 0) {
+      y = 0;
+    } else if (y >= this.canvas.height) {
+      y = this.canvas.height - 1;
+    }
+
+    component.point.moveTo(x, y);
 
     this.eventAggregator.dispatchEvent(new RenderEvent());
     event.handled = true;

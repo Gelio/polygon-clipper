@@ -49,7 +49,7 @@ export class Point {
   public moveTo(x: number, y: number): void;
   public moveTo(pointOrX: Point | number, y?: number) {
     if (typeof pointOrX === 'number') {
-      if (!y) {
+      if (y === undefined) {
         throw new Error('x is defined, but y is not defined');
       }
 

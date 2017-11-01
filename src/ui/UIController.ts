@@ -143,7 +143,8 @@ export class UIController implements Service {
   private createPointDraggingService() {
     const pointDraggingService = new PointDraggingService({
       eventAggregator: this.eventAggregator,
-      stage: this.stage
+      stage: this.stage,
+      canvas: this.canvas
     });
 
     this.uiServices.push(pointDraggingService);
