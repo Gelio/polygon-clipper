@@ -20,8 +20,8 @@ export class MousePositionTransformer {
 
   public getPointFromMouseEvent(event: MouseEvent) {
     return new Point(
-      event.pageX - this.canvasClientRect.left,
-      event.pageY - this.canvasClientRect.top
+      event.clientX - this.canvasClientRect.left,
+      event.clientY - this.canvasClientRect.top
     );
   }
 }
