@@ -5,10 +5,14 @@
   position: absolute;
 
   transform: translate(-50%, -50%);
+  border: solid 2px;
+
+  &:not(:active) {
+    border-color: green;
+  }
 
   &:active {
     border-color: red;
-    border-width: 2px;
   }
 }
 
