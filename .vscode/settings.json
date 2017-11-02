@@ -10,5 +10,13 @@
     "**/bower_components": true,
     "**/coverage": true,
     "**/dist": true
-  }
+  },
+  "cSpell.ignorePaths": [
+    "**/node_modules/**",
+    "**/vscode-extension/**",
+    "**/.git/**",
+    ".vscode",
+    "typings",
+    "dokumentacja.md"
+  ]
 }
