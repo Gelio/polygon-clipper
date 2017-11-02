@@ -1,10 +1,12 @@
 import { DialogBox } from 'ui/components/DialogBox';
+import 'ui/components/DialogBox.scss';
 
 import { Color } from 'common/Color';
 
 import 'ui/components/color-select-dialog/ColorSelectDialog.scss';
 
 const classNames = {
+  DIALOG_BOX: 'dialog-box',
   DIALOG: 'color-select-dialog',
   HEADER: 'color-select-dialog__header',
   HEADING: 'color-select-dialog__heading',
@@ -27,6 +29,7 @@ export class ColorSelectDialog extends HTMLElement implements DialogBox {
   constructor() {
     super();
 
+    this.classList.add(classNames.DIALOG_BOX);
     this.classList.add(classNames.DIALOG);
 
     this.onCancelButtonClick = this.onCancelButtonClick.bind(this);

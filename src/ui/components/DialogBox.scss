@@ -1,0 +1,22 @@
+.dialog-box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0, 0);
+  z-index: 1;
+
+  background-color: #eee;
+  border: solid 1px black;
+  border-radius: 25px;
+  color: #222;
+
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 2px 2px 5px black;
+
+  transition: transform 250ms ease-in-out;
+}
+
+.dialog-box--active {
+  transform: translate(-50%, -50%) scale(1, 1);
+}

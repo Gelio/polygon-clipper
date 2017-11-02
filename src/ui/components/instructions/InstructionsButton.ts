@@ -1,7 +1,9 @@
+import { DialogOverlay } from 'ui/components/dialog-overlay/DialogOverlay';
 import { InstructionsDialog } from 'ui/components/instructions/InstructionsDialog';
 
 export class InstructionsButton extends HTMLElement {
   private button: HTMLButtonElement;
+  private instructionsDialog: InstructionsDialog;
 
   constructor() {
     super();
@@ -11,6 +13,19 @@ export class InstructionsButton extends HTMLElement {
     this.button.className = 'instructions-button';
 
     this.onButtonClick = this.onButtonClick.bind(this);
+    this.instructionsDialog = new InstructionsDialog();
+  }
+
+  public static get observedAttributes() {
+    return ['dialog-overlay-id'];
+  }
+
+  public get dialogOverlayId() {
+    return this.getAttribute('dialog-overlay-id') || '';
+  }
+
+  public set dialogOverlayId(value: string) {
+    this.setAttribute('dialog-overlay-id', value);
   }
 
   public connectedCallback() {
@@ -24,8 +39,12 @@ export class InstructionsButton extends HTMLElement {
   }
 
   private onButtonClick() {
-    const instructionsDialog = new InstructionsDialog();
-    this.appendChild(instructionsDialog);
+    const dialogOverlay = <DialogOverlay>document.getElementById(this.dialogOverlayId);
+    if (!dialogOverlay) {
+      throw new Error('Dialog overlay not found');
+    }
+
+    dialogOverlay.showDialog(this.instructionsDialog);
   }
 }
 

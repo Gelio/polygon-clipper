@@ -1,57 +1,57 @@
+import { DialogBox } from 'ui/components/DialogBox';
+
 import 'ui/components/instructions/InstructionsDialog.scss';
 
-export class InstructionsDialog extends HTMLElement {
-  private overlay: HTMLElement;
-  private dialogContainer: HTMLDivElement;
+export class InstructionsDialog extends HTMLElement implements DialogBox {
   private dismissButton: HTMLButtonElement;
+  private titleElement: HTMLElement;
+  private usageList: HTMLUListElement;
 
   constructor() {
     super();
 
-    this.className = 'instructions-dialog-wrapper';
+    this.className = 'instructions-dialog dialog-box';
 
-    this.overlay = document.createElement('div');
-    this.overlay.className = 'instructions-dialog__overlay';
+    this.titleElement = document.createElement('h1');
+    this.titleElement.textContent = 'Instructions';
+    this.titleElement.className = 'instructions-dialog__title';
 
-    this.dialogContainer = document.createElement('div');
-    this.dialogContainer.className = 'instructions-dialog';
-
-    const title = document.createElement('h1');
-    title.textContent = 'Instructions';
-    title.className = 'instructions-dialog__title';
-    this.dialogContainer.appendChild(title);
-
-    this.dialogContainer.appendChild(this.createUsageList());
+    this.usageList = this.createUsageList();
 
     this.dismissButton = document.createElement('button');
     this.dismissButton.textContent = 'Dismiss';
     this.dismissButton.className = 'instructions-dialog__dismiss-button';
 
-    this.dialogContainer.appendChild(this.dismissButton);
-
     this.dismiss = this.dismiss.bind(this);
   }
 
   public connectedCallback() {
-    this.appendChild(this.overlay);
-    this.appendChild(this.dialogContainer);
+    this.appendChild(this.titleElement);
+    this.appendChild(this.usageList);
+    this.appendChild(this.dismissButton);
+
     this.dismissButton.addEventListener('click', this.dismiss);
-    this.overlay.addEventListener('click', this.dismiss);
 
     requestAnimationFrame(() => {
-      this.overlay.classList.add('instructions-dialog__overlay--active');
-      this.dialogContainer.classList.add('instructions-dialog--active');
+      this.classList.add('instructions-dialog--active');
     });
   }
 
   public disconnectedCallback() {
-    this.removeChild(this.overlay);
-    this.removeChild(this.dialogContainer);
+    this.removeChild(this.titleElement);
+    this.removeChild(this.usageList);
+    this.removeChild(this.dismissButton);
     this.dismissButton.removeEventListener('click', this.dismiss);
-    this.overlay.removeEventListener('click', this.dismiss);
 
-    this.overlay.classList.remove('instructions-dialog__overlay--active');
-    this.dialogContainer.classList.remove('instructions-dialog--active');
+    this.classList.remove('instructions-dialog--active');
+  }
+
+  public close() {
+    this.dispatchEvent(new CustomEvent('close'));
+  }
+
+  public canClose() {
+    return true;
   }
 
   private dismiss() {
@@ -69,11 +69,13 @@ export class InstructionsDialog extends HTMLElement {
       'Double click on an edge to add a vertex in the middle of it',
       'Double click on a vertex to remove it',
       'Pressing Ctrl allows dragging a whole polygon',
+      "Shift + click to clip the polygons using Sutherland-Hodgman's algorithm",
       'Save allows you to export all the polygons on the screen',
       'Load allows you to restore the polygons'
     ];
 
-    usage.map(usageItemText => this.createUsageListItem(usageItemText))
+    usage
+      .map(usageItemText => this.createUsageListItem(usageItemText))
       .forEach(usageListItem => list.appendChild(usageListItem));
 
     return list;

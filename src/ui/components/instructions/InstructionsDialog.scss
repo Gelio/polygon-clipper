@@ -1,48 +1,6 @@
-$zIndex: 2;
-
-.instructions-dialog-wrapper {
-  z-index: $zIndex;
-}
-
-.instructions-dialog__overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: $zIndex;
-
-  width: 100vw;
-  height: 100vh;
-
-  background-color: #000;
-  opacity: 0;
-  transition: opacity 250ms ease-in-out;
-}
-
-.instructions-dialog__overlay--active {
-  opacity: 0.5;
-}
-
 .instructions-dialog {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  z-index: $zIndex;
-
-  transform: translate(-50%, -50%) scale(0, 0);
-
   background-color: rgb(31, 53, 15);
-  border: solid 1px black;
   color: #eee;
-
-  padding: 2em;
-  border-radius: 10px;
-  box-shadow: 2px 2px 5px black;
-
-  transition: transform 250ms ease-in-out;
-}
-
-.instructions-dialog--active {
-  transform: translate(-50%, -50%) scale(1, 1);
 }
 
 .instructions-dialog__title {

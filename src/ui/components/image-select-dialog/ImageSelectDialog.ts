@@ -3,6 +3,7 @@ import 'ui/components/image-select-dialog/ImageSelectDialog.scss';
 import { DialogBox } from 'ui/components/DialogBox';
 
 const classNames = {
+  DIALOG_BOX: 'dialog-box',
   DIALOG: 'image-select-dialog',
   HEADER: 'image-select-dialog__header',
   HEADING: 'image-select-dialog__heading',
@@ -41,6 +42,7 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
 
     this._presetImageUrls = presetImageUrls;
 
+    this.classList.add(classNames.DIALOG_BOX);
     this.classList.add(classNames.DIALOG);
 
     this.onSelectableImageClick = this.onSelectableImageClick.bind(this);
