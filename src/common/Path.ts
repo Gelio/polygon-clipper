@@ -206,4 +206,28 @@ export class Path {
 
     this.vertices.forEach((point, index) => point.moveTo(path.getVertex(index)));
   }
+
+  public getWeightedCenterPoint() {
+    let centerX = 0;
+    let centerY = 0;
+
+    this.getVertices().forEach(point => {
+      centerX += point.x;
+      centerY += point.y;
+    });
+
+    centerX /= this.getVerticesCount();
+    centerY /= this.getVerticesCount();
+
+    return new Point(centerX, centerY);
+  }
+
+  public getCenterPoint() {
+    const boundingBox = this.getBoundingBox();
+
+    const centerX = (boundingBox.maxX + boundingBox.minX) / 2;
+    const centerY = (boundingBox.maxY + boundingBox.minY) / 2;
+
+    return new Point(centerX, centerY);
+  }
 }

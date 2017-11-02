@@ -4,6 +4,7 @@ import { EventAggregator } from 'events/EventAggregator';
 import { Stage } from 'Stage';
 import { MousePositionTransformer } from 'ui/MousePositionTransformer';
 
+import { ClosestPathFinder } from 'services/ClosestPathFinder';
 import { Service } from 'services/Service';
 
 import { RenderEvent } from 'events/RenderEvent';
@@ -14,6 +15,7 @@ interface PathDraggingServiceDependencies {
   stage: Stage;
   canvas: HTMLCanvasElement;
   mousePositionTransformer: MousePositionTransformer;
+  closestPathFinder: ClosestPathFinder;
 }
 
 export class PathDraggingService implements Service {
@@ -21,6 +23,7 @@ export class PathDraggingService implements Service {
   private readonly stage: Stage;
   private readonly canvas: HTMLCanvasElement;
   private readonly mousePositionTransformer: MousePositionTransformer;
+  private readonly closestPathFinder: ClosestPathFinder;
 
   private pathToDrag: Path | undefined;
   private previousPoint: Point | undefined;
@@ -31,6 +34,7 @@ export class PathDraggingService implements Service {
     this.stage = dependencies.stage;
     this.canvas = dependencies.canvas;
     this.mousePositionTransformer = dependencies.mousePositionTransformer;
+    this.closestPathFinder = dependencies.closestPathFinder;
 
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
@@ -55,21 +59,18 @@ export class PathDraggingService implements Service {
     this.pathToDrag = undefined;
     this.previousPoint = undefined;
 
-    for (const layer of this.stage.layers) {
-      for (const path of layer.paths) {
-        if (!path.isPointInBoundingBox(point)) {
-          continue;
-        }
+    const allPathsInBoundingBox: Path[] = [];
 
-        this.pathToDrag = path;
-        break;
-      }
+    for (const layer of this.stage.layers) {
+      const pathsInBoundingBox = layer.paths.filter(path => path.isPointInBoundingBox(point));
+      allPathsInBoundingBox.push(...pathsInBoundingBox);
     }
 
-    if (!this.pathToDrag) {
+    if (allPathsInBoundingBox.length === 0) {
       return alert('Cannot drag path - no path found, point is not in the bounding box');
     }
 
+    this.pathToDrag = this.closestPathFinder.getClosestPath(allPathsInBoundingBox, point);
     this.previousPoint = point;
     this._isDragging = true;
     this.addEventListeners();
