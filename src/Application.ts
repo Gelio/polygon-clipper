@@ -8,6 +8,7 @@ import { PolygonFiller } from 'polygon-filler/PolygonFiller';
 import { Renderer } from 'Renderer';
 import { Stage } from 'Stage';
 
+import { ClosestPathFinder } from 'services/ClosestPathFinder';
 import { ImageDownloader } from 'services/ImageDownloader';
 import { InputDataInitializer } from 'services/InputDataInitializer';
 import { LightSimulator } from 'services/LightSimulator';
@@ -58,7 +59,8 @@ export class Application {
       canvas: this.canvas,
       eventAggregator: this.eventAggregator,
       imageDownloader: this.imageDownloader,
-      polygonClipper: new PolygonClipper()
+      polygonClipper: new PolygonClipper(),
+      closestPathFinder: new ClosestPathFinder()
     });
 
     this.onRenderEvent = this.onRenderEvent.bind(this);
@@ -114,7 +116,6 @@ export class Application {
     } else {
       this.isRendering = false;
     }
-
   }
 
   private addEventListeners() {

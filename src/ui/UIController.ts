@@ -13,6 +13,7 @@ import { PointRemoverService } from 'ui/PointRemoverService';
 import { PointSyncService } from 'ui/PointSyncService';
 import { SerializationService } from 'ui/SerializationService';
 
+import { ClosestPathFinder } from 'services/ClosestPathFinder';
 import { ImageDownloader } from 'services/ImageDownloader';
 import { PolygonClipper } from 'services/PolygonClipper';
 import { Service } from 'services/Service';
@@ -32,6 +33,7 @@ interface UIControllerDependencies {
   eventAggregator: EventAggregator;
   imageDownloader: ImageDownloader;
   polygonClipper: PolygonClipper;
+  closestPathFinder: ClosestPathFinder;
 }
 
 export class UIController implements Service {
@@ -41,6 +43,7 @@ export class UIController implements Service {
   private readonly eventAggregator: EventAggregator;
   private readonly imageDownloader: ImageDownloader;
   private readonly polygonClipper: PolygonClipper;
+  private readonly closestPathFinder: ClosestPathFinder;
 
   private mousePositionTransformer: MousePositionTransformer;
   private applicationUIContainer: HTMLElement;
@@ -57,6 +60,7 @@ export class UIController implements Service {
     this.eventAggregator = dependencies.eventAggregator;
     this.imageDownloader = dependencies.imageDownloader;
     this.polygonClipper = dependencies.polygonClipper;
+    this.closestPathFinder = dependencies.closestPathFinder;
 
     this.onClick = this.onClick.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
@@ -129,7 +133,9 @@ export class UIController implements Service {
     }
 
     event.stopPropagation();
-    this.eventAggregator.dispatchEvent(new LineClickEvent(hitTestResult.line, hitTestResult.path, point));
+    this.eventAggregator.dispatchEvent(
+      new LineClickEvent(hitTestResult.line, hitTestResult.path, point)
+    );
   }
 
   private createPointSyncService() {
@@ -188,7 +194,8 @@ export class UIController implements Service {
       canvas: this.canvas,
       eventAggregator: this.eventAggregator,
       mousePositionTransformer: this.mousePositionTransformer,
-      stage: this.stage
+      stage: this.stage,
+      closestPathFinder: this.closestPathFinder
     });
 
     this.uiServices.push(this.pathDraggingService);
@@ -216,7 +223,8 @@ export class UIController implements Service {
     this.polygonClippingService = new PolygonClippingService({
       polygonClipper: this.polygonClipper,
       eventAggregator: this.eventAggregator,
-      polygonLayer: this.stage.findLayerByName(LEX.POLYGON_LAYER_NAME)
+      polygonLayer: this.stage.findLayerByName(LEX.POLYGON_LAYER_NAME),
+      closestPathFinder: this.closestPathFinder
     });
 
     this.uiServices.push(this.polygonClippingService);

@@ -18,7 +18,7 @@ export class PolygonClipper {
    * @param clippingPolygon Must be convex
    */
   public clipPolygon(subjectPolygon: Polygon, clippingPolygon: Polygon) {
-    const clippingPolygonCenter = clippingPolygon.getCenterPoint();
+    const clippingPolygonCenter = clippingPolygon.getWeightedCenterPoint();
 
     let output: Point[] = subjectPolygon.getVertices();
     const clippingPolygonEdges: Line[] = [];
