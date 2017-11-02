@@ -22,3 +22,6 @@ w środku wybranej krawędzi.
 Klawiszem _Escape_ możemy anulować dodawanie nowego wielokąta, o ile nie został on już zamknięty.
 
 Przytrzymanie klawisza _Ctrl_ pozwala ruszać całym wielokątem.
+
+Kliknięcie z przytrymanym klawiszem Shift powoduje obcięcie dwóch wielokątów używając algorytmu
+Sutherlanda-Hodgmana.

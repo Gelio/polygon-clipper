@@ -69,11 +69,13 @@ export class InstructionsDialog extends HTMLElement {
       'Double click on an edge to add a vertex in the middle of it',
       'Double click on a vertex to remove it',
       'Pressing Ctrl allows dragging a whole polygon',
+      "Shift + click to clip the polygons using Sutherland-Hodgman's algorithm",
       'Save allows you to export all the polygons on the screen',
       'Load allows you to restore the polygons'
     ];
 
-    usage.map(usageItemText => this.createUsageListItem(usageItemText))
+    usage
+      .map(usageItemText => this.createUsageListItem(usageItemText))
       .forEach(usageListItem => list.appendChild(usageListItem));
 
     return list;
