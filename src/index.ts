@@ -5,7 +5,7 @@ import '@webcomponents/webcomponentsjs/webcomponents-hi-sd-ce';
 
 import { Application } from 'Application';
 
-window.addEventListener('load', bootstrap, false);
+window.onload = bootstrap;
 
 function bootstrap(): void {
   const canvasId = 'main-canvas';
