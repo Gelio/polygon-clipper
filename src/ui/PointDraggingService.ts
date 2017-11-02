@@ -85,9 +85,9 @@ export class PointDraggingService implements Service {
   }
 
   private onPointDrag(event: PointDragEvent) {
-    const { component, newPosition } = event.payload;
+    const { element, newPosition } = event.payload;
 
-    for (const point of component.path.getVerticesIterator()) {
+    for (const point of element.path.getVerticesIterator()) {
       if (point.equals(newPosition)) {
         return;
       }
@@ -108,7 +108,7 @@ export class PointDraggingService implements Service {
       y = this.canvas.height - 1;
     }
 
-    component.point.moveTo(x, y);
+    element.point.moveTo(x, y);
 
     this.eventAggregator.dispatchEvent(new RenderEvent());
     event.handled = true;

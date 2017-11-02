@@ -1,18 +1,18 @@
 import { Point } from 'common/Point';
 import { AppEvent } from 'events/AppEvent';
-import { PathPointComponent } from 'ui/components/PathPointComponent';
+import { PathPointElement } from 'ui/components/path-point/PathPointElement';
 
 export class PointDragEvent implements AppEvent {
   public readonly payload: {
-    component: PathPointComponent,
+    element: PathPointElement,
     newPosition: Point
   };
   public readonly eventType = PointDragEvent.eventType;
   public handled = false;
 
-  constructor(pathPointComponent: PathPointComponent, newPosition: Point) {
+  constructor(pathPointElement: PathPointElement, newPosition: Point) {
     this.payload = {
-      component: pathPointComponent,
+      element: pathPointElement,
       newPosition
     };
   }

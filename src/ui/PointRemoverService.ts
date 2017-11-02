@@ -5,7 +5,7 @@ import { EventAggregator } from 'events/EventAggregator';
 import { PointClickEvent } from 'events/PointClickEvent';
 import { RenderEvent } from 'events/RenderEvent';
 import { SyncComponentsEvent } from 'events/ui/SyncComponentsEvent';
-import { PathPointComponent } from 'ui/components/PathPointComponent';
+import { PathPointElement } from 'ui/components/path-point/PathPointElement';
 
 interface PointRemoverServiceDependencies {
   eventAggregator: EventAggregator;
@@ -14,7 +14,7 @@ interface PointRemoverServiceDependencies {
 export class PointRemoverService implements Service {
   private readonly eventAggregator: EventAggregator;
 
-  private previousPathPointComponent: PathPointComponent;
+  private previousPathPointElement: PathPointElement;
   private previousClickTimestamp = 0;
 
   constructor(dependencies: PointRemoverServiceDependencies) {
@@ -33,13 +33,13 @@ export class PointRemoverService implements Service {
   private onPointClick(event: PointClickEvent) {
     const currentTimestamp = Date.now();
 
-    const pathPointComponent = event.payload;
-    const previousPathPointComponent = this.previousPathPointComponent;
+    const pathPointElement = event.payload;
+    const previousPathPointElement = this.previousPathPointElement;
     const previousClickTimestamp = this.previousClickTimestamp;
 
     this.updatePreviousClickInformation(event, currentTimestamp);
 
-    if (!previousPathPointComponent || previousPathPointComponent !== pathPointComponent) {
+    if (!previousPathPointElement || previousPathPointElement !== pathPointElement) {
       return;
     }
 
@@ -52,13 +52,13 @@ export class PointRemoverService implements Service {
   }
 
   private updatePreviousClickInformation(event: PointClickEvent, timestamp: number) {
-    this.previousPathPointComponent = event.payload;
+    this.previousPathPointElement = event.payload;
     this.previousClickTimestamp = timestamp;
   }
 
   private removePreviousClickedPoint() {
-    const path = this.previousPathPointComponent.path;
-    const point = this.previousPathPointComponent.point;
+    const path = this.previousPathPointElement.path;
+    const point = this.previousPathPointElement.point;
 
     try {
       path.removeVertex(point);
@@ -66,7 +66,7 @@ export class PointRemoverService implements Service {
       return alert('Cannot remove vertex');
     }
 
-    this.previousPathPointComponent.remove();
+    this.previousPathPointElement.remove();
     this.eventAggregator.dispatchEvent(new RenderEvent());
     this.eventAggregator.dispatchEvent(new SyncComponentsEvent());
   }

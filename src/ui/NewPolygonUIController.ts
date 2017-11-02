@@ -91,14 +91,14 @@ export class NewPolygonUIController implements Service {
   }
 
   private onPointClick(event: PointClickEvent) {
-    const pathPointComponent = event.payload;
+    const pathPointElement = event.payload;
 
-    if (pathPointComponent.path === this.unfinishedPath && pathPointComponent.initial) {
+    if (pathPointElement.path === this.unfinishedPath && pathPointElement.initial) {
       event.handled = true;
 
       try {
         this.closePath();
-        pathPointComponent.initial = false;
+        pathPointElement.initial = false;
       } catch (error) {
         alert(error.message);
       }

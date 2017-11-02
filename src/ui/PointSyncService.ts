@@ -3,7 +3,10 @@ import { Point } from 'common/Point';
 import { Service } from 'services/Service';
 import { Stage } from 'Stage';
 
-import { PathPointComponent } from 'ui/components/PathPointComponent';
+import {
+  PathPointElement,
+  PathPointElementDependencies
+} from 'ui/components/path-point/PathPointElement';
 import { MousePositionTransformer } from 'ui/MousePositionTransformer';
 
 import { EventAggregator } from 'events/EventAggregator';
@@ -16,17 +19,18 @@ interface PointSyncServiceDependencies {
   eventAggregator: EventAggregator;
 }
 
-interface PathPoint {
+interface PathPointTuple {
   path: Path;
   point: Point;
 }
 
 export class PointSyncService implements Service {
   private readonly stage: Stage;
-  private pathPointComponents: PathPointComponent[] = [];
+  private pathPointElements: PathPointElement[] = [];
   private readonly container: HTMLElement;
   private readonly mousePositionTransformer: MousePositionTransformer;
   private readonly eventAggregator: EventAggregator;
+  private readonly pathPointDependencies: PathPointElementDependencies;
 
   constructor(dependencies: PointSyncServiceDependencies) {
     this.stage = dependencies.stage;
@@ -34,46 +38,52 @@ export class PointSyncService implements Service {
     this.mousePositionTransformer = dependencies.mousePositionTransformer;
     this.eventAggregator = dependencies.eventAggregator;
 
-    this.synchronizeComponents = this.synchronizeComponents.bind(this);
+    this.pathPointDependencies = {
+      eventAggregator: this.eventAggregator,
+      mousePositionTransformer: this.mousePositionTransformer
+    };
+
+    this.synchronizeElements = this.synchronizeElements.bind(this);
   }
 
   public init() {
     this.eventAggregator.addEventListener(
       SyncComponentsEvent.eventType,
-      this.synchronizeComponents
+      this.synchronizeElements
     );
   }
 
   public destroy() {
     this.eventAggregator.removeEventListener(
       SyncComponentsEvent.eventType,
-      this.synchronizeComponents
+      this.synchronizeElements
     );
   }
 
-  public synchronizeComponents(event: SyncComponentsEvent) {
-    const componentsToRemove = this.getRedundantComponents();
-    componentsToRemove.forEach(component => component.remove());
+  public synchronizeElements(event: SyncComponentsEvent) {
+    const elementsToRemove = this.getRedundantElements();
+    elementsToRemove.forEach(component => component.remove());
 
-    const pathPoints = this.getPathPoints();
-    const pointsWithoutComponents = this.getPointsWithoutComponents(pathPoints);
-    const newComponents = this.createPathPointComponents(pointsWithoutComponents);
+    const pathPointTuples = this.getPathPointTuples();
+    const pointsWithoutElements = this.getPointsWithoutElements(pathPointTuples);
+    const newElements = this.createPathPointElements(pointsWithoutElements);
+    newElements.forEach(element => this.container.appendChild(element));
 
-    const componentsNotRemoved = this.pathPointComponents.filter(
-      component => componentsToRemove.indexOf(component) === -1
+    const elementsNotRemoved = this.pathPointElements.filter(
+      element => elementsToRemove.indexOf(element) === -1
     );
 
-    this.pathPointComponents = [...newComponents, ...componentsNotRemoved];
+    this.pathPointElements = [...newElements, ...elementsNotRemoved];
     event.handled = true;
   }
 
-  private getPathPoints() {
-    const pathPoints: PathPoint[] = [];
+  private getPathPointTuples() {
+    const pathPointTuples: PathPointTuple[] = [];
 
     this.stage.layers.forEach(layer => {
       layer.paths.forEach(path => {
         path.getVertices().forEach(point => {
-          pathPoints.push({
+          pathPointTuples.push({
             path,
             point
           });
@@ -81,34 +91,30 @@ export class PointSyncService implements Service {
       });
     });
 
-    return pathPoints;
+    return pathPointTuples;
   }
 
-  private createPathPointComponents(pathPoints: PathPoint[]) {
+  private createPathPointElements(pathPoints: PathPointTuple[]) {
     return pathPoints.map(
       pathPoint =>
-        new PathPointComponent(pathPoint.path, pathPoint.point, {
-          applicationUIContainer: this.container,
-          eventAggregator: this.eventAggregator,
-          mousePositionTransformer: this.mousePositionTransformer
-        })
+        new PathPointElement(pathPoint.path, pathPoint.point, this.pathPointDependencies)
     );
   }
 
-  private getRedundantComponents() {
+  private getRedundantElements() {
     const activePaths = this.getActivePaths();
 
-    return this.pathPointComponents.filter(
+    return this.pathPointElements.filter(
       component =>
         activePaths.indexOf(component.path) === -1 ||
         component.path.getVertices().indexOf(component.point) === -1
     );
   }
 
-  private getPointsWithoutComponents(pathPoints: PathPoint[]) {
+  private getPointsWithoutElements(pathPoints: PathPointTuple[]) {
     return pathPoints.filter(
       pathPoint =>
-        !this.pathPointComponents.find(
+        !this.pathPointElements.find(
           component => component.path === pathPoint.path && component.point === pathPoint.point
         )
     );

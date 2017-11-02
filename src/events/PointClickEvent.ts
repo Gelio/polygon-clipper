@@ -1,13 +1,13 @@
 import { AppEvent } from 'events/AppEvent';
-import { PathPointComponent } from 'ui/components/PathPointComponent';
+import { PathPointElement } from 'ui/components/path-point/PathPointElement';
 
 export class PointClickEvent implements AppEvent {
   public readonly eventType = PointClickEvent.eventType;
-  public readonly payload: PathPointComponent;
+  public readonly payload: PathPointElement;
   public handled = false;
 
-  constructor(pathPointComponent: PathPointComponent) {
-    this.payload = pathPointComponent;
+  constructor(pathPointElement: PathPointElement) {
+    this.payload = pathPointElement;
   }
 
   public static get eventType() {
