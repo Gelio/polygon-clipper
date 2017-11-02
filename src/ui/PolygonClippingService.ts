@@ -60,9 +60,15 @@ export class PolygonClippingService implements Service {
     const subjectPolygons = polygonsInBoundingBox.filter(
       polygon => polygon !== closestConvexPolygon
     );
-    const closestSubjectPolygon = <Polygon>this.closestPathFinder.getClosestPath(subjectPolygons, point);
+    const closestSubjectPolygon = <Polygon>this.closestPathFinder.getClosestPath(
+      subjectPolygons,
+      point
+    );
 
-    const clippedPolygon = this.polygonClipper.clipPolygon(closestSubjectPolygon, closestConvexPolygon);
+    const clippedPolygon = this.polygonClipper.clipPolygon(
+      closestSubjectPolygon,
+      closestConvexPolygon
+    );
     if (!clippedPolygon) {
       return alert('Cannot clip polygons (they do not overlap)');
     }

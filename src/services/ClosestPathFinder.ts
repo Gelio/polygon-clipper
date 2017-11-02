@@ -24,6 +24,6 @@ export class ClosestPathFinder {
   }
 
   private getPathToPointDistance(path: Path, point: Point) {
-    return point.getDistanceSquaredTo(path.getWeightedCenterPoint());
+    return point.getDistanceSquaredTo(path.getCenterOfGravity());
   }
 }

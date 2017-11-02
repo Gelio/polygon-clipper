@@ -207,7 +207,7 @@ export class Path {
     this.vertices.forEach((point, index) => point.moveTo(path.getVertex(index)));
   }
 
-  public getWeightedCenterPoint() {
+  public getCenterOfGravity() {
     let centerX = 0;
     let centerY = 0;
 
@@ -222,7 +222,7 @@ export class Path {
     return new Point(centerX, centerY);
   }
 
-  public getCenterPoint() {
+  public getBoundingBoxCenter() {
     const boundingBox = this.getBoundingBox();
 
     const centerX = (boundingBox.maxX + boundingBox.minX) / 2;

@@ -28,11 +28,7 @@ export class PathPointComponent {
   private readonly mousePositionTransformer: MousePositionTransformer;
   private readonly eventAggregator: EventAggregator;
 
-  constructor(
-    path: Path,
-    point: Point,
-    dependencies: PathPointComponentDependencies
-  ) {
+  constructor(path: Path, point: Point, dependencies: PathPointComponentDependencies) {
     this.path = path;
     this.point = point;
     this.applicationUIContainer = dependencies.applicationUIContainer;

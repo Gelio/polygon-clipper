@@ -10,6 +10,4 @@ const LEX = {
   }
 };
 
-export {
-  LEX
-};
+export { LEX };

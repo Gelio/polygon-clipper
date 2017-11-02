@@ -14,7 +14,7 @@ describe('Vector3', () => {
 
       expect(Math.abs(normalized.x - 0.26)).toBeLessThan(0.1);
       expect(Math.abs(normalized.y - 0.53)).toBeLessThan(0.1);
-      expect(Math.abs(normalized.z - 0.80)).toBeLessThan(0.1);
+      expect(Math.abs(normalized.z - 0.8)).toBeLessThan(0.1);
 
       expect(Math.abs(normalized.getLength() - 1)).toBeLessThan(0.1);
     });

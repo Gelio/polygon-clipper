@@ -38,11 +38,17 @@ export class PointSyncService implements Service {
   }
 
   public init() {
-    this.eventAggregator.addEventListener(SyncComponentsEvent.eventType, this.synchronizeComponents);
+    this.eventAggregator.addEventListener(
+      SyncComponentsEvent.eventType,
+      this.synchronizeComponents
+    );
   }
 
   public destroy() {
-    this.eventAggregator.removeEventListener(SyncComponentsEvent.eventType, this.synchronizeComponents);
+    this.eventAggregator.removeEventListener(
+      SyncComponentsEvent.eventType,
+      this.synchronizeComponents
+    );
   }
 
   public synchronizeComponents(event: SyncComponentsEvent) {

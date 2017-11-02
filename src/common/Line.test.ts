@@ -9,7 +9,7 @@ describe('Line', () => {
     expect(new Line(p1, p2)).toBeDefined();
   });
 
-  it('should throw an error when it\'s the same point', () => {
+  it("should throw an error when it's the same point", () => {
     const p1 = new Point(0, 5);
     const p2 = new Point(0, 5);
 

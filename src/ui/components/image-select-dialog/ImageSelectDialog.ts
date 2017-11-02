@@ -99,12 +99,14 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
     this.customColorInput.addEventListener('change', this.onCustomColorInputChange);
     this.customColorImage.addEventListener('click', this.onSelectableImageClick);
 
-    this.presetImagesListContainer.querySelectorAll('img')
+    this.presetImagesListContainer
+      .querySelectorAll('img')
       .forEach(image => image.addEventListener('click', this.onSelectableImageClick));
   }
 
   public disconnectedCallback() {
-    this.presetImagesListContainer.querySelectorAll('img')
+    this.presetImagesListContainer
+      .querySelectorAll('img')
       .forEach(image => image.removeEventListener('click', this.onSelectableImageClick));
     this.customFileInput.removeEventListener('change', this.showCustomImage);
     this.customImage.removeEventListener('click', this.onSelectableImageClick);
@@ -148,7 +150,8 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
     const imagesContainer = document.createElement('div');
     imagesContainer.classList.add(classNames.PRESET_IMAGES_CONTAINER);
     container.appendChild(imagesContainer);
-    this.presetImageUrls.map(url => this.createSelectableImage(url))
+    this.presetImageUrls
+      .map(url => this.createSelectableImage(url))
       .forEach(image => imagesContainer.appendChild(image));
 
     this.presetImagesListContainer = container;

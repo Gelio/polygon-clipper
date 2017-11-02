@@ -42,7 +42,7 @@ export class PathDraggingService implements Service {
   }
 
   public init() {
-    // TODO: possible polygon ghost layer here
+    // TODO: possible path ghost layer here
   }
 
   public destroy() {

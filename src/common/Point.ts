@@ -38,7 +38,7 @@ export class Point {
   }
 
   public static getAngle(p1: Point, p2: Point): number {
-    let angle = (Math.atan2(p2.y - p1.y, p2.x - p1.x)) * 180 / Math.PI;
+    let angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI;
 
     if (angle < 0) {
       angle += 360;

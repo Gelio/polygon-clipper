@@ -83,7 +83,11 @@ export class NewPolygonUIController implements Service {
 
   private drawNewLineGuide() {
     const lastPoint = this.unfinishedPath.getVertex(this.unfinishedPath.getVerticesCount() - 1);
-    this.renderer.drawLine(lastPoint, this.lastMousePosition, configuration.newLinePreviewProperties);
+    this.renderer.drawLine(
+      lastPoint,
+      this.lastMousePosition,
+      configuration.newLinePreviewProperties
+    );
   }
 
   private onPointClick(event: PointClickEvent) {

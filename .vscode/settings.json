@@ -1,9 +1,5 @@
 {
-  "cSpell.words": [
-    "Rasterizer",
-    "rasterize",
-    "rasterized"
-  ],
+  "cSpell.words": ["Rasterizer", "rasterize", "rasterized"],
   "prettier.printWidth": 100,
   "search.exclude": {
     "**/node_modules": true,

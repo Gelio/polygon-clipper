@@ -27,7 +27,8 @@ export class ActiveEdge {
     if (this.higherPoint.y === this.lowerPoint.y) {
       this.inverseSlope = 99999999999;
     } else {
-      this.inverseSlope = (this.higherPoint.x - this.lowerPoint.x) / (this.higherPoint.y - this.lowerPoint.y);
+      this.inverseSlope =
+        (this.higherPoint.x - this.lowerPoint.x) / (this.higherPoint.y - this.lowerPoint.y);
     }
   }
 }
