@@ -17,11 +17,19 @@ const configuration = {
   lineConditionLabelOffset: new Point(5, 0),
   removeConditionsWhenInsertingPoints: true,
   presetBackgroundTextures: [
+    'images/backgrounds/red-bricks.jpg',
     'images/backgrounds/Funny-Cat-Face.jpg',
     'images/backgrounds/hqdefault.jpg'
   ],
-  presetHeightMaps: ['images/height-maps/brick_heightmap.png'],
-  presetNormalMaps: ['images/normal-maps/brick_normalmap.png', 'images/normal-maps/normal_map.jpg'],
+  presetHeightMaps: [
+    'images/height-maps/brick_heightmap.png',
+    'images/height-maps/terrain-heightmap.png'
+  ],
+  presetNormalMaps: [
+    'images/normal-maps/brick_normalmap.png',
+    'images/normal-maps/normal_map.jpg',
+    'images/normal-maps/circles.png'
+  ],
   presetLightColor: COLORS.WHITE,
   circlingLight: {
     lapTime: 10 * 1000,
