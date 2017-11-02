@@ -275,11 +275,7 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
   }
 
   private onSelectableImageClick(event: MouseEvent) {
-    if (!event.srcElement) {
-      return;
-    }
-
-    this.selectImage(<HTMLImageElement>event.srcElement);
+    this.selectImage(<HTMLImageElement>event.target);
   }
 
   private selectImage(image: HTMLImageElement) {
