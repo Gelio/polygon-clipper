@@ -211,9 +211,8 @@ export class PolygonFiller implements Service {
           const e1 = activeEdgeTable[i];
           const e2 = activeEdgeTable[i + 1];
 
-          // this.renderingContext.fillRect(e1.x, y, e2.x - e1.x, 1);
           fillStrips.push({
-            y,
+            y: previousY,
             fromX: e1.x,
             toX: e2.x
           });
