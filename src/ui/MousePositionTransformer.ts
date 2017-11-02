@@ -22,6 +22,6 @@ export class MousePositionTransformer {
     return new Point(
       event.clientX - this.canvasClientRect.left,
       event.clientY - this.canvasClientRect.top
-    );
+    ).floor();
   }
 }
