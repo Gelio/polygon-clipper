@@ -31,6 +31,10 @@ export class DialogOverlay extends HTMLElement {
     this.showOverlay();
     this.appendChild(dialogBox);
     dialogBox.addEventListener('close', this.onDialogClose);
+
+    requestAnimationFrame(() => {
+      dialogBox.classList.add('dialog-box--active');
+    });
   }
 
   private onOverlayClick() {
@@ -43,9 +47,15 @@ export class DialogOverlay extends HTMLElement {
 
   private onDialogClose() {
     if (this.dialogBox) {
-      this.removeChild(this.dialogBox);
-      this.dialogBox.removeEventListener('close', this.onDialogClose);
+      const dialogBox = this.dialogBox;
+      this.removeChild(dialogBox);
+      dialogBox.removeEventListener('close', this.onDialogClose);
+
+      requestAnimationFrame(() => {
+        dialogBox.classList.remove('dialog-box--active');
+      });
     }
+
     this.dialogBox = undefined;
     this.hideOverlay();
   }
