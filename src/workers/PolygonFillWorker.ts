@@ -69,6 +69,5 @@ function putPixel(x: number, y: number) {
 }
 
 function respond() {
-  const arrayBuffer = canvasImageData.data.buffer;
-  postMessage(arrayBuffer, [arrayBuffer]);
+  postMessage(canvasImageData, [canvasImageData.data.buffer]);
 }

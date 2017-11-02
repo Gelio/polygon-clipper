@@ -131,13 +131,7 @@ export class PolygonFiller implements Service {
   }
 
   private onFillWorkerMessage(event: MessageEvent) {
-    this.renderArrayBuffer(event.data);
-  }
-
-  private renderArrayBuffer(arrayBuffer: ArrayBuffer) {
-    const uint8Array = new Uint8ClampedArray(arrayBuffer);
-    const imageData = new ImageData(uint8Array, this.canvas.width, this.canvas.height);
-
+    const imageData: ImageData = event.data;
     this.renderingContext.putImageData(imageData, 0, 0);
   }
 
