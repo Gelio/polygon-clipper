@@ -1,13 +1,13 @@
 import { AppEvent } from 'events/AppEvent';
-import { PathPointComponent } from 'ui/components/PathPointComponent';
+import { PathPointElement } from 'ui/components/path-point/PathPointElement';
 
 export class FinishPointDragEvent implements AppEvent {
-  public readonly payload: PathPointComponent;
+  public readonly payload: PathPointElement;
   public readonly eventType = FinishPointDragEvent.eventType;
   public handled = false;
 
-  constructor(pathPointComponent: PathPointComponent) {
-    this.payload = pathPointComponent;
+  constructor(pathPointElement: PathPointElement) {
+    this.payload = pathPointElement;
   }
 
   public static get eventType() {
