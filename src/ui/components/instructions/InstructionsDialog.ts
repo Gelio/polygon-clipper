@@ -22,7 +22,7 @@ export class InstructionsDialog extends HTMLElement implements DialogBox {
     this.dismissButton.textContent = 'Dismiss';
     this.dismissButton.className = 'instructions-dialog__dismiss-button';
 
-    this.dismiss = this.dismiss.bind(this);
+    this.close = this.close.bind(this);
   }
 
   public connectedCallback() {
@@ -30,7 +30,7 @@ export class InstructionsDialog extends HTMLElement implements DialogBox {
     this.appendChild(this.usageList);
     this.appendChild(this.dismissButton);
 
-    this.dismissButton.addEventListener('click', this.dismiss);
+    this.dismissButton.addEventListener('click', this.close);
 
     requestAnimationFrame(() => {
       this.classList.add('instructions-dialog--active');
@@ -41,7 +41,7 @@ export class InstructionsDialog extends HTMLElement implements DialogBox {
     this.removeChild(this.titleElement);
     this.removeChild(this.usageList);
     this.removeChild(this.dismissButton);
-    this.dismissButton.removeEventListener('click', this.dismiss);
+    this.dismissButton.removeEventListener('click', this.close);
 
     this.classList.remove('instructions-dialog--active');
   }
@@ -52,10 +52,6 @@ export class InstructionsDialog extends HTMLElement implements DialogBox {
 
   public canClose() {
     return true;
-  }
-
-  private dismiss() {
-    this.remove();
   }
 
   private createUsageList() {
