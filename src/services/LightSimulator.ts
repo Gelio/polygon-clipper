@@ -1,5 +1,6 @@
 import { EventAggregator } from 'events/EventAggregator';
 import { NewLightVersorEvent, NewLightVersorTypeEvent } from 'events/input-data';
+import { RenderEvent } from 'events/RenderEvent';
 
 import { configuration } from 'configuration';
 
@@ -82,6 +83,7 @@ export class LightSimulator implements Service {
     const lightVersor = lightVector.normalize();
 
     this.eventAggregator.dispatchEvent(new NewLightVersorEvent(lightVersor));
+    this.eventAggregator.dispatchEvent(new RenderEvent());
 
     this.circlingLightAngle += LightSimulator.stepInRadians;
     if (this.circlingLightAngle >= LightSimulator.radiansModuloValue) {

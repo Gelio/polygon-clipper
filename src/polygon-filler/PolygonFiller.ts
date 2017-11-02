@@ -1,6 +1,6 @@
-import { Color } from 'common/Color';
 import { LightVersorType } from 'common/LightVersorType';
 import { Polygon } from 'common/Polygon';
+import { Vector3 } from 'common/Vector3';
 
 import { EventAggregator } from 'events/EventAggregator';
 import {
@@ -36,7 +36,7 @@ export class PolygonFiller implements Service {
   private readonly fillData: AppFillData = {
     backgroundTexture: new ImageData(1, 1),
     heightMap: new ImageData(1, 1),
-    lightColor: new Color(0, 0, 0),
+    lightColor: new Vector3(1, 1, 1),
     lightVersorType: LightVersorType.Constant,
     normalMap: new ImageData(1, 1)
   };
@@ -204,7 +204,7 @@ export class PolygonFiller implements Service {
         }
       }
 
-      if (y >= 0 && y < this.canvas.height) {
+      if (previousY >= 0 && previousY < this.canvas.height) {
         activeEdgeTable.sort((e1, e2) => e1.x - e2.x);
 
         for (let i = 0; i < activeEdgeTable.length; i += 2) {

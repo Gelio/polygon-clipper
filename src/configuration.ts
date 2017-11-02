@@ -1,5 +1,6 @@
 import { COLORS } from 'common/COLORS';
 import { LineProperties } from 'common/LineProperties';
+import { Vector3 } from 'common/Vector3';
 
 const configuration = {
   newLinePreviewProperties: new LineProperties(COLORS.BLUE, 2),
@@ -29,7 +30,7 @@ const configuration = {
     'images/normal-maps/normal_map.jpg',
     'images/normal-maps/circles.png'
   ],
-  presetLightColor: COLORS.WHITE,
+  presetLightColor: new Vector3(1, 1, 1),
 
   circlingLight: {
     lapTime: 10 * 1000,
