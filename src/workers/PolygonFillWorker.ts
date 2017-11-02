@@ -45,22 +45,16 @@ onmessage = (e: MessageEvent) => {
 
 function fillStrips(strips: FillStrip[]) {
   strips.forEach(strip => {
-    for (let x = strip.fromX; x <= strip.toX; x += 1) {
+    const fromX = Math.max(Math.floor(strip.fromX), 0);
+    const toX = Math.min(Math.floor(strip.toX), canvasWidth);
+
+    for (let x = fromX; x <= toX; x += 1) {
       putPixel(x, strip.y);
     }
   });
 }
 
 function putPixel(x: number, y: number) {
-  if (x >= canvasImageData.width || y >= canvasImageData.height) {
-    return;
-  }
-
-  // tslint:disable no-bitwise
-  x = ~~x;
-  y = ~~y;
-  // tslint:enable no-bitwise
-
   const backgroundTexture = appFillData.backgroundTexture;
   const backgroundTextureX = x % backgroundTexture.width;
   const backgroundTextureY = y % backgroundTexture.height;

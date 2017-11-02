@@ -210,18 +210,20 @@ export class PolygonFiller implements Service {
         }
       }
 
-      activeEdgeTable.sort((e1, e2) => e1.x - e2.x);
+      if (y >= 0 && y < this.canvas.height) {
+        activeEdgeTable.sort((e1, e2) => e1.x - e2.x);
 
-      for (let i = 0; i < activeEdgeTable.length; i += 2) {
-        const e1 = activeEdgeTable[i];
-        const e2 = activeEdgeTable[i + 1];
+        for (let i = 0; i < activeEdgeTable.length; i += 2) {
+          const e1 = activeEdgeTable[i];
+          const e2 = activeEdgeTable[i + 1];
 
-        // this.renderingContext.fillRect(e1.x, y, e2.x - e1.x, 1);
-        fillStrips.push({
-          y,
-          fromX: e1.x,
-          toX: e2.x
-        });
+          // this.renderingContext.fillRect(e1.x, y, e2.x - e1.x, 1);
+          fillStrips.push({
+            y,
+            fromX: e1.x,
+            toX: e2.x
+          });
+        }
       }
 
       activeEdgeTable.forEach(edge => edge.nextScanLine());
