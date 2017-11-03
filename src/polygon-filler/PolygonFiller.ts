@@ -1,14 +1,13 @@
-import { Color } from 'common/Color';
-import { LightVersorType } from 'common/LightVersorType';
 import { Polygon } from 'common/Polygon';
+import { Vector3 } from 'common/Vector3';
 
+import { AppEvent } from 'events/AppEvent';
 import { EventAggregator } from 'events/EventAggregator';
 import {
   NewBackgroundTextureEvent,
   NewHeightMapEvent,
   NewLightColorEvent,
   NewLightVersorEvent,
-  NewLightVersorTypeEvent,
   NewNormalMapEvent
 } from 'events/input-data';
 
@@ -36,8 +35,7 @@ export class PolygonFiller implements Service {
   private readonly fillData: AppFillData = {
     backgroundTexture: new ImageData(1, 1),
     heightMap: new ImageData(1, 1),
-    lightColor: new Color(0, 0, 0),
-    lightVersorType: LightVersorType.Constant,
+    lightColor: new Vector3(1, 1, 1),
     normalMap: new ImageData(1, 1)
   };
 
@@ -49,7 +47,6 @@ export class PolygonFiller implements Service {
     this.onNewHeightMap = this.onNewHeightMap.bind(this);
     this.onNewLightColor = this.onNewLightColor.bind(this);
     this.onNewLightVersor = this.onNewLightVersor.bind(this);
-    this.onNewLightVersorType = this.onNewLightVersorType.bind(this);
     this.onNewNormalMap = this.onNewNormalMap.bind(this);
     this.onFillWorkerMessage = this.onFillWorkerMessage.bind(this);
   }
@@ -68,12 +65,14 @@ export class PolygonFiller implements Service {
     eventAggregator.addEventListener(NewHeightMapEvent.eventType, this.onNewHeightMap);
     eventAggregator.addEventListener(NewLightColorEvent.eventType, this.onNewLightColor);
     eventAggregator.addEventListener(NewLightVersorEvent.eventType, this.onNewLightVersor);
-    eventAggregator.addEventListener(NewLightVersorTypeEvent.eventType, this.onNewLightVersorType);
     eventAggregator.addEventListener(NewNormalMapEvent.eventType, this.onNewNormalMap);
 
     this.fillWorker = new Worker(FILL_WORKER_URL);
-    this.sendAppFillDataToWorker();
-
+    this.fillWorker.postMessage({
+      type: FillWorkerMessageType.CanvasInfo,
+      width: this.canvas.width,
+      height: this.canvas.height
+    });
     this.fillWorker.addEventListener('message', this.onFillWorkerMessage);
   }
 
@@ -87,10 +86,6 @@ export class PolygonFiller implements Service {
     eventAggregator.removeEventListener(NewHeightMapEvent.eventType, this.onNewHeightMap);
     eventAggregator.removeEventListener(NewLightColorEvent.eventType, this.onNewLightColor);
     eventAggregator.removeEventListener(NewLightVersorEvent.eventType, this.onNewLightVersor);
-    eventAggregator.removeEventListener(
-      NewLightVersorTypeEvent.eventType,
-      this.onNewLightVersorType
-    );
     eventAggregator.removeEventListener(NewNormalMapEvent.eventType, this.onNewNormalMap);
     this.fillWorker.removeEventListener('message', this.onFillWorkerMessage);
     this.fillWorker.terminate();
@@ -141,15 +136,6 @@ export class PolygonFiller implements Service {
     this.fillWorker.postMessage({
       type: FillWorkerMessageType.FillStrips,
       fillStrips
-    });
-  }
-
-  private sendAppFillDataToWorker() {
-    this.fillWorker.postMessage({
-      type: FillWorkerMessageType.FillData,
-      width: this.canvas.width,
-      height: this.canvas.height,
-      appFillData: this.fillData
     });
   }
 
@@ -204,7 +190,7 @@ export class PolygonFiller implements Service {
         }
       }
 
-      if (y >= 0 && y < this.canvas.height) {
+      if (previousY >= 0 && previousY < this.canvas.height) {
         activeEdgeTable.sort((e1, e2) => e1.x - e2.x);
 
         for (let i = 0; i < activeEdgeTable.length; i += 2) {
@@ -228,44 +214,37 @@ export class PolygonFiller implements Service {
 
   private onNewBackgroundTexture(event: NewBackgroundTextureEvent) {
     this.fillData.backgroundTexture = event.payload;
-    this.sendAppFillDataToWorker();
+    this.sendAppFillDataEvent(event);
     event.handled = true;
   }
 
   private onNewHeightMap(event: NewHeightMapEvent) {
     this.fillData.heightMap = event.payload;
-    this.sendAppFillDataToWorker();
+    this.sendAppFillDataEvent(event);
     event.handled = true;
   }
 
   private onNewLightColor(event: NewLightColorEvent) {
     this.fillData.lightColor = event.payload;
-    this.sendAppFillDataToWorker();
+    this.sendAppFillDataEvent(event);
     event.handled = true;
   }
 
   private onNewLightVersor(event: NewLightVersorEvent) {
-    const lightVersor = event.payload;
-
-    this.fillWorker.postMessage({
-      type: FillWorkerMessageType.LightVersor,
-      versor: {
-        x: lightVersor.x,
-        y: lightVersor.y,
-        z: lightVersor.z
-      }
-    });
-  }
-
-  private onNewLightVersorType(event: NewLightVersorTypeEvent) {
-    this.fillData.lightVersorType = event.payload;
-    this.sendAppFillDataToWorker();
+    this.sendAppFillDataEvent(event);
     event.handled = true;
   }
 
   private onNewNormalMap(event: NewNormalMapEvent) {
     this.fillData.normalMap = event.payload;
-    this.sendAppFillDataToWorker();
+    this.sendAppFillDataEvent(event);
     event.handled = true;
+  }
+
+  private sendAppFillDataEvent(event: AppEvent) {
+    this.fillWorker.postMessage({
+      type: FillWorkerMessageType.NewFillDataEvent,
+      event
+    });
   }
 }

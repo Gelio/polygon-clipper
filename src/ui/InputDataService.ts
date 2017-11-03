@@ -17,6 +17,7 @@ import { DialogOverlay } from 'ui/components/dialog-overlay/DialogOverlay';
 import { ImageSelectDialog } from 'ui/components/image-select-dialog/ImageSelectDialog';
 
 import { LightVersorType } from 'common/LightVersorType';
+import { Vector3 } from 'common/Vector3';
 
 interface SerializationServiceDependencies {
   eventAggregator: EventAggregator;
@@ -147,7 +148,7 @@ export class InputDataService implements Service {
 
     this.lightColorDialog = new ColorSelectDialog();
     this.lightColorDialog.name = 'Light color';
-    this.lightColorDialog.selectedColor = configuration.presetLightColor;
+    this.lightColorDialog.selectedColor = configuration.presetLightColor.toColor();
 
     this.openLightColorDialog = this.openLightColorDialog.bind(this);
     this.onLightColorDialogClosed = this.onLightColorDialogClosed.bind(this);
@@ -164,7 +165,8 @@ export class InputDataService implements Service {
     }
 
     const lightColor = this.lightColorDialog.selectedColor;
-    this.eventAggregator.dispatchEvent(new NewLightColorEvent(lightColor));
+    const lightVector = Vector3.fromColor(lightColor);
+    this.eventAggregator.dispatchEvent(new NewLightColorEvent(lightVector));
     this.eventAggregator.dispatchEvent(new RenderEvent());
   }
   // #endregion

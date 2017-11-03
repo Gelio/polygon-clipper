@@ -1,7 +1,9 @@
 export enum FillWorkerMessageType {
-  FillData,
+  CanvasInfo,
+
+  NewFillDataEvent,
+
   StartFill,
   FillStrips,
-  EndFill,
-  LightVersor
+  EndFill
 }

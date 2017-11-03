@@ -45,6 +45,18 @@ export class Vector3 {
     return dotProduct / (length1 * length2);
   }
 
+  public static fromNormalMap(r: number, g: number, b: number): Vector3 {
+    const x = r / 255 * 2 - 1;
+    const y = g / 255 * 2 - 1;
+    const z = b / 255;
+
+    return new Vector3(x, y, z);
+  }
+
+  public static multiplyComponents(v1: Vector3, v2: Vector3) {
+    return new Vector3(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z);
+  }
+
   public toColor(): Color {
     const r = Math.floor(this.x * MAX_COLOR);
     const g = Math.floor(this.y * MAX_COLOR);
@@ -59,6 +71,10 @@ export class Vector3 {
     return new Vector3(this.x / length, this.y / length, this.z / length);
   }
 
+  public multiply(scale: number) {
+    return new Vector3(this.x * scale, this.y * scale, this.z * scale);
+  }
+
   public getLength() {
     return Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2);
   }
@@ -69,5 +85,19 @@ export class Vector3 {
 
   public invert() {
     return new Vector3(-this.x, -this.y, -this.z);
+  }
+
+  public floor() {
+    const x = Math.floor(this.x);
+    const y = Math.floor(this.y);
+    const z = Math.floor(this.z);
+
+    return new Vector3(x, y, z);
+  }
+
+  public normalizeWithZIdentity() {
+    const scale = 1 / this.z;
+
+    return new Vector3(this.x * scale, this.y * scale, 1);
   }
 }

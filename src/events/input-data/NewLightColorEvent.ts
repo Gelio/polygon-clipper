@@ -1,13 +1,13 @@
-import { Color } from 'common/Color';
+import { Vector3 } from 'common/Vector3';
 
 import { AppEvent } from 'events/AppEvent';
 
 export class NewLightColorEvent implements AppEvent {
-  public readonly payload: Color;
+  public readonly payload: Vector3;
   public readonly eventType = NewLightColorEvent.eventType;
   public handled = false;
 
-  constructor(color: Color) {
+  constructor(color: Vector3) {
     this.payload = color;
   }
 
