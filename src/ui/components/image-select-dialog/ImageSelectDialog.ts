@@ -28,6 +28,7 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
 
   private customColorContainer: HTMLDivElement;
   private customColorInput: HTMLInputElement;
+  private initialCustomColorHex: string;
   private customColorImage: HTMLImageElement;
 
   private bottomButtonsContainer: HTMLDivElement;
@@ -37,10 +38,11 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
   private _selectedImage: HTMLImageElement;
   private _wasCancelled = false;
 
-  constructor(presetImageUrls: string[]) {
+  constructor(presetImageUrls: string[], initialCustomColorHex: string) {
     super();
 
     this._presetImageUrls = presetImageUrls;
+    this.initialCustomColorHex = initialCustomColorHex;
 
     this.classList.add(classNames.DIALOG_BOX);
     this.classList.add(classNames.DIALOG);
@@ -195,7 +197,7 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
 
     this.customColorInput = document.createElement('input');
     this.customColorInput.type = 'color';
-    this.customColorInput.value = '#000000';
+    this.customColorInput.value = this.initialCustomColorHex;
     this.customColorContainer.appendChild(this.customColorInput);
 
     this.customColorImage = new Image(20, 20);

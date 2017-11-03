@@ -116,7 +116,10 @@ export class InputDataService implements Service {
     this.openBackgroundTextureDialogButton = document.createElement('button');
     this.openBackgroundTextureDialogButton.innerText = 'Select background texture';
 
-    this.backgroundTextureDialog = new ImageSelectDialog(configuration.presetBackgroundTextures);
+    this.backgroundTextureDialog = new ImageSelectDialog(
+      configuration.presetBackgroundTextures,
+      configuration.initialCustomBackgroundColorHex
+    );
     this.backgroundTextureDialog.name = 'Background texture';
 
     this.openBackgroundTextureDialog = this.openBackgroundTextureDialog.bind(this);
@@ -176,7 +179,10 @@ export class InputDataService implements Service {
     this.openNormalMapDialogButton = document.createElement('button');
     this.openNormalMapDialogButton.innerText = 'Select normal map';
 
-    this.normalMapDialog = new ImageSelectDialog(configuration.presetNormalMaps);
+    this.normalMapDialog = new ImageSelectDialog(
+      configuration.presetNormalMaps,
+      configuration.initialCustomNormalMapColorHex
+    );
     this.normalMapDialog.name = 'Normal map';
 
     this.openNormalMapDialog = this.openNormalMapDialog.bind(this);
@@ -248,7 +254,10 @@ export class InputDataService implements Service {
     this.openHeightMapDialogButton = document.createElement('button');
     this.openHeightMapDialogButton.innerText = 'Select height map';
 
-    this.heightMapDialog = new ImageSelectDialog(configuration.presetHeightMaps);
+    this.heightMapDialog = new ImageSelectDialog(
+      configuration.presetHeightMaps,
+      configuration.initialCustomHeightMapColorHex
+    );
     this.heightMapDialog.name = 'Height map';
 
     this.openHeightMapDialog = this.openHeightMapDialog.bind(this);

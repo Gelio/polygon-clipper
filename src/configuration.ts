@@ -16,15 +16,18 @@ const configuration = {
   displayPathGhostWhenDragging: false,
   canvasFont: '30pt serif',
 
+  initialCustomBackgroundColorHex: '#00a2e8', // blue-ish
   presetBackgroundTextures: [
     'images/backgrounds/red-bricks.jpg',
     'images/backgrounds/Funny-Cat-Face.jpg',
     'images/backgrounds/hqdefault.jpg'
   ],
+  initialCustomHeightMapColorHex: '#000000',  // [0, 0, 0]
   presetHeightMaps: [
     'images/height-maps/brick_heightmap.png',
     'images/height-maps/terrain-heightmap.png'
   ],
+  initialCustomNormalMapColorHex: '#7f7fff',  // [0, 0, 1] (because x and y are [-1, 1])
   presetNormalMaps: [
     'images/normal-maps/brick_normalmap.png',
     'images/normal-maps/normal_map.jpg',
