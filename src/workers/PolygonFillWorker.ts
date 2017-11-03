@@ -144,7 +144,7 @@ function prepareNormalVectors() {
       const g = normalMap.data[index + 1];
       const b = normalMap.data[index + 2];
 
-      const normalVector = Vector3.fromNormalMap(r, g, b).normalizeWithZIdentity();
+      const normalVector = Vector3.fromNormalMap(r, g, b);
       normalVectors[x].push(normalVector);
     }
   }
@@ -167,7 +167,6 @@ function prepareBumpVectors() {
       let dhx = 0; // = H[x + 1, y] - H[x, y]
       let dhy = 0; // = H[x, y+1] - H[x, y]
 
-      // TODO: fix this
       if (heightMapX < maxHeightMapX) {
         dhx = heightMap.data[index + 4] - heightMap.data[index];
       } else {
@@ -186,6 +185,7 @@ function prepareBumpVectors() {
       const t = new Vector3(1, 0, -normalVector.x);
       const b = new Vector3(0, 1, -normalVector.y);
 
+      // Possibly divide dhx and dhy by 255
       const d = Vector3.add(t.multiply(dhx), b.multiply(dhy));
       bumpVectors[x].push(d);
     }
