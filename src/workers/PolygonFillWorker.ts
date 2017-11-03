@@ -145,7 +145,8 @@ function prepareNormalVectors() {
       const b = normalMap.data[index + 2];
 
       const normalVector = Vector3.fromNormalMap(r, g, b);
-      normalVectors[x].push(normalVector);
+      const scale = 1 / normalVector.z; // [Nx, Ny, 1]
+      normalVectors[x].push(normalVector.multiply(scale));
     }
   }
 }
@@ -185,7 +186,6 @@ function prepareBumpVectors() {
       const t = new Vector3(1, 0, -normalVector.x);
       const b = new Vector3(0, 1, -normalVector.y);
 
-      // Possibly divide dhx and dhy by 255
       const d = Vector3.add(t.multiply(dhx), b.multiply(dhy));
       bumpVectors[x].push(d);
     }
