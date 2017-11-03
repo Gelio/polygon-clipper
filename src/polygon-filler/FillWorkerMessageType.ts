@@ -1,9 +1,9 @@
-// TODO: split into separate messages for FillData
-
 export enum FillWorkerMessageType {
-  FillData,
+  CanvasInfo,
+
+  NewFillDataEvent,
+
   StartFill,
   FillStrips,
-  EndFill,
-  LightVersor
+  EndFill
 }

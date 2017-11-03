@@ -94,4 +94,10 @@ export class Vector3 {
 
     return new Vector3(x, y, z);
   }
+
+  public normalizeWithZIdentity() {
+    const scale = 1 / this.z;
+
+    return new Vector3(this.x * scale, this.y * scale, 1);
+  }
 }

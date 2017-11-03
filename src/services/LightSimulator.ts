@@ -53,10 +53,12 @@ export class LightSimulator implements Service {
       case LightVersorType.Constant:
         this.stopCirclingLight();
         this.dispatchLightVersor(new Vector3(0, 0, 1));
+        event.handled = true;
         break;
 
-      case LightVersorType.Circling:
+        case LightVersorType.Circling:
         this.startCirclingLight();
+        event.handled = true;
         break;
 
       default:
