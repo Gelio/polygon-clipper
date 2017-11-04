@@ -5,12 +5,14 @@ import { RenderEvent } from 'events/RenderEvent';
 import { configuration } from 'configuration';
 
 import { LightVersorType } from 'common/LightVersorType';
+import { Point } from 'common/Point';
 import { Vector3 } from 'common/Vector3';
 
 import { Service } from 'services/Service';
 
 interface LightSimulatorDependencies {
   eventAggregator: EventAggregator;
+  centerPoint: Point;
 }
 
 export class LightSimulator implements Service {
@@ -22,12 +24,14 @@ export class LightSimulator implements Service {
   private static readonly radiansModuloValue = 2 * Math.PI;
 
   private readonly eventAggregator: EventAggregator;
+  private readonly centerPoint: Point;
 
   private circlingLightIntervalId: number;
   private circlingLightAngle = 0;
 
   constructor(dependencies: LightSimulatorDependencies) {
     this.eventAggregator = dependencies.eventAggregator;
+    this.centerPoint = dependencies.centerPoint;
 
     this.onNewLightVersorType = this.onNewLightVersorType.bind(this);
     this.circlingLightTick = this.circlingLightTick.bind(this);
@@ -78,8 +82,9 @@ export class LightSimulator implements Service {
   }
 
   private circlingLightTick() {
-    const x = configuration.circlingLight.distance * Math.cos(this.circlingLightAngle);
-    const y = configuration.circlingLight.distance * Math.sin(this.circlingLightAngle);
+    const { x: centerX, y: centerY } = this.centerPoint;
+    const x = centerX + configuration.circlingLight.distance * Math.cos(this.circlingLightAngle);
+    const y = centerY + configuration.circlingLight.distance * Math.sin(this.circlingLightAngle);
 
     const lightVector = new Vector3(x, y, configuration.circlingLight.height);
     const lightVersor = lightVector.normalize();

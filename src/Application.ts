@@ -1,6 +1,6 @@
 import { Layer } from 'common/Layer';
+import { Point } from 'common/Point';
 import { Polygon } from 'common/Polygon';
-import { EventAggregator } from 'events/EventAggregator';
 import { LEX } from 'LEX';
 
 import { PolygonFiller } from 'polygon-filler/PolygonFiller';
@@ -16,6 +16,7 @@ import { PolygonClipper } from 'services/PolygonClipper';
 
 import { UIController } from 'ui/UIController';
 
+import { EventAggregator } from 'events/EventAggregator';
 import { RenderEvent } from 'events/RenderEvent';
 import { RenderFinishedEvent } from 'events/RenderFinishedEvent';
 
@@ -44,7 +45,8 @@ export class Application {
       eventAggregator: this.eventAggregator
     });
     this.lightSimulator = new LightSimulator({
-      eventAggregator: this.eventAggregator
+      eventAggregator: this.eventAggregator,
+      centerPoint: new Point(this.canvas.width / 2, this.canvas.height / 2)
     });
 
     this.renderer = new Renderer({
