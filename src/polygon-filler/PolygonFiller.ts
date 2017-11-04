@@ -25,6 +25,8 @@ interface PolygonFillerDependencies {
 }
 
 export class PolygonFiller implements Service {
+  public fillingFinishedCallback: () => void;
+
   private readonly eventAggregator: EventAggregator;
   private readonly canvas: HTMLCanvasElement;
   private readonly proxyEvents = [
@@ -45,6 +47,7 @@ export class PolygonFiller implements Service {
     this.canvas = dependencies.canvas;
 
     this.onFillWorkerMessage = this.onFillWorkerMessage.bind(this);
+    this.onFillWorkerError = this.onFillWorkerError.bind(this);
     this.sendAppFillDataEvent = this.sendAppFillDataEvent.bind(this);
   }
 
@@ -64,6 +67,7 @@ export class PolygonFiller implements Service {
       height: this.canvas.height
     });
     this.fillWorker.addEventListener('message', this.onFillWorkerMessage);
+    this.fillWorker.addEventListener('error', this.onFillWorkerError);
   }
 
   public destroy() {
@@ -71,6 +75,7 @@ export class PolygonFiller implements Service {
       this.eventAggregator.removeEventListener(event.eventType, this.sendAppFillDataEvent)
     );
     this.fillWorker.removeEventListener('message', this.onFillWorkerMessage);
+    this.fillWorker.removeEventListener('error', this.onFillWorkerError);
     this.fillWorker.terminate();
   }
 
@@ -83,34 +88,22 @@ export class PolygonFiller implements Service {
 
     polygons.forEach(polygon => this.fillPolygon(polygon));
 
-    return new Promise((resolve, reject) => {
-      function onMessage() {
-        resolve();
-        removeEventListeners();
-      }
-
-      function onError(error: ErrorEvent) {
-        reject(error);
-        removeEventListeners();
-      }
-
-      function removeEventListeners() {
-        fillWorker.removeEventListener('message', onMessage);
-        fillWorker.removeEventListener('error', onError);
-      }
-
-      fillWorker.addEventListener('message', onMessage);
-      fillWorker.addEventListener('error', onError);
-
-      fillWorker.postMessage({
-        type: FillWorkerMessageType.EndFill
-      });
+    fillWorker.postMessage({
+      type: FillWorkerMessageType.EndFill
     });
   }
 
   private onFillWorkerMessage(event: MessageEvent) {
     const imageData: ImageData = event.data;
     this.renderingContext.putImageData(imageData, 0, 0);
+
+    if (this.fillingFinishedCallback) {
+      this.fillingFinishedCallback();
+    }
+  }
+
+  private onFillWorkerError(event: ErrorEvent) {
+    console.error('Fill worker error', event);
   }
 
   private fillPolygon(polygon: Polygon) {
