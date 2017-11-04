@@ -4,46 +4,32 @@ import 'ui/components/instructions/InstructionsDialog.scss';
 
 export class InstructionsDialog extends HTMLElement implements DialogBox {
   private dismissButton: HTMLButtonElement;
-  private titleElement: HTMLElement;
-  private usageList: HTMLUListElement;
 
   constructor() {
     super();
 
     this.className = 'instructions-dialog dialog-box';
 
-    this.titleElement = document.createElement('h1');
-    this.titleElement.textContent = 'Instructions';
-    this.titleElement.className = 'instructions-dialog__title';
+    const titleElement = document.createElement('h1');
+    titleElement.textContent = 'Instructions';
+    titleElement.className = 'instructions-dialog__title';
+    this.appendChild(titleElement);
 
-    this.usageList = this.createUsageList();
+    this.createUsageList();
 
     this.dismissButton = document.createElement('button');
     this.dismissButton.textContent = 'Dismiss';
-    this.dismissButton.className = 'instructions-dialog__dismiss-button';
+    this.appendChild(this.dismissButton);
 
     this.close = this.close.bind(this);
   }
 
   public connectedCallback() {
-    this.appendChild(this.titleElement);
-    this.appendChild(this.usageList);
-    this.appendChild(this.dismissButton);
-
     this.dismissButton.addEventListener('click', this.close);
-
-    requestAnimationFrame(() => {
-      this.classList.add('instructions-dialog--active');
-    });
   }
 
   public disconnectedCallback() {
-    this.removeChild(this.titleElement);
-    this.removeChild(this.usageList);
-    this.removeChild(this.dismissButton);
     this.dismissButton.removeEventListener('click', this.close);
-
-    this.classList.remove('instructions-dialog--active');
   }
 
   public close() {
@@ -74,7 +60,7 @@ export class InstructionsDialog extends HTMLElement implements DialogBox {
       .map(usageItemText => this.createUsageListItem(usageItemText))
       .forEach(usageListItem => list.appendChild(usageListItem));
 
-    return list;
+    this.appendChild(list);
   }
 
   private createUsageListItem(textContent: string) {
