@@ -80,11 +80,12 @@ function fillStrips(strips: FillStrip[]) {
 function putPixel(x: number, y: number) {
   const textureVectorWithLightColor = textureVectorsWithLightColor[x][y];
   const distortedNormalVector = distortedNormalVectors[x][y];
+  const lightVersor = getLightVersor(x, y);
 
   // cos theta = v1 * v2 / (norm(v1) * norm(v2))
   // Since lightDirectionVersor and distortedNormalVector are unit vectors, cos theta is just
   // a dot product
-  const cosTheta = Vector3.dotProduct(lightPosition, distortedNormalVector);
+  const cosTheta = Vector3.dotProduct(lightVersor, distortedNormalVector);
   const clampedCosTheta = Math.max(0, Math.min(1, cosTheta));
 
   const result = textureVectorWithLightColor
@@ -96,6 +97,17 @@ function putPixel(x: number, y: number) {
   canvasImageData.data[index + 1] = result.y;
   canvasImageData.data[index + 2] = result.z;
   canvasImageData.data[index + 3] = 255;
+}
+
+function getLightVersor(x: number, y: number): Vector3 {
+  if (lightType === LightType.Constant) {
+    return lightPosition;
+  }
+
+  // Moving light type
+  const lightDirectionVector = Vector3.subtract(lightPosition, new Vector3(x, y, 0));
+
+  return lightDirectionVector.normalize();
 }
 
 function respond() {
