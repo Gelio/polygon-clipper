@@ -1,5 +1,9 @@
 import { EventAggregator } from 'events/EventAggregator';
-import { NewLightPositionEvent, NewLightTypeEvent } from 'events/input-data';
+import {
+  NewLightPositionEvent,
+  NewLightPositionRadiusEvent,
+  NewLightTypeEvent
+} from 'events/input-data';
 import { RenderEvent } from 'events/RenderEvent';
 
 import { configuration } from 'configuration';
@@ -16,43 +20,69 @@ interface LightSimulatorDependencies {
 }
 
 export class LightSimulator implements Service {
-  private static readonly stepInRadians = configuration.circlingLight.interval /
-    configuration.circlingLight.lapTime *
-    2 *
-    Math.PI;
+  private horizontalRadiansModuloValue = 2 * Math.PI; // [0; 360] degrees
+  private horizontalStepInRadians: number;
 
-  private static readonly radiansModuloValue = 2 * Math.PI;
+  private minVerticalAngle: number;
+  private verticalAngleDelta: number;
+  private verticalStepInRadians: number;
 
   private readonly eventAggregator: EventAggregator;
   private readonly centerPoint: Point;
 
-  private circlingLightIntervalId: number;
-  private circlingLightAngle = 0;
+  private movingLightIntervalId: number;
+  private lightHorizontalAngle = 0;
+  private lightVerticalAngleOffset = configuration.movingLight.minVerticalAngle;
+  private lightVerticalRising = true;
+  private lightPositionRadius: number;
 
   constructor(dependencies: LightSimulatorDependencies) {
     this.eventAggregator = dependencies.eventAggregator;
     this.centerPoint = dependencies.centerPoint;
 
     this.onNewLightType = this.onNewLightType.bind(this);
-    this.circlingLightTick = this.circlingLightTick.bind(this);
+    this.movingLightTick = this.movingLightTick.bind(this);
+    this.onNewLightPositionRadius = this.onNewLightPositionRadius.bind(this);
   }
 
   public init() {
     this.eventAggregator.addEventListener(NewLightTypeEvent.eventType, this.onNewLightType);
+    this.eventAggregator.addEventListener(
+      NewLightPositionRadiusEvent.eventType,
+      this.onNewLightPositionRadius
+    );
+
+    this.performInitialCalculations();
   }
 
   public destroy() {
+    this.eventAggregator.removeEventListener(NewLightTypeEvent.eventType, this.onNewLightType);
     this.eventAggregator.removeEventListener(
-      NewLightTypeEvent.eventType,
-      this.onNewLightType
+      NewLightPositionRadiusEvent.eventType,
+      this.onNewLightPositionRadius
     );
-    this.stopCirclingLight();
+    this.stopMovingLight();
+  }
+
+  private performInitialCalculations() {
+    this.horizontalStepInRadians = configuration.movingLight.tickInterval /
+      configuration.movingLight.horizontalLapTime *
+      2 *
+      Math.PI;
+
+    this.minVerticalAngle = configuration.movingLight.minVerticalAngle;
+    this.verticalAngleDelta = configuration.movingLight.maxVerticalAngle -
+      this.minVerticalAngle;
+
+    this.verticalStepInRadians = configuration.movingLight.tickInterval /
+      configuration.movingLight.verticalLapTime *
+      this.verticalAngleDelta;
   }
 
   private onNewLightType(event: NewLightTypeEvent) {
     switch (event.payload) {
       case LightType.Constant:
-        this.stopCirclingLight();
+        this.stopMovingLight();
         this.dispatchLightPosition(new Vector3(0, 0, 1));
         event.handled = true;
         break;
@@ -63,7 +93,7 @@ export class LightSimulator implements Service {
         break;
 
       default:
-        throw new Error('Unknown light versor type');
+        throw new Error('Unknown light type');
     }
   }
 
@@ -72,28 +102,60 @@ export class LightSimulator implements Service {
   }
 
   private startMovingLight() {
-    this.circlingLightIntervalId = setInterval(
-      this.circlingLightTick,
-      configuration.circlingLight.interval
+    this.movingLightIntervalId = setInterval(
+      this.movingLightTick,
+      configuration.movingLight.tickInterval
     );
   }
 
-  private circlingLightTick() {
+  private movingLightTick() {
     const { x: centerX, y: centerY } = this.centerPoint;
-    const x = centerX + configuration.circlingLight.distance * Math.cos(this.circlingLightAngle);
-    const y = centerY + configuration.circlingLight.distance * Math.sin(this.circlingLightAngle);
+    const verticalAngle =
+      configuration.movingLight.minVerticalAngle + this.lightVerticalAngleOffset;
 
-    const lightPosition = new Vector3(x, y, configuration.circlingLight.height);
+    const horizontalRadius = this.lightPositionRadius * Math.cos(verticalAngle);
+
+    const x = centerX + horizontalRadius * Math.cos(this.lightHorizontalAngle);
+    const y = centerY + horizontalRadius * Math.sin(this.lightHorizontalAngle);
+    const z = this.lightPositionRadius * Math.sin(verticalAngle);
+
+    const lightPosition = new Vector3(x, y, z);
     this.dispatchLightPosition(lightPosition);
     this.eventAggregator.dispatchEvent(new RenderEvent());
 
-    this.circlingLightAngle += LightSimulator.stepInRadians;
-    if (this.circlingLightAngle >= LightSimulator.radiansModuloValue) {
-      this.circlingLightAngle -= LightSimulator.radiansModuloValue;
+    this.horizontalTick();
+    this.verticalTick();
+  }
+
+  private horizontalTick() {
+    this.lightHorizontalAngle += this.horizontalStepInRadians;
+    if (this.lightHorizontalAngle >= this.horizontalRadiansModuloValue) {
+      this.lightHorizontalAngle -= this.horizontalRadiansModuloValue;
     }
   }
 
-  private stopCirclingLight() {
-    clearInterval(this.circlingLightIntervalId);
+  private verticalTick() {
+    if (this.lightVerticalRising) {
+      this.lightVerticalAngleOffset += this.verticalStepInRadians;
+      if (this.lightVerticalAngleOffset >= this.verticalAngleDelta) {
+        this.lightVerticalRising = false;
+      }
+    } else {
+      this.lightVerticalAngleOffset -= this.verticalStepInRadians;
+      if (this.lightVerticalAngleOffset <= 0) {
+        this.lightVerticalRising = true;
+      }
+    }
+  }
+
+  private stopMovingLight() {
+    clearInterval(this.movingLightIntervalId);
+    this.lightHorizontalAngle = 0;
+    this.lightVerticalAngleOffset = configuration.movingLight.minVerticalAngle;
+    this.lightVerticalRising = true;
+  }
+
+  private onNewLightPositionRadius(event: NewLightPositionRadiusEvent) {
+    this.lightPositionRadius = event.payload;
   }
 }

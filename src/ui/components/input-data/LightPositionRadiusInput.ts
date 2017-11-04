@@ -29,7 +29,7 @@ export class LightPositionRadiusInput extends HTMLElement {
     this.input.style.width = '80px';
     this.appendChild(this.input);
 
-    this.lightPositionRadius = configuration.circlingLight.defaultRadius;
+    this.setInputValue(configuration.movingLight.defaultRadius);
     this.onLightPositionRadiusChange = this.onLightPositionRadiusChange.bind(this);
   }
 
@@ -52,7 +52,6 @@ export class LightPositionRadiusInput extends HTMLElement {
 
   private onLightPositionRadiusChange() {
     const lightPositionRadius = this.lightPositionRadius;
-    console.log('change to', lightPositionRadius);
     this.setInputValue(lightPositionRadius);
 
     this.eventAggregator.dispatchEvent(new NewLightPositionRadiusEvent(lightPositionRadius));
