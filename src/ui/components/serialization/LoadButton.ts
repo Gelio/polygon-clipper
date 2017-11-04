@@ -22,19 +22,19 @@ export class LoadButton extends HTMLElement {
 
     this.eventAggregator = dependencies.eventAggregator;
     this.stage = dependencies.stage;
+
     this.buttonElement = document.createElement('button');
     this.buttonElement.innerText = 'Load';
+    this.appendChild(this.buttonElement);
 
     this.onClick = this.onClick.bind(this);
   }
 
   public connectedCallback() {
     this.buttonElement.addEventListener('click', this.onClick);
-    this.appendChild(this.buttonElement);
   }
 
   public disconnectedCallback() {
-    this.removeChild(this.buttonElement);
     this.buttonElement.removeEventListener('click', this.onClick);
   }
 
