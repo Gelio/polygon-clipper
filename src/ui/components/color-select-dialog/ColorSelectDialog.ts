@@ -17,12 +17,9 @@ const classNames = {
 export class ColorSelectDialog extends HTMLElement implements DialogBox {
   private _wasCancelled = true;
 
-  private header: HTMLElement;
   private heading: HTMLHeadingElement;
 
   private colorInput: HTMLInputElement;
-
-  private bottomButtonsContainer: HTMLDivElement;
   private cancelButton: HTMLButtonElement;
   private confirmButton: HTMLButtonElement;
 
@@ -64,17 +61,11 @@ export class ColorSelectDialog extends HTMLElement implements DialogBox {
   public connectedCallback() {
     this._wasCancelled = true;
 
-    this.appendChild(this.header);
-    this.appendChild(this.colorInput);
-    this.appendChild(this.bottomButtonsContainer);
     this.cancelButton.addEventListener('click', this.onCancelButtonClick);
     this.confirmButton.addEventListener('click', this.onConfirmButtonClick);
   }
 
   public disconnectedCallback() {
-    this.removeChild(this.header);
-    this.removeChild(this.colorInput);
-    this.removeChild(this.bottomButtonsContainer);
     this.cancelButton.removeEventListener('click', this.onCancelButtonClick);
     this.confirmButton.removeEventListener('click', this.onConfirmButtonClick);
   }
@@ -92,24 +83,27 @@ export class ColorSelectDialog extends HTMLElement implements DialogBox {
   }
 
   private createHeader() {
-    this.header = this.createBlock();
-    this.header.classList.add(classNames.HEADER);
+    const header = this.createBlock();
+    header.classList.add(classNames.HEADER);
+    this.appendChild(header);
 
     this.heading = document.createElement('h2');
     this.heading.classList.add(classNames.HEADING);
     this.heading.innerText = this.name;
 
-    this.header.appendChild(this.heading);
+    header.appendChild(this.heading);
   }
 
   private createColorInput() {
     this.colorInput = document.createElement('input');
     this.colorInput.type = 'color';
+    this.appendChild(this.colorInput);
   }
 
   private createBottomButtons() {
-    this.bottomButtonsContainer = document.createElement('div');
-    this.bottomButtonsContainer.classList.add(classNames.BOTTOM_BUTTONS);
+    const bottomButtonsContainer = document.createElement('div');
+    bottomButtonsContainer.classList.add(classNames.BOTTOM_BUTTONS);
+    this.appendChild(bottomButtonsContainer);
 
     this.cancelButton = document.createElement('button');
     this.cancelButton.innerText = 'Cancel';
@@ -117,8 +111,8 @@ export class ColorSelectDialog extends HTMLElement implements DialogBox {
     this.confirmButton = document.createElement('button');
     this.confirmButton.innerText = 'Confirm';
 
-    this.bottomButtonsContainer.appendChild(this.cancelButton);
-    this.bottomButtonsContainer.appendChild(this.confirmButton);
+    bottomButtonsContainer.appendChild(this.cancelButton);
+    bottomButtonsContainer.appendChild(this.confirmButton);
   }
 
   private onCancelButtonClick() {
