@@ -3,6 +3,7 @@ import {
   NewBackgroundTextureEvent,
   NewHeightMapEvent,
   NewLightColorEvent,
+  NewLightPositionRadiusEvent,
   NewLightTypeEvent,
   NewNormalMapEvent
 } from 'events/input-data';
@@ -61,6 +62,9 @@ export class InputDataInitializer implements Service {
     this.eventAggregator.dispatchEvent(new NewNormalMapEvent(downloadedImageData[1]));
     this.eventAggregator.dispatchEvent(new NewHeightMapEvent(downloadedImageData[2]));
     this.eventAggregator.dispatchEvent(new NewLightColorEvent(configuration.presetLightColor));
+    this.eventAggregator.dispatchEvent(
+      new NewLightPositionRadiusEvent(configuration.movingLight.defaultRadius)
+    );
     this.eventAggregator.dispatchEvent(new NewLightTypeEvent(LightType.Constant));
     this.eventAggregator.dispatchEvent(new RenderEvent());
   }

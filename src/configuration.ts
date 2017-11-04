@@ -35,11 +35,12 @@ const configuration = {
   ],
   presetLightColor: new Vector3(1, 1, 1),
 
-  circlingLight: {
-    lapTime: 10 * 1000,
-    interval: 50,
-    height: 50,
-    distance: 500,
+  movingLight: {
+    horizontalLapTime: 10 * 1000,
+    verticalLapTime: 8 * 1000,
+    minVerticalAngle: (20 / 180) * Math.PI,
+    maxVerticalAngle: (70 / 180) * Math.PI,
+    tickInterval: 50,
     defaultRadius: 500
   }
 };
