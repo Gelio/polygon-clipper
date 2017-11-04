@@ -4,7 +4,8 @@ $imageMaxHeight: 200px;
 .image-select-dialog {
   padding: 1rem;
 
-  width: 75vw;
+  width: 75%;
+  max-width: 800px;
 }
 
 .image-select-dialog__heading {
