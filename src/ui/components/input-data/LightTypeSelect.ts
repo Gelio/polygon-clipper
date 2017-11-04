@@ -4,6 +4,8 @@ import { EventAggregator } from 'events/EventAggregator';
 import { NewLightTypeEvent } from 'events/input-data';
 import { RenderEvent } from 'events/RenderEvent';
 
+import { LightPositionRadiusInput } from 'ui/components/input-data/LightPositionRadiusInput';
+
 export interface LightTypeSelectDependencies {
   eventAggregator: EventAggregator;
 }
@@ -25,6 +27,7 @@ export class LightTypeSelect extends HTMLElement {
   ];
 
   private lightTypeSelect: HTMLSelectElement;
+  private lightPositionRadiusInput: LightPositionRadiusInput;
 
   constructor(dependencies: LightTypeSelectDependencies) {
     super();
@@ -36,6 +39,10 @@ export class LightTypeSelect extends HTMLElement {
     this.setupLightTypeSelect();
 
     this.onLightTypeChange = this.onLightTypeChange.bind(this);
+    this.lightPositionRadiusInput = new LightPositionRadiusInput({
+      eventAggregator: this.eventAggregator
+    });
+    this.lightPositionRadiusInput.style.marginLeft = '5px';
   }
 
   public get selectedLightType(): LightType {
@@ -100,7 +107,9 @@ export class LightTypeSelect extends HTMLElement {
     this.eventAggregator.dispatchEvent(new RenderEvent());
 
     if (lightType === LightType.Moving) {
-      // Display input for changing the radius
+      this.appendChild(this.lightPositionRadiusInput);
+    } else {
+      this.removeChild(this.lightPositionRadiusInput);
     }
   }
 }

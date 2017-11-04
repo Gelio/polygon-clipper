@@ -39,7 +39,8 @@ const configuration = {
     lapTime: 10 * 1000,
     interval: 50,
     height: 50,
-    distance: 500
+    distance: 500,
+    defaultRadius: 500
   }
 };
 
