@@ -62,10 +62,12 @@ export class DialogOverlay extends HTMLElement {
 
   private showOverlay() {
     this.overlayElement.classList.add('overlay--visible');
+    document.body.classList.add('popup-active');
   }
 
   private hideOverlay() {
     this.overlayElement.classList.remove('overlay--visible');
+    document.body.classList.remove('popup-active');
   }
 }
 
