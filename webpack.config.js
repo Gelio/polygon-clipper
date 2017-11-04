@@ -10,7 +10,8 @@ const CONFIG = {
 module.exports = {
   entry: {
     bundle: './src/index',
-    fillWorker: './src/workers/PolygonFillWorker'
+    fillWorker: './src/workers/PolygonFillWorker',
+    clearWorker: './src/workers/ClearWorker'
   },
   output: {
     path: CONFIG.distPath,
