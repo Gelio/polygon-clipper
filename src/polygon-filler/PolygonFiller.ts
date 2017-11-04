@@ -18,6 +18,7 @@ import { FillWorkerMessageType } from 'polygon-filler/FillWorkerMessageType';
 import { Service } from 'services/Service';
 
 const FILL_WORKER_URL = 'fillWorker.js';
+const CLEAR_WORKER_URL = 'clearWorker.js';
 
 interface PolygonFillerDependencies {
   eventAggregator: EventAggregator;
@@ -39,6 +40,11 @@ export class PolygonFiller implements Service {
   private renderingContext: CanvasRenderingContext2D;
 
   private fillWorker: Worker;
+  private clearWorker: Worker;
+
+  private readyImageData: ImageData;
+  private clearedImageData: ImageData;  // needs to be a promise or something
+  private displayedImageData: ImageData;
 
   constructor(dependencies: PolygonFillerDependencies) {
     this.eventAggregator = dependencies.eventAggregator;
@@ -46,6 +52,7 @@ export class PolygonFiller implements Service {
 
     this.onFillWorkerMessage = this.onFillWorkerMessage.bind(this);
     this.sendAppFillDataEvent = this.sendAppFillDataEvent.bind(this);
+    this.onClearWorkerMessage = this.onClearWorkerMessage.bind(this);
   }
 
   public injectCanvasRenderingContext(renderingContext: CanvasRenderingContext2D) {
@@ -53,9 +60,17 @@ export class PolygonFiller implements Service {
   }
 
   public init() {
+    const { width, height } = this.canvas;
+    this.readyImageData = this.renderingContext.createImageData(width, height);
+    this.clearedImageData = this.renderingContext.createImageData(width, height);
+    this.displayedImageData = this.renderingContext.createImageData(width, height);
+
     this.proxyEvents.forEach(event =>
       this.eventAggregator.addEventListener(event.eventType, this.sendAppFillDataEvent)
     );
+
+    this.clearWorker = new Worker(CLEAR_WORKER_URL);
+    this.clearWorker.addEventListener('message', this.onClearWorkerMessage);
 
     this.fillWorker = new Worker(FILL_WORKER_URL);
     this.fillWorker.postMessage({
@@ -70,6 +85,7 @@ export class PolygonFiller implements Service {
     this.proxyEvents.forEach(event =>
       this.eventAggregator.removeEventListener(event.eventType, this.sendAppFillDataEvent)
     );
+    this.clearWorker.removeEventListener('message', this.onClearWorkerMessage);
     this.fillWorker.removeEventListener('message', this.onFillWorkerMessage);
     this.fillWorker.terminate();
   }
@@ -77,9 +93,16 @@ export class PolygonFiller implements Service {
   public fillPolygons(polygons: Polygon[]) {
     const fillWorker = this.fillWorker;
 
+    // console.log('Sending ready to fill, ready = cleared');
     fillWorker.postMessage({
-      type: FillWorkerMessageType.StartFill
-    });
+      type: FillWorkerMessageType.StartFill,
+      imageData: this.readyImageData
+    }, [this.readyImageData.data.buffer]);
+    this.readyImageData = this.clearedImageData;
+    // mark cleared image data as promise somehow
+
+    // console.log('Sending display to clear worker');
+    this.clearWorker.postMessage(this.displayedImageData, [this.displayedImageData.data.buffer]);
 
     polygons.forEach(polygon => this.fillPolygon(polygon));
 
@@ -109,8 +132,9 @@ export class PolygonFiller implements Service {
   }
 
   private onFillWorkerMessage(event: MessageEvent) {
-    const imageData: ImageData = event.data;
-    this.renderingContext.putImageData(imageData, 0, 0);
+    // console.log('Displaying');
+    this.displayedImageData = event.data;
+    this.renderingContext.putImageData(this.displayedImageData, 0, 0);
   }
 
   private fillPolygon(polygon: Polygon) {
@@ -200,5 +224,11 @@ export class PolygonFiller implements Service {
       type: FillWorkerMessageType.NewFillDataEvent,
       event
     });
+  }
+
+  private onClearWorkerMessage(event: MessageEvent) {
+    // console.log('Received cleared');
+    this.clearedImageData = event.data;
+    // resolve cleared image data promise somehow
   }
 }
