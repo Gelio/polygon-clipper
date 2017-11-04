@@ -66,10 +66,12 @@ export class Application {
     });
 
     this.onRenderEvent = this.onRenderEvent.bind(this);
-    this.render = this.render.bind(this);
+    this.startRendering = this.startRendering.bind(this);
+    this.onFillingFinished = this.onFillingFinished.bind(this);
   }
 
   public async init() {
+    this.polygonFiller.fillingFinishedCallback = this.onFillingFinished;
     this.polygonLayer = new Layer(LEX.POLYGON_LAYER_NAME);
     this.stage.layers.push(this.polygonLayer);
 
@@ -104,17 +106,20 @@ export class Application {
     }
 
     this.isRendering = true;
-    requestAnimationFrame(this.render);
+    requestAnimationFrame(this.startRendering);
   }
 
-  private async render() {
-    await this.polygonFiller.fillPolygons(<Polygon[]>this.polygonLayer.paths);
+  private startRendering() {
+    this.polygonFiller.fillPolygons(<Polygon[]>this.polygonLayer.paths);
+  }
+
+  private onFillingFinished() {
     this.stage.render(this.renderer);
     this.eventAggregator.dispatchEvent(new RenderFinishedEvent());
 
     if (this.isNextRenderQueued) {
       this.isNextRenderQueued = false;
-      requestAnimationFrame(this.render);
+      requestAnimationFrame(this.startRendering);
     } else {
       this.isRendering = false;
     }
