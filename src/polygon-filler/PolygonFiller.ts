@@ -1,5 +1,4 @@
 import { Polygon } from 'common/Polygon';
-import { Vector3 } from 'common/Vector3';
 
 import { AppEvent } from 'events/AppEvent';
 import { EventAggregator } from 'events/EventAggregator';
@@ -7,12 +6,12 @@ import {
   NewBackgroundTextureEvent,
   NewHeightMapEvent,
   NewLightColorEvent,
-  NewLightVersorEvent,
+  NewLightPositionEvent,
+  NewLightTypeEvent,
   NewNormalMapEvent
 } from 'events/input-data';
 
 import { ActiveEdge } from 'polygon-filler/ActiveEdge';
-import { AppFillData } from 'polygon-filler/AppFillData';
 import { FillStrip } from 'polygon-filler/FillStrip';
 import { FillWorkerMessageType } from 'polygon-filler/FillWorkerMessageType';
 
@@ -28,27 +27,25 @@ interface PolygonFillerDependencies {
 export class PolygonFiller implements Service {
   private readonly eventAggregator: EventAggregator;
   private readonly canvas: HTMLCanvasElement;
+  private readonly proxyEvents = [
+    NewBackgroundTextureEvent,
+    NewHeightMapEvent,
+    NewLightColorEvent,
+    NewLightPositionEvent,
+    NewLightTypeEvent,
+    NewNormalMapEvent
+  ];
+
   private renderingContext: CanvasRenderingContext2D;
 
   private fillWorker: Worker;
-
-  private readonly fillData: AppFillData = {
-    backgroundTexture: new ImageData(1, 1),
-    heightMap: new ImageData(1, 1),
-    lightColor: new Vector3(1, 1, 1),
-    normalMap: new ImageData(1, 1)
-  };
 
   constructor(dependencies: PolygonFillerDependencies) {
     this.eventAggregator = dependencies.eventAggregator;
     this.canvas = dependencies.canvas;
 
-    this.onNewBackgroundTexture = this.onNewBackgroundTexture.bind(this);
-    this.onNewHeightMap = this.onNewHeightMap.bind(this);
-    this.onNewLightColor = this.onNewLightColor.bind(this);
-    this.onNewLightVersor = this.onNewLightVersor.bind(this);
-    this.onNewNormalMap = this.onNewNormalMap.bind(this);
     this.onFillWorkerMessage = this.onFillWorkerMessage.bind(this);
+    this.sendAppFillDataEvent = this.sendAppFillDataEvent.bind(this);
   }
 
   public injectCanvasRenderingContext(renderingContext: CanvasRenderingContext2D) {
@@ -56,16 +53,9 @@ export class PolygonFiller implements Service {
   }
 
   public init() {
-    const eventAggregator = this.eventAggregator;
-
-    eventAggregator.addEventListener(
-      NewBackgroundTextureEvent.eventType,
-      this.onNewBackgroundTexture
+    this.proxyEvents.forEach(event =>
+      this.eventAggregator.addEventListener(event.eventType, this.sendAppFillDataEvent)
     );
-    eventAggregator.addEventListener(NewHeightMapEvent.eventType, this.onNewHeightMap);
-    eventAggregator.addEventListener(NewLightColorEvent.eventType, this.onNewLightColor);
-    eventAggregator.addEventListener(NewLightVersorEvent.eventType, this.onNewLightVersor);
-    eventAggregator.addEventListener(NewNormalMapEvent.eventType, this.onNewNormalMap);
 
     this.fillWorker = new Worker(FILL_WORKER_URL);
     this.fillWorker.postMessage({
@@ -77,16 +67,9 @@ export class PolygonFiller implements Service {
   }
 
   public destroy() {
-    const eventAggregator = this.eventAggregator;
-
-    eventAggregator.removeEventListener(
-      NewBackgroundTextureEvent.eventType,
-      this.onNewBackgroundTexture
+    this.proxyEvents.forEach(event =>
+      this.eventAggregator.removeEventListener(event.eventType, this.sendAppFillDataEvent)
     );
-    eventAggregator.removeEventListener(NewHeightMapEvent.eventType, this.onNewHeightMap);
-    eventAggregator.removeEventListener(NewLightColorEvent.eventType, this.onNewLightColor);
-    eventAggregator.removeEventListener(NewLightVersorEvent.eventType, this.onNewLightVersor);
-    eventAggregator.removeEventListener(NewNormalMapEvent.eventType, this.onNewNormalMap);
     this.fillWorker.removeEventListener('message', this.onFillWorkerMessage);
     this.fillWorker.terminate();
   }
@@ -210,35 +193,6 @@ export class PolygonFiller implements Service {
     }
 
     return fillStrips;
-  }
-
-  private onNewBackgroundTexture(event: NewBackgroundTextureEvent) {
-    this.fillData.backgroundTexture = event.payload;
-    this.sendAppFillDataEvent(event);
-    event.handled = true;
-  }
-
-  private onNewHeightMap(event: NewHeightMapEvent) {
-    this.fillData.heightMap = event.payload;
-    this.sendAppFillDataEvent(event);
-    event.handled = true;
-  }
-
-  private onNewLightColor(event: NewLightColorEvent) {
-    this.fillData.lightColor = event.payload;
-    this.sendAppFillDataEvent(event);
-    event.handled = true;
-  }
-
-  private onNewLightVersor(event: NewLightVersorEvent) {
-    this.sendAppFillDataEvent(event);
-    event.handled = true;
-  }
-
-  private onNewNormalMap(event: NewNormalMapEvent) {
-    this.fillData.normalMap = event.payload;
-    this.sendAppFillDataEvent(event);
-    event.handled = true;
   }
 
   private sendAppFillDataEvent(event: AppEvent) {

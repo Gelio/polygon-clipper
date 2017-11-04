@@ -1,5 +1,5 @@
 import { EventAggregator } from 'events/EventAggregator';
-import { NewLightVersorTypeEvent } from 'events/input-data';
+import { NewLightTypeEvent } from 'events/input-data';
 import { RenderEvent } from 'events/RenderEvent';
 
 import { ImageDownloader } from 'services/ImageDownloader';
@@ -7,7 +7,7 @@ import { Service } from 'services/Service';
 
 import { DialogOverlay } from 'ui/components/dialog-overlay/DialogOverlay';
 
-import { LightVersorType } from 'common/LightVersorType';
+import { LightType } from 'common/LightType';
 
 import {
   BackgroundSelectButton,
@@ -32,14 +32,14 @@ export class InputDataService implements Service {
   private lightColorSelectButton: LightColorSelectButton;
   private normalMapSelectButton: NormalMapSelectButton;
 
-  private lightVersorContainer: HTMLElement;
-  private lightVersorSelect: HTMLSelectElement;
+  private lightTypeContainer: HTMLElement;
+  private lightTypeSelect: HTMLSelectElement;
 
   constructor(dependencies: SerializationServiceDependencies) {
     this.eventAggregator = dependencies.eventAggregator;
     this.imageDownloader = dependencies.imageDownloader;
 
-    this.setupLightVersorSelect();
+    this.setupLightTypeSelect();
   }
 
   public init() {
@@ -51,9 +51,9 @@ export class InputDataService implements Service {
     this.inputDataContainer.appendChild(this.lightColorSelectButton);
     this.inputDataContainer.appendChild(this.normalMapSelectButton);
     this.inputDataContainer.appendChild(this.heightMapSelectButton);
-    this.inputDataContainer.appendChild(this.lightVersorContainer);
+    this.inputDataContainer.appendChild(this.lightTypeContainer);
 
-    this.lightVersorSelect.addEventListener('change', this.onLightVersorSelectChange);
+    this.lightTypeSelect.addEventListener('change', this.onLightTypeSelectChange);
   }
 
   public destroy() {
@@ -65,7 +65,7 @@ export class InputDataService implements Service {
     // tslint:disable-next-line
     this.inputDataContainer.innerHTML = '';
 
-    this.lightVersorSelect.removeEventListener('change', this.onLightVersorSelectChange);
+    this.lightTypeSelect.removeEventListener('change', this.onLightTypeSelectChange);
   }
 
   private findInputDataContainer() {
@@ -98,44 +98,41 @@ export class InputDataService implements Service {
     this.normalMapSelectButton = new NormalMapSelectButton(imageSelectButtonDependencies);
   }
 
-  // #region Light versor select
-  private setupLightVersorSelect() {
-    this.lightVersorContainer = document.createElement('div');
+  private setupLightTypeSelect() {
+    this.lightTypeContainer = document.createElement('div');
 
     const label = document.createElement('label');
-    label.setAttribute('for', 'light-wersor-select');
-    label.innerText = 'Light versor: ';
-    this.lightVersorContainer.appendChild(label);
+    label.setAttribute('for', 'light-type-select');
+    label.innerText = 'Light type: ';
+    this.lightTypeContainer.appendChild(label);
 
-    this.lightVersorSelect = document.createElement('select');
-    const constantVersorOption = document.createElement('option');
-    constantVersorOption.innerText = 'Constant ([0, 0, 1])';
-    constantVersorOption.value = 'constant';
+    this.lightTypeSelect = document.createElement('select');
+    const constantLightTypeOption = document.createElement('option');
+    constantLightTypeOption.innerText = 'Constant ([0, 0, 1])';
+    constantLightTypeOption.value = 'constant';
 
-    const movingVersorOption = document.createElement('option');
-    movingVersorOption.innerText = 'Circling above the screen';
-    movingVersorOption.value = 'circling';
+    const movingLightTypeOption = document.createElement('option');
+    movingLightTypeOption.innerText = 'Moving above the screen';
+    movingLightTypeOption.value = 'moving';
 
-    this.lightVersorSelect.appendChild(constantVersorOption);
-    this.lightVersorSelect.appendChild(movingVersorOption);
+    this.lightTypeSelect.appendChild(constantLightTypeOption);
+    this.lightTypeSelect.appendChild(movingLightTypeOption);
 
-    this.lightVersorContainer.appendChild(this.lightVersorSelect);
+    this.lightTypeContainer.appendChild(this.lightTypeSelect);
 
-    this.onLightVersorSelectChange = this.onLightVersorSelectChange.bind(this);
+    this.onLightTypeSelectChange = this.onLightTypeSelectChange.bind(this);
   }
 
-  private onLightVersorSelectChange() {
-    const value = this.lightVersorSelect.value;
-    const versorTypes: { [name: string]: LightVersorType } = {
-      constant: LightVersorType.Constant,
-      circling: LightVersorType.Circling
+  private onLightTypeSelectChange() {
+    const value = this.lightTypeSelect.value;
+    const lightTypes: { [name: string]: LightType } = {
+      constant: LightType.Constant,
+      moving: LightType.Moving
     };
 
-    const versorType = versorTypes[value];
+    const lightType = lightTypes[value];
 
-    this.eventAggregator.dispatchEvent(new NewLightVersorTypeEvent(versorType));
+    this.eventAggregator.dispatchEvent(new NewLightTypeEvent(lightType));
     this.eventAggregator.dispatchEvent(new RenderEvent());
   }
-
-  // #endregion
 }

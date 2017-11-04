@@ -3,7 +3,7 @@ import {
   NewBackgroundTextureEvent,
   NewHeightMapEvent,
   NewLightColorEvent,
-  NewLightVersorTypeEvent,
+  NewLightTypeEvent,
   NewNormalMapEvent
 } from 'events/input-data';
 import { RenderEvent } from 'events/RenderEvent';
@@ -12,7 +12,7 @@ import { SyncComponentsEvent } from 'events/ui/SyncComponentsEvent';
 import { configuration } from 'configuration';
 
 import { Layer } from 'common/Layer';
-import { LightVersorType } from 'common/LightVersorType';
+import { LightType } from 'common/LightType';
 import { LineProperties } from 'common/LineProperties';
 import { Point } from 'common/Point';
 import { Polygon } from 'common/Polygon';
@@ -61,7 +61,7 @@ export class InputDataInitializer implements Service {
     this.eventAggregator.dispatchEvent(new NewNormalMapEvent(downloadedImageData[1]));
     this.eventAggregator.dispatchEvent(new NewHeightMapEvent(downloadedImageData[2]));
     this.eventAggregator.dispatchEvent(new NewLightColorEvent(configuration.presetLightColor));
-    this.eventAggregator.dispatchEvent(new NewLightVersorTypeEvent(LightVersorType.Constant));
+    this.eventAggregator.dispatchEvent(new NewLightTypeEvent(LightType.Constant));
     this.eventAggregator.dispatchEvent(new RenderEvent());
   }
 

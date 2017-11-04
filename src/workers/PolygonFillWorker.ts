@@ -1,3 +1,4 @@
+import { LightType } from 'common/LightType';
 import { Vector3 } from 'common/Vector3';
 
 import { AppEvent } from 'events/AppEvent';
@@ -5,7 +6,8 @@ import {
   NewBackgroundTextureEvent,
   NewHeightMapEvent,
   NewLightColorEvent,
-  NewLightVersorEvent,
+  NewLightPositionEvent,
+  NewLightTypeEvent,
   NewNormalMapEvent
 } from 'events/input-data';
 
@@ -22,7 +24,8 @@ const appFillData: AppFillData = {
 let canvasWidth = 0;
 let canvasHeight = 0;
 let canvasImageData: ImageData;
-let lightDirectionVersor = new Vector3(0, 0, 1);
+let lightPosition = new Vector3(0, 0, 1);
+let lightType = LightType.Constant;
 let initializationValue = 0;
 
 type Vector3Map = Vector3[][];
@@ -81,7 +84,7 @@ function putPixel(x: number, y: number) {
   // cos theta = v1 * v2 / (norm(v1) * norm(v2))
   // Since lightDirectionVersor and distortedNormalVector are unit vectors, cos theta is just
   // a dot product
-  const cosTheta = Vector3.dotProduct(lightDirectionVersor, distortedNormalVector);
+  const cosTheta = Vector3.dotProduct(lightPosition, distortedNormalVector);
   const clampedCosTheta = Math.max(0, Math.min(1, cosTheta));
 
   const result = textureVectorWithLightColor
@@ -226,7 +229,8 @@ function handleNewFillDataEvent(event: AppEvent) {
     [NewBackgroundTextureEvent.eventType]: onNewBackgroundTexture,
     [NewHeightMapEvent.eventType]: onNewHeightMap,
     [NewLightColorEvent.eventType]: onNewLightColor,
-    [NewLightVersorEvent.eventType]: onNewLightVersor,
+    [NewLightPositionEvent.eventType]: onNewLightPosition,
+    [NewLightTypeEvent.eventType]: onNewLightType,
     [NewNormalMapEvent.eventType]: onNewNormalMap
   };
 
@@ -270,10 +274,19 @@ function onNewLightColor(event: NewLightColorEvent) {
   }
 }
 
-function onNewLightVersor(event: NewLightVersorEvent) {
+function onNewLightPosition(event: NewLightPositionEvent) {
   const { x, y, z } = event.payload;
-  lightDirectionVersor = new Vector3(x, y, z);
+  lightPosition = new Vector3(x, y, z);
   initializationValue |= 8;
+
+  if (canInitialize()) {
+    performInitialPreparation();
+  }
+}
+
+function onNewLightType(event: NewLightTypeEvent) {
+  lightType = event.payload;
+  initializationValue |= 16;
 
   if (canInitialize()) {
     performInitialPreparation();
@@ -282,7 +295,7 @@ function onNewLightVersor(event: NewLightVersorEvent) {
 
 function onNewNormalMap(event: NewNormalMapEvent) {
   appFillData.normalMap = event.payload;
-  initializationValue |= 16;
+  initializationValue |= 32;
 
   if (hasInitialized()) {
     prepareNormalVectors();
@@ -295,8 +308,8 @@ function onNewNormalMap(event: NewNormalMapEvent) {
 // tslint:enable no-bitwise
 
 function canInitialize() {
-  if (initializationValue === 31) {
-    initializationValue = 63;
+  if (initializationValue === 63) {
+    initializationValue = 127;
 
     return true;
   }
@@ -305,5 +318,5 @@ function canInitialize() {
 }
 
 function hasInitialized() {
-  return initializationValue === 63;
+  return initializationValue === 127;
 }

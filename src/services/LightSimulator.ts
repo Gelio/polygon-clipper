@@ -1,10 +1,10 @@
 import { EventAggregator } from 'events/EventAggregator';
-import { NewLightVersorEvent, NewLightVersorTypeEvent } from 'events/input-data';
+import { NewLightPositionEvent, NewLightTypeEvent } from 'events/input-data';
 import { RenderEvent } from 'events/RenderEvent';
 
 import { configuration } from 'configuration';
 
-import { LightVersorType } from 'common/LightVersorType';
+import { LightType } from 'common/LightType';
 import { Point } from 'common/Point';
 import { Vector3 } from 'common/Vector3';
 
@@ -33,35 +33,32 @@ export class LightSimulator implements Service {
     this.eventAggregator = dependencies.eventAggregator;
     this.centerPoint = dependencies.centerPoint;
 
-    this.onNewLightVersorType = this.onNewLightVersorType.bind(this);
+    this.onNewLightType = this.onNewLightType.bind(this);
     this.circlingLightTick = this.circlingLightTick.bind(this);
   }
 
   public init() {
-    this.eventAggregator.addEventListener(
-      NewLightVersorTypeEvent.eventType,
-      this.onNewLightVersorType
-    );
+    this.eventAggregator.addEventListener(NewLightTypeEvent.eventType, this.onNewLightType);
   }
 
   public destroy() {
     this.eventAggregator.removeEventListener(
-      NewLightVersorTypeEvent.eventType,
-      this.onNewLightVersorType
+      NewLightTypeEvent.eventType,
+      this.onNewLightType
     );
     this.stopCirclingLight();
   }
 
-  private onNewLightVersorType(event: NewLightVersorTypeEvent) {
+  private onNewLightType(event: NewLightTypeEvent) {
     switch (event.payload) {
-      case LightVersorType.Constant:
+      case LightType.Constant:
         this.stopCirclingLight();
-        this.dispatchLightVersor(new Vector3(0, 0, 1));
+        this.dispatchLightPosition(new Vector3(0, 0, 1));
         event.handled = true;
         break;
 
-        case LightVersorType.Circling:
-        this.startCirclingLight();
+      case LightType.Moving:
+        this.startMovingLight();
         event.handled = true;
         break;
 
@@ -70,11 +67,11 @@ export class LightSimulator implements Service {
     }
   }
 
-  private dispatchLightVersor(versor: Vector3) {
-    this.eventAggregator.dispatchEvent(new NewLightVersorEvent(versor));
+  private dispatchLightPosition(position: Vector3) {
+    this.eventAggregator.dispatchEvent(new NewLightPositionEvent(position));
   }
 
-  private startCirclingLight() {
+  private startMovingLight() {
     this.circlingLightIntervalId = setInterval(
       this.circlingLightTick,
       configuration.circlingLight.interval
@@ -86,10 +83,8 @@ export class LightSimulator implements Service {
     const x = centerX + configuration.circlingLight.distance * Math.cos(this.circlingLightAngle);
     const y = centerY + configuration.circlingLight.distance * Math.sin(this.circlingLightAngle);
 
-    const lightVector = new Vector3(x, y, configuration.circlingLight.height);
-    const lightVersor = lightVector.normalize();
-
-    this.eventAggregator.dispatchEvent(new NewLightVersorEvent(lightVersor));
+    const lightPosition = new Vector3(x, y, configuration.circlingLight.height);
+    this.dispatchLightPosition(lightPosition);
     this.eventAggregator.dispatchEvent(new RenderEvent());
 
     this.circlingLightAngle += LightSimulator.stepInRadians;
