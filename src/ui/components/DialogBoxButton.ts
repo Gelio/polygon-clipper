@@ -18,6 +18,7 @@ export abstract class DialogBoxButton extends HTMLElement {
 
     this.button = document.createElement('button');
     this.button.innerText = 'Open dialog box';
+    this.appendChild(this.button);
 
     this.openDialogBox = this.openDialogBox.bind(this);
     this.onDialogBoxClosed = this.onDialogBoxClosed.bind(this);
@@ -29,13 +30,10 @@ export abstract class DialogBoxButton extends HTMLElement {
   }
 
   public connectedCallback() {
-    this.appendChild(this.button);
-
     this.button.addEventListener('click', this.openDialogBox);
   }
 
   public disconnectedCallback() {
-    this.removeChild(this.button);
     this.button.removeEventListener('click', this.openDialogBox);
 
     this.dialogBox.removeEventListener('close', this.onDialogBoxClosed);
