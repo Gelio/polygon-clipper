@@ -1,5 +1,9 @@
+body.popup-active {
+  overflow: hidden;
+}
+
 .overlay {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
 

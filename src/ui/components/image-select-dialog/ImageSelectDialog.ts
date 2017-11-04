@@ -18,20 +18,16 @@ const classNames = {
 export class ImageSelectDialog extends HTMLElement implements DialogBox {
   private _presetImageUrls: string[];
 
-  private header: HTMLElement;
   private heading: HTMLHeadingElement;
 
   private presetImagesListContainer: HTMLDivElement;
-  private customImageContainer: HTMLDivElement;
   private customFileInput: HTMLInputElement;
   private customImage: HTMLImageElement;
 
-  private customColorContainer: HTMLDivElement;
   private customColorInput: HTMLInputElement;
   private initialCustomColorHex: string;
   private customColorImage: HTMLImageElement;
 
-  private bottomButtonsContainer: HTMLDivElement;
   private cancelButton: HTMLButtonElement;
   private confirmButton: HTMLButtonElement;
 
@@ -88,12 +84,6 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
   public connectedCallback() {
     this._wasCancelled = true;
 
-    this.appendChild(this.header);
-    this.appendChild(this.presetImagesListContainer);
-    this.appendChild(this.customImageContainer);
-    this.appendChild(this.customColorContainer);
-    this.appendChild(this.bottomButtonsContainer);
-
     this.cancelButton.addEventListener('click', this.onCancelButtonClick);
     this.confirmButton.addEventListener('click', this.onConfirmButtonClick);
     this.customFileInput.addEventListener('change', this.showCustomImage);
@@ -117,12 +107,6 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
 
     this.cancelButton.removeEventListener('click', this.onCancelButtonClick);
     this.confirmButton.removeEventListener('click', this.onConfirmButtonClick);
-
-    this.removeChild(this.header);
-    this.removeChild(this.presetImagesListContainer);
-    this.removeChild(this.customImageContainer);
-    this.removeChild(this.customColorContainer);
-    this.removeChild(this.bottomButtonsContainer);
   }
 
   public canClose() {
@@ -134,14 +118,15 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
   }
 
   private createHeader() {
-    this.header = this.createBlock();
-    this.header.classList.add(classNames.HEADER);
+    const header = this.createBlock();
+    header.classList.add(classNames.HEADER);
+    this.appendChild(header);
 
     this.heading = document.createElement('h2');
     this.heading.classList.add(classNames.HEADING);
     this.heading.innerText = this.name;
 
-    this.header.appendChild(this.heading);
+    header.appendChild(this.heading);
   }
 
   private createPresetImagesList() {
@@ -157,23 +142,26 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
       .forEach(image => imagesContainer.appendChild(image));
 
     this.presetImagesListContainer = container;
+    this.appendChild(this.presetImagesListContainer);
 
     this.selectImage(<HTMLImageElement>this.presetImagesListContainer.querySelector('img'));
   }
 
   private createCustomImagePicker() {
-    this.customImageContainer = this.createBlock();
+    const customImageContainer = this.createBlock();
+    this.appendChild(customImageContainer);
+
     const blockTitle = this.createBlockTitle('Select custom image');
-    this.customImageContainer.appendChild(blockTitle);
+    customImageContainer.appendChild(blockTitle);
 
     this.customFileInput = document.createElement('input');
     this.customFileInput.type = 'file';
     this.customFileInput.accept = 'image/*';
-    this.customImageContainer.appendChild(this.customFileInput);
+    customImageContainer.appendChild(this.customFileInput);
 
     this.customImage = document.createElement('img');
     this.customImage.classList.add(classNames.CUSTOM_IMAGE);
-    this.customImageContainer.appendChild(this.customImage);
+    customImageContainer.appendChild(this.customImage);
   }
 
   private showCustomImage() {
@@ -191,17 +179,19 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
   }
 
   private createCustomColorPicker() {
-    this.customColorContainer = this.createBlock();
+    const customColorContainer = this.createBlock();
+    this.appendChild(customColorContainer);
+
     const title = this.createBlockTitle('Custom solid color');
-    this.customColorContainer.appendChild(title);
+    customColorContainer.appendChild(title);
 
     this.customColorInput = document.createElement('input');
     this.customColorInput.type = 'color';
     this.customColorInput.value = this.initialCustomColorHex;
-    this.customColorContainer.appendChild(this.customColorInput);
+    customColorContainer.appendChild(this.customColorInput);
 
     this.customColorImage = new Image(20, 20);
-    this.customColorContainer.appendChild(this.customColorImage);
+    customColorContainer.appendChild(this.customColorImage);
 
     this.setCustomColorImageColor();
   }
@@ -228,8 +218,9 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
   }
 
   private createBottomButtons() {
-    this.bottomButtonsContainer = document.createElement('div');
-    this.bottomButtonsContainer.classList.add(classNames.BOTTOM_BUTTONS);
+    const bottomButtonsContainer = document.createElement('div');
+    bottomButtonsContainer.classList.add(classNames.BOTTOM_BUTTONS);
+    this.appendChild(bottomButtonsContainer);
 
     this.cancelButton = document.createElement('button');
     this.cancelButton.innerText = 'Cancel';
@@ -237,8 +228,8 @@ export class ImageSelectDialog extends HTMLElement implements DialogBox {
     this.confirmButton = document.createElement('button');
     this.confirmButton.innerText = 'Confirm';
 
-    this.bottomButtonsContainer.appendChild(this.cancelButton);
-    this.bottomButtonsContainer.appendChild(this.confirmButton);
+    bottomButtonsContainer.appendChild(this.cancelButton);
+    bottomButtonsContainer.appendChild(this.confirmButton);
   }
 
   private onCancelButtonClick() {

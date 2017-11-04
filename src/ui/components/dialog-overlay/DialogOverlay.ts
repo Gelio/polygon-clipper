@@ -11,18 +11,17 @@ export class DialogOverlay extends HTMLElement {
 
     this.overlayElement = document.createElement('div');
     this.overlayElement.classList.add('overlay');
+    this.appendChild(this.overlayElement);
 
     this.onOverlayClick = this.onOverlayClick.bind(this);
     this.onDialogClose = this.onDialogClose.bind(this);
   }
 
   public connectedCallback() {
-    this.appendChild(this.overlayElement);
     this.overlayElement.addEventListener('click', this.onOverlayClick);
   }
 
   public disconnectedCallback() {
-    this.removeChild(this.overlayElement);
     this.overlayElement.removeEventListener('click', this.onOverlayClick);
   }
 
@@ -62,10 +61,12 @@ export class DialogOverlay extends HTMLElement {
 
   private showOverlay() {
     this.overlayElement.classList.add('overlay--visible');
+    document.body.classList.add('popup-active');
   }
 
   private hideOverlay() {
     this.overlayElement.classList.remove('overlay--visible');
+    document.body.classList.remove('popup-active');
   }
 }
 

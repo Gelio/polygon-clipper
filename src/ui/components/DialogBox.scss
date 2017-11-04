@@ -15,6 +15,7 @@
   box-shadow: 2px 2px 5px black;
 
   transition: transform 250ms ease-in-out;
+  will-change: transform;
 }
 
 .dialog-box--active {

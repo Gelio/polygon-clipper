@@ -11,6 +11,7 @@ export class InstructionsButton extends HTMLElement {
     this.button = document.createElement('button');
     this.button.textContent = 'Instructions';
     this.button.className = 'instructions-button';
+    this.appendChild(this.button);
 
     this.onButtonClick = this.onButtonClick.bind(this);
     this.instructionsDialog = new InstructionsDialog();
@@ -29,12 +30,10 @@ export class InstructionsButton extends HTMLElement {
   }
 
   public connectedCallback() {
-    this.appendChild(this.button);
     this.button.addEventListener('click', this.onButtonClick);
   }
 
   public disconnectedCallback() {
-    this.removeChild(this.button);
     this.button.removeEventListener('click', this.onButtonClick);
   }
 
