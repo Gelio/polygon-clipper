@@ -60,7 +60,7 @@ export class FillWorkerEventHandler {
 
   // tslint:disable no-bitwise
   private onNewBackgroundTexture(event: NewBackgroundTextureEvent) {
-    this.state.appFillData.backgroundTexture = event.payload;
+    this.state.appFillData.backgroundTexture = this.resizeImageDataToCanvasSize(event.payload);
     this.state.initializationValue |= 1;
 
     if (this.hasInitialized()) {
@@ -70,7 +70,7 @@ export class FillWorkerEventHandler {
   }
 
   private onNewHeightMap(event: NewHeightMapEvent) {
-    this.state.appFillData.heightMap = event.payload;
+    this.state.appFillData.heightMap = this.resizeImageDataToCanvasSize(event.payload);
     this.state.initializationValue |= 2;
 
     if (this.hasInitialized()) {
@@ -105,7 +105,7 @@ export class FillWorkerEventHandler {
   }
 
   private onNewNormalMap(event: NewNormalMapEvent) {
-    this.state.appFillData.normalMap = event.payload;
+    this.state.appFillData.normalMap = this.resizeImageDataToCanvasSize(event.payload);
     this.state.initializationValue |= 32;
 
     if (this.hasInitialized()) {
@@ -115,4 +115,28 @@ export class FillWorkerEventHandler {
     }
   }
   // tslint:enable no-bitwise
+
+  private resizeImageDataToCanvasSize(imageData: ImageData) {
+    const { canvasWidth, canvasHeight } = this.state;
+    const resizedImageData = new ImageData(canvasWidth, canvasHeight);
+
+    for (let x = 0; x < canvasWidth; x += 1) {
+      const imageDataX = x % imageData.width;
+
+      for (let y = 0; y < canvasHeight; y += 1) {
+        const imageDataY = y % imageData.height;
+
+        const imageDataIndex = (imageDataX + (imageDataY * imageData.width)) * 4;
+        const resizedImageDataIndex = (x + (y * canvasWidth)) * 4;
+
+        // TODO: possibly introduce incrementing instead of simple addition
+        resizedImageData.data[resizedImageDataIndex] = imageData.data[imageDataIndex];
+        resizedImageData.data[resizedImageDataIndex + 1] = imageData.data[imageDataIndex + 1];
+        resizedImageData.data[resizedImageDataIndex + 2] = imageData.data[imageDataIndex + 2];
+        resizedImageData.data[resizedImageDataIndex + 3] = imageData.data[imageDataIndex + 3];
+      }
+    }
+
+    return resizedImageData;
+  }
 }
