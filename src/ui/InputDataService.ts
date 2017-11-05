@@ -16,6 +16,7 @@ import {
 interface SerializationServiceDependencies {
   eventAggregator: EventAggregator;
   imageDownloader: ImageDownloader;
+  dialogOverlay: DialogOverlay;
 }
 
 export class InputDataService implements Service {
@@ -33,11 +34,11 @@ export class InputDataService implements Service {
   constructor(dependencies: SerializationServiceDependencies) {
     this.eventAggregator = dependencies.eventAggregator;
     this.imageDownloader = dependencies.imageDownloader;
+    this.dialogOverlay = dependencies.dialogOverlay;
   }
 
   public init() {
     this.findInputDataContainer();
-    this.findDialogOverlay();
     this.setupElements();
 
     this.inputDataContainer.appendChild(this.backgroundSelectButton);
@@ -62,15 +63,6 @@ export class InputDataService implements Service {
     }
 
     this.inputDataContainer = inputDataContainer;
-  }
-
-  private findDialogOverlay() {
-    const dialogOverlay = document.querySelector('app-dialog-overlay');
-    if (!dialogOverlay) {
-      throw new Error('Dialog overlay not found');
-    }
-
-    this.dialogOverlay = <DialogOverlay>dialogOverlay;
   }
 
   private setupElements() {

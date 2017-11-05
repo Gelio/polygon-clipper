@@ -39,7 +39,7 @@ export class Application {
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.eventAggregator = new EventAggregator();
-    this.imageDownloader = new ImageDownloader();
+    this.imageDownloader = new ImageDownloader({ eventAggregator: this.eventAggregator });
     this.polygonFiller = new PolygonFiller({
       canvas: this.canvas,
       eventAggregator: this.eventAggregator
