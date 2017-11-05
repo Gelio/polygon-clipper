@@ -4,6 +4,7 @@ import { Renderer } from 'Renderer';
 import { Stage } from 'Stage';
 
 import { InputDataService } from 'ui/InputDataService';
+import { LoadingUIService } from 'ui/LoadingUIService';
 import { MousePositionTransformer } from 'ui/MousePositionTransformer';
 import { NewPolygonUIController } from 'ui/NewPolygonUIController';
 import { PathDraggingService } from 'ui/PathDraggingService';
@@ -22,6 +23,7 @@ import { EventAggregator } from 'events/EventAggregator';
 import { LineClickEvent } from 'events/LineClickEvent';
 
 import 'ui/components/dialog-overlay/DialogOverlay';
+import { DialogOverlay } from 'ui/components/dialog-overlay/DialogOverlay';
 import 'ui/components/instructions/InstructionsButton';
 import 'ui/components/instructions/InstructionsDialog';
 import { PolygonClippingService } from 'ui/PolygonClippingService';
@@ -47,6 +49,7 @@ export class UIController implements Service {
 
   private mousePositionTransformer: MousePositionTransformer;
   private applicationUIContainer: HTMLElement;
+  private dialogOverlay: DialogOverlay;
 
   private readonly uiServices: Service[] = [];
   private newPolygonUIController: NewPolygonUIController;
@@ -67,12 +70,8 @@ export class UIController implements Service {
   }
 
   public init() {
-    const applicationUIContainer = document.getElementById(configuration.applicationUIContainerID);
-    if (!applicationUIContainer) {
-      throw new Error('Application UI container not found');
-    }
-
-    this.applicationUIContainer = applicationUIContainer;
+    this.findApplicationUIContainer();
+    this.findDialogOverlay();
 
     this.mousePositionTransformer = new MousePositionTransformer(this.canvas);
     this.canvas.addEventListener('click', this.onClick);
@@ -87,6 +86,7 @@ export class UIController implements Service {
     this.createSerializationService();
     this.createInputDataService();
     this.createPolygonClippingService();
+    this.createLoadingUIService();
 
     this.uiServices.forEach(uiService => uiService.init());
   }
@@ -136,6 +136,24 @@ export class UIController implements Service {
     this.eventAggregator.dispatchEvent(
       new LineClickEvent(hitTestResult.line, hitTestResult.path, point)
     );
+  }
+
+  private findApplicationUIContainer() {
+    const applicationUIContainer = document.getElementById(configuration.applicationUIContainerID);
+    if (!applicationUIContainer) {
+      throw new Error('Application UI container not found');
+    }
+
+    this.applicationUIContainer = applicationUIContainer;
+  }
+
+  private findDialogOverlay() {
+    const dialogOverlay = document.querySelector('app-dialog-overlay');
+    if (!dialogOverlay) {
+      throw new Error('Dialog overlay not found');
+    }
+
+    this.dialogOverlay = <DialogOverlay>dialogOverlay;
   }
 
   private createPointSyncService() {
@@ -213,7 +231,8 @@ export class UIController implements Service {
   private createInputDataService() {
     const inputDataService = new InputDataService({
       eventAggregator: this.eventAggregator,
-      imageDownloader: this.imageDownloader
+      imageDownloader: this.imageDownloader,
+      dialogOverlay: this.dialogOverlay
     });
 
     this.uiServices.push(inputDataService);
@@ -228,5 +247,14 @@ export class UIController implements Service {
     });
 
     this.uiServices.push(this.polygonClippingService);
+  }
+
+  private createLoadingUIService() {
+    const loadingUIService = new LoadingUIService({
+      dialogOverlay: this.dialogOverlay,
+      eventAggregator: this.eventAggregator
+    });
+
+    this.uiServices.push(loadingUIService);
   }
 }
