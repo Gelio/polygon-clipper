@@ -1,0 +1,13 @@
+.loading-bar-dialog {
+  overflow: hidden;
+}
+
+.loading-dialog__background-bar {
+  position: absolute;
+  height: 100%;
+  transition: width 200ms ease-in-out;
+  background-color: cyan;
+
+  margin: -2rem;
+  z-index: -1;
+}

@@ -15,6 +15,7 @@ const configuration = {
 
   displayPathGhostWhenDragging: false,
   canvasFont: '30pt serif',
+  loadingBarHideDelay: 1500,
 
   initialCustomBackgroundColorHex: '#00a2e8', // blue-ish
   presetBackgroundTextures: [
