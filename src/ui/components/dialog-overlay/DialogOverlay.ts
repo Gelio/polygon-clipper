@@ -4,11 +4,12 @@ import { DialogBox } from 'ui/components/DialogBox';
 
 export class DialogOverlay extends HTMLElement {
   private overlayElement: HTMLElement;
-  private dialogBox: DialogBox | undefined;
+  private dialogBoxStack: DialogBox[];
 
   constructor() {
     super();
 
+    this.dialogBoxStack = [];
     this.overlayElement = document.createElement('div');
     this.overlayElement.classList.add('overlay');
     this.appendChild(this.overlayElement);
@@ -26,8 +27,11 @@ export class DialogOverlay extends HTMLElement {
   }
 
   public showDialog(dialogBox: DialogBox) {
-    this.dialogBox = dialogBox;
-    this.showOverlay();
+    if (this.dialogBoxStack.length === 0) {
+      this.showOverlay();
+    }
+
+    this.dialogBoxStack.push(dialogBox);
     this.appendChild(dialogBox);
     dialogBox.addEventListener('close', this.onDialogClose);
 
@@ -37,26 +41,33 @@ export class DialogOverlay extends HTMLElement {
   }
 
   private onOverlayClick() {
-    if (!this.dialogBox || !this.dialogBox.canClose()) {
+    if (this.dialogBoxStack.length === 0) {
       return;
     }
 
-    this.dialogBox.close();
-  }
-
-  private onDialogClose() {
-    if (this.dialogBox) {
-      const dialogBox = this.dialogBox;
-      this.removeChild(dialogBox);
-      dialogBox.removeEventListener('close', this.onDialogClose);
-
-      requestAnimationFrame(() => {
-        dialogBox.classList.remove('dialog-box--active');
-      });
+    const topmostDialogBox = this.dialogBoxStack[this.dialogBoxStack.length - 1];
+    if (!topmostDialogBox.canClose()) {
+      return;
     }
 
-    this.dialogBox = undefined;
-    this.hideOverlay();
+    topmostDialogBox.close();
+  }
+
+  private onDialogClose(event: CustomEvent) {
+    const dialogBox = <DialogBox>event.target;
+    this.removeChild(dialogBox);
+    dialogBox.removeEventListener('close', this.onDialogClose);
+
+    requestAnimationFrame(() => {
+      dialogBox.classList.remove('dialog-box--active');
+    });
+
+    const dialogBoxIndex = this.dialogBoxStack.indexOf(dialogBox);
+    this.dialogBoxStack.splice(dialogBoxIndex, 1);
+
+    if (this.dialogBoxStack.length === 0) {
+      this.hideOverlay();
+    }
   }
 
   private showOverlay() {
