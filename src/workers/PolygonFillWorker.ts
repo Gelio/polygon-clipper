@@ -13,6 +13,7 @@ const state: FillWorkerState = {
     backgroundTexture: new ImageData(1, 1),
     normalMap: new ImageData(1, 1),
     heightMap: new ImageData(1, 1),
+    heightMapIntensity: 1,
     lightColor: new Vector3(0, 0, 0)
   },
   canvasHeight: 0,

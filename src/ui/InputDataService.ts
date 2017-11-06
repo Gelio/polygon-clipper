@@ -7,6 +7,7 @@ import { DialogOverlay } from 'ui/components/dialog-overlay/DialogOverlay';
 
 import {
   BackgroundSelectButton,
+  HeightMapIntensityInput,
   HeightMapSelectButton,
   LightColorSelectButton,
   LightTypeSelect,
@@ -30,6 +31,7 @@ export class InputDataService implements Service {
   private lightColorSelectButton: LightColorSelectButton;
   private normalMapSelectButton: NormalMapSelectButton;
   private lightTypeSelect: LightTypeSelect;
+  private heightMapIntensityInput: HeightMapIntensityInput;
 
   constructor(dependencies: SerializationServiceDependencies) {
     this.eventAggregator = dependencies.eventAggregator;
@@ -46,6 +48,7 @@ export class InputDataService implements Service {
     this.inputDataContainer.appendChild(this.normalMapSelectButton);
     this.inputDataContainer.appendChild(this.heightMapSelectButton);
     this.inputDataContainer.appendChild(this.lightTypeSelect);
+    this.inputDataContainer.appendChild(this.heightMapIntensityInput);
   }
 
   public destroy() {
@@ -54,6 +57,7 @@ export class InputDataService implements Service {
     this.inputDataContainer.removeChild(this.normalMapSelectButton);
     this.inputDataContainer.removeChild(this.heightMapSelectButton);
     this.inputDataContainer.removeChild(this.lightTypeSelect);
+    this.inputDataContainer.removeChild(this.heightMapIntensityInput);
   }
 
   private findInputDataContainer() {
@@ -76,5 +80,6 @@ export class InputDataService implements Service {
     this.lightColorSelectButton = new LightColorSelectButton(colorSelectButtonDependencies);
     this.normalMapSelectButton = new NormalMapSelectButton(imageSelectButtonDependencies);
     this.lightTypeSelect = new LightTypeSelect({ eventAggregator });
+    this.heightMapIntensityInput = new HeightMapIntensityInput({ eventAggregator });
   }
 }

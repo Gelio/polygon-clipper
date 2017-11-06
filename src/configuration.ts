@@ -35,6 +35,7 @@ const configuration = {
     'images/normal-maps/circles.png'
   ],
   presetLightColor: new Vector3(1, 1, 1),
+  presetHeightMapIntensity: 0.05,
 
   movingLight: {
     horizontalLapTime: 10 * 1000,

@@ -87,6 +87,7 @@ export class VectorMapPreparer {
           // H[0, y] - H[x, y]
           dhx = heightMap.data[index - heightMapX * 4] - heightMap.data[index];
         }
+        dhx *= state.appFillData.heightMapIntensity;
 
         if (heightMapY < maxHeightMapY) {
           dhy = heightMap.data[index + heightMap.width * 4] - heightMap.data[index];
@@ -94,6 +95,7 @@ export class VectorMapPreparer {
           // H[x, 0] - H[x, y]
           dhy = heightMap.data[heightMapX * 4] - heightMap.data[index];
         }
+        dhy *= state.appFillData.heightMapIntensity;
 
         const normalVector = state.normalVectors[x][y];
         const t = new Vector3(1, 0, -normalVector.x);

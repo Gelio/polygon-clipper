@@ -2,6 +2,7 @@ import { EventAggregator } from 'events/EventAggregator';
 import {
   NewBackgroundTextureEvent,
   NewHeightMapEvent,
+  NewHeightMapIntensityEvent,
   NewLightColorEvent,
   NewLightPositionRadiusEvent,
   NewLightTypeEvent,
@@ -61,6 +62,9 @@ export class InputDataInitializer implements Service {
     this.eventAggregator.dispatchEvent(new NewBackgroundTextureEvent(downloadedImageData[0]));
     this.eventAggregator.dispatchEvent(new NewNormalMapEvent(downloadedImageData[1]));
     this.eventAggregator.dispatchEvent(new NewHeightMapEvent(downloadedImageData[2]));
+    this.eventAggregator.dispatchEvent(
+      new NewHeightMapIntensityEvent(configuration.presetHeightMapIntensity)
+    );
     this.eventAggregator.dispatchEvent(new NewLightColorEvent(configuration.presetLightColor));
     this.eventAggregator.dispatchEvent(
       new NewLightPositionRadiusEvent(configuration.movingLight.defaultRadius)

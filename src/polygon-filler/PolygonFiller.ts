@@ -5,6 +5,7 @@ import { EventAggregator } from 'events/EventAggregator';
 import {
   NewBackgroundTextureEvent,
   NewHeightMapEvent,
+  NewHeightMapIntensityEvent,
   NewLightColorEvent,
   NewLightPositionEvent,
   NewLightTypeEvent,
@@ -32,6 +33,7 @@ export class PolygonFiller implements Service {
   private readonly proxyEvents = [
     NewBackgroundTextureEvent,
     NewHeightMapEvent,
+    NewHeightMapIntensityEvent,
     NewLightColorEvent,
     NewLightPositionEvent,
     NewLightTypeEvent,
