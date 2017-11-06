@@ -5,6 +5,7 @@ import { AppEvent } from 'events/AppEvent';
 import {
   NewBackgroundTextureEvent,
   NewHeightMapEvent,
+  NewHeightMapIntensityEvent,
   NewLightColorEvent,
   NewLightPositionEvent,
   NewLightTypeEvent,
@@ -28,7 +29,8 @@ export class FillWorkerEventHandler {
     [NewLightColorEvent.eventType]: this.onNewLightColor,
     [NewLightPositionEvent.eventType]: this.onNewLightPosition,
     [NewLightTypeEvent.eventType]: this.onNewLightType,
-    [NewNormalMapEvent.eventType]: this.onNewNormalMap
+    [NewNormalMapEvent.eventType]: this.onNewNormalMap,
+    [NewHeightMapIntensityEvent.eventType]: this.onNewHeightMapIntensity
   };
 
   constructor(dependencies: FillWorkerEventHandlerDependencies) {
@@ -37,8 +39,8 @@ export class FillWorkerEventHandler {
   }
 
   public canInitialize() {
-    if (this.state.initializationValue === 63) {
-      this.state.initializationValue = 127;
+    if (this.state.initializationValue === 127) {
+      this.state.initializationValue = 255;
 
       return true;
     }
@@ -47,7 +49,7 @@ export class FillWorkerEventHandler {
   }
 
   public hasInitialized() {
-    return this.state.initializationValue === 127;
+    return this.state.initializationValue === 255;
   }
 
   public handleEvent(event: AppEvent) {
@@ -110,6 +112,16 @@ export class FillWorkerEventHandler {
 
     if (this.hasInitialized()) {
       this.vectorMapPreparer.prepareNormalVectors();
+      this.vectorMapPreparer.prepareBumpVectors();
+      this.vectorMapPreparer.applyBumpVectors();
+    }
+  }
+
+  private onNewHeightMapIntensity(event: NewHeightMapIntensityEvent) {
+    this.state.appFillData.heightMapIntensity = event.payload;
+    this.state.initializationValue |= 64;
+
+    if (this.hasInitialized()) {
       this.vectorMapPreparer.prepareBumpVectors();
       this.vectorMapPreparer.applyBumpVectors();
     }
