@@ -53,7 +53,7 @@ export class DialogOverlay extends HTMLElement {
     topmostDialogBox.close();
   }
 
-  private onDialogClose(event: CustomEvent) {
+  private onDialogClose(event: Event) {
     const dialogBox = <DialogBox>event.target;
     this.removeChild(dialogBox);
     dialogBox.removeEventListener('close', this.onDialogClose);

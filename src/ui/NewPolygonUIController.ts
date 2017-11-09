@@ -17,7 +17,6 @@ import { RenderFinishedEvent } from 'events/RenderFinishedEvent';
 import { SyncComponentsEvent } from 'events/ui/SyncComponentsEvent';
 
 interface NewPolygonUIControllerDependencies {
-  applicationUIContainer: HTMLElement;
   canvas: HTMLCanvasElement;
   mousePositionTransformer: MousePositionTransformer;
   polygonLayer: Layer;
@@ -27,7 +26,6 @@ interface NewPolygonUIControllerDependencies {
 }
 
 export class NewPolygonUIController implements Service {
-  private readonly applicationUIContainer: HTMLElement;
   private readonly canvas: HTMLCanvasElement;
   private readonly stage: Stage;
   private readonly mousePositionTransformer: MousePositionTransformer;
@@ -41,7 +39,6 @@ export class NewPolygonUIController implements Service {
   private lastMousePosition: Point;
 
   constructor(dependencies: NewPolygonUIControllerDependencies) {
-    this.applicationUIContainer = dependencies.applicationUIContainer;
     this.canvas = dependencies.canvas;
     this.stage = dependencies.stage;
     this.polygonLayer = dependencies.polygonLayer;

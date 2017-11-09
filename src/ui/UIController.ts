@@ -187,7 +187,6 @@ export class UIController implements Service {
 
   private createNewPolygonUIController() {
     this.newPolygonUIController = new NewPolygonUIController({
-      applicationUIContainer: this.applicationUIContainer,
       canvas: this.canvas,
       stage: this.stage,
       polygonLayer: this.stage.findLayerByName(LEX.POLYGON_LAYER_NAME),
