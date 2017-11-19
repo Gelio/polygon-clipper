@@ -6,7 +6,8 @@ import {
   NewLightColorEvent,
   NewLightPositionRadiusEvent,
   NewLightTypeEvent,
-  NewNormalMapEvent
+  NewNormalMapEvent,
+  NewNormalMapTypeEvent
 } from 'events/input-data';
 import { RenderEvent } from 'events/RenderEvent';
 import { SyncComponentsEvent } from 'events/ui/SyncComponentsEvent';
@@ -16,6 +17,7 @@ import { configuration } from 'configuration';
 import { Layer } from 'common/Layer';
 import { LightType } from 'common/LightType';
 import { LineProperties } from 'common/LineProperties';
+import { NormalMapType } from 'common/NormalMapType';
 import { Point } from 'common/Point';
 import { Polygon } from 'common/Polygon';
 
@@ -70,6 +72,7 @@ export class InputDataInitializer implements Service {
       new NewLightPositionRadiusEvent(configuration.movingLight.defaultRadius)
     );
     this.eventAggregator.dispatchEvent(new NewLightTypeEvent(LightType.Constant));
+    this.eventAggregator.dispatchEvent(new NewNormalMapTypeEvent(NormalMapType.Stationary));
     this.eventAggregator.dispatchEvent(new RenderEvent());
   }
 

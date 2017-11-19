@@ -4,6 +4,7 @@ import { HeightMapSelectButton } from 'ui/components/input-data/HeightMapSelectB
 import { LightColorSelectButton } from 'ui/components/input-data/LightColorSelectButton';
 import { LightTypeSelect } from 'ui/components/input-data/LightTypeSelect';
 import { NormalMapSelectButton } from 'ui/components/input-data/NormalMapSelectButton';
+import { NormalMapTypeSelect } from 'ui/components/input-data/NormalMapTypeSelect';
 
 export {
   BackgroundSelectButton,
@@ -11,5 +12,6 @@ export {
   HeightMapSelectButton,
   LightColorSelectButton,
   LightTypeSelect,
-  NormalMapSelectButton
+  NormalMapSelectButton,
+  NormalMapTypeSelect
 };

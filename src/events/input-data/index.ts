@@ -6,6 +6,7 @@ import { NewLightPositionEvent } from 'events/input-data/NewLightPositionEvent';
 import { NewLightPositionRadiusEvent } from 'events/input-data/NewLightPositionRadiusEvent';
 import { NewLightTypeEvent } from 'events/input-data/NewLightTypeEvent';
 import { NewNormalMapEvent } from 'events/input-data/NewNormalMapEvent';
+import { NewNormalMapTypeEvent } from 'events/input-data/NewNormalMapTypeEvent';
 
 export {
   NewBackgroundTextureEvent,
@@ -15,5 +16,6 @@ export {
   NewLightPositionEvent,
   NewLightPositionRadiusEvent,
   NewLightTypeEvent,
-  NewNormalMapEvent
+  NewNormalMapEvent,
+  NewNormalMapTypeEvent
 };

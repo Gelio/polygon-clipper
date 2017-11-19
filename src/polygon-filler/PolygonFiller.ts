@@ -9,7 +9,8 @@ import {
   NewLightColorEvent,
   NewLightPositionEvent,
   NewLightTypeEvent,
-  NewNormalMapEvent
+  NewNormalMapEvent,
+  NewNormalMapTypeEvent
 } from 'events/input-data';
 
 import { ActiveEdge } from 'polygon-filler/ActiveEdge';
@@ -37,7 +38,8 @@ export class PolygonFiller implements Service {
     NewLightColorEvent,
     NewLightPositionEvent,
     NewLightTypeEvent,
-    NewNormalMapEvent
+    NewNormalMapEvent,
+    NewNormalMapTypeEvent
   ];
 
   private renderingContext: CanvasRenderingContext2D;
