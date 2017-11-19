@@ -34,7 +34,8 @@ const state: FillWorkerState = {
   distortedNormalVectors: [],
 
   mousePosition: new Point(0, 0),
-  normalMapType: NormalMapType.Stationary
+  normalMapType: NormalMapType.Stationary,
+  normalMapCenter: new Point(0, 0)
 };
 
 const vectorMapPreparer = new VectorMapPreparer(state);

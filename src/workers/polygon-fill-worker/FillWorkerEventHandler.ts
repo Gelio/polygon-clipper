@@ -111,6 +111,11 @@ export class FillWorkerEventHandler {
     this.state.appFillData.normalMap = event.payload;
     this.state.initializationValue |= 32;
 
+    this.state.normalMapCenter = new Point(
+      this.state.appFillData.normalMap.width / 2,
+      this.state.appFillData.normalMap.height / 2
+    ).floor();
+
     if (this.hasInitialized()) {
       this.vectorMapPreparer.prepareNormalVectors();
       this.vectorMapPreparer.prepareBumpVectors();

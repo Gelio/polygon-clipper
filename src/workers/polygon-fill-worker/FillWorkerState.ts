@@ -25,4 +25,5 @@ export interface FillWorkerState {
 
   mousePosition: Point;
   normalMapType: NormalMapType;
+  normalMapCenter: Point;
 }

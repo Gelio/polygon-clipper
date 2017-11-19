@@ -1,4 +1,5 @@
 import { LightType } from 'common/LightType';
+import { NormalMapType } from 'common/NormalMapType';
 import { Vector3 } from 'common/Vector3';
 
 import { FillStrip } from 'polygon-filler/FillStrip';
@@ -23,14 +24,10 @@ export class FillWorkerFiller {
   }
 
   private putPixel(x: number, y: number) {
-    const {
-      textureVectorsWithLightColor,
-      distortedNormalVectors,
-      canvasImageData
-    } = this.state;
+    const { textureVectorsWithLightColor, canvasImageData } = this.state;
 
     const textureVectorWithLightColor = textureVectorsWithLightColor[x][y];
-    const distortedNormalVector = distortedNormalVectors[x][y];
+    const distortedNormalVector = this.getDistortedNormalVector(x, y);
     const lightVersor = this.getLightVersor(x, y);
 
     // cos theta = v1 * v2 / (norm(v1) * norm(v2))
@@ -48,16 +45,39 @@ export class FillWorkerFiller {
     canvasImageData.data[index + 3] = 255;
   }
 
+  private getDistortedNormalVector(x: number, y: number): Vector3 {
+    if (this.state.normalMapType === NormalMapType.Stationary) {
+      return this.state.distortedNormalVectors[x][y];
+    }
+    const normalMapCenter = this.state.normalMapCenter;
+
+    const mousePosition = this.state.mousePosition;
+    const bumpVector = this.state.bumpVectors[x][y];
+    let normalVectorX =
+      (x - mousePosition.x + normalMapCenter.x) % this.state.appFillData.normalMap.width;
+    let normalVectorY =
+      (y - mousePosition.y + normalMapCenter.y) % this.state.appFillData.normalMap.height;
+
+    if (normalVectorX < 0) {
+      normalVectorX += this.state.appFillData.normalMap.width;
+    }
+
+    if (normalVectorY < 0) {
+      normalVectorY += this.state.appFillData.normalMap.height;
+    }
+
+    const normalVector = this.state.normalVectors[normalVectorX][normalVectorY];
+
+    return Vector3.add(normalVector, bumpVector).normalize();
+  }
+
   private getLightVersor(x: number, y: number): Vector3 {
     if (this.state.lightType === LightType.Constant) {
       return this.state.lightPosition;
     }
 
     // Moving light type
-    const lightDirectionVector = Vector3.subtract(
-      this.state.lightPosition,
-      new Vector3(x, y, 0)
-    );
+    const lightDirectionVector = Vector3.subtract(this.state.lightPosition, new Vector3(x, y, 0));
 
     return lightDirectionVector.normalize();
   }
