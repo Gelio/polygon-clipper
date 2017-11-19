@@ -9,6 +9,7 @@ import {
   NewLightColorEvent,
   NewLightPositionEvent,
   NewLightTypeEvent,
+  NewMousePositionEvent,
   NewNormalMapEvent,
   NewNormalMapTypeEvent
 } from 'events/input-data';
@@ -39,7 +40,8 @@ export class PolygonFiller implements Service {
     NewLightPositionEvent,
     NewLightTypeEvent,
     NewNormalMapEvent,
-    NewNormalMapTypeEvent
+    NewNormalMapTypeEvent,
+    NewMousePositionEvent
   ];
 
   private renderingContext: CanvasRenderingContext2D;

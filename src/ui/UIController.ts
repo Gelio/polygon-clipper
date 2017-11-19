@@ -27,6 +27,7 @@ import { DialogOverlay } from 'ui/components/dialog-overlay/DialogOverlay';
 import 'ui/components/instructions/InstructionsButton';
 import 'ui/components/instructions/InstructionsDialog';
 import { PolygonClippingService } from 'ui/PolygonClippingService';
+import { MouseFollowingService } from 'ui/MouseFollowingService';
 
 interface UIControllerDependencies {
   canvas: HTMLCanvasElement;
@@ -87,6 +88,7 @@ export class UIController implements Service {
     this.createInputDataService();
     this.createPolygonClippingService();
     this.createLoadingUIService();
+    this.createMouseFollowingService();
 
     this.uiServices.forEach(uiService => uiService.init());
   }
@@ -255,5 +257,15 @@ export class UIController implements Service {
     });
 
     this.uiServices.push(loadingUIService);
+  }
+
+  private createMouseFollowingService() {
+    const mouseFollowingService = new MouseFollowingService({
+      canvas: this.canvas,
+      eventAggregator: this.eventAggregator,
+      mousePositionTransformer: this.mousePositionTransformer
+    });
+
+    this.uiServices.push(mouseFollowingService);
   }
 }
