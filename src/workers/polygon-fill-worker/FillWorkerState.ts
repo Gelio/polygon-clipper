@@ -1,4 +1,6 @@
 import { LightType } from 'common/LightType';
+import { NormalMapType } from 'common/NormalMapType';
+import { Point } from 'common/Point';
 import { Vector3 } from 'common/Vector3';
 
 import { AppFillData } from 'polygon-filler/AppFillData';
@@ -20,4 +22,7 @@ export interface FillWorkerState {
   normalVectors: Vector3Map;
   bumpVectors: Vector3Map;
   distortedNormalVectors: Vector3Map;
+
+  mousePosition: Point;
+  normalMapType: NormalMapType;
 }

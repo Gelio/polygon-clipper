@@ -9,9 +9,12 @@ import {
   NewLightColorEvent,
   NewLightPositionEvent,
   NewLightTypeEvent,
-  NewNormalMapEvent
+  NewMousePositionEvent,
+  NewNormalMapEvent,
+  NewNormalMapTypeEvent
 } from 'events/input-data';
 
+import { Point } from 'common/Point';
 import { Vector3 } from 'common/Vector3';
 
 interface FillWorkerEventHandlerDependencies {
@@ -30,7 +33,9 @@ export class FillWorkerEventHandler {
     [NewLightPositionEvent.eventType]: this.onNewLightPosition,
     [NewLightTypeEvent.eventType]: this.onNewLightType,
     [NewNormalMapEvent.eventType]: this.onNewNormalMap,
-    [NewHeightMapIntensityEvent.eventType]: this.onNewHeightMapIntensity
+    [NewHeightMapIntensityEvent.eventType]: this.onNewHeightMapIntensity,
+    [NewMousePositionEvent.eventType]: this.onNewMousePosition,
+    [NewNormalMapTypeEvent.eventType]: this.onNewNormalMapType
   };
 
   constructor(dependencies: FillWorkerEventHandlerDependencies) {
@@ -39,8 +44,8 @@ export class FillWorkerEventHandler {
   }
 
   public canInitialize() {
-    if (this.state.initializationValue === 127) {
-      this.state.initializationValue = 255;
+    if (this.state.initializationValue === 511) {
+      this.state.initializationValue = 1023;
 
       return true;
     }
@@ -49,7 +54,7 @@ export class FillWorkerEventHandler {
   }
 
   public hasInitialized() {
-    return this.state.initializationValue === 255;
+    return this.state.initializationValue === 1023;
   }
 
   public handleEvent(event: AppEvent) {
@@ -95,10 +100,6 @@ export class FillWorkerEventHandler {
     const { x, y, z } = event.payload;
     this.state.lightPosition = new Vector3(x, y, z);
     this.state.initializationValue |= 8;
-
-    if (this.canInitialize()) {
-      this.vectorMapPreparer.performInitialPreparation();
-    }
   }
 
   private onNewLightType(event: NewLightTypeEvent) {
@@ -123,6 +124,24 @@ export class FillWorkerEventHandler {
 
     if (this.hasInitialized()) {
       this.vectorMapPreparer.prepareBumpVectors();
+      this.vectorMapPreparer.applyBumpVectors();
+    }
+  }
+
+  private onNewMousePosition(event: NewMousePositionEvent) {
+    this.state.mousePosition = new Point(event.payload.x, event.payload.y);
+    this.state.initializationValue |= 128;
+
+    if (this.hasInitialized()) {
+      this.vectorMapPreparer.applyBumpVectors();
+    }
+  }
+
+  private onNewNormalMapType(event: NewNormalMapTypeEvent) {
+    this.state.normalMapType = event.payload;
+    this.state.initializationValue |= 256;
+
+    if (this.hasInitialized()) {
       this.vectorMapPreparer.applyBumpVectors();
     }
   }

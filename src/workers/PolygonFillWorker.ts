@@ -1,4 +1,6 @@
 import { LightType } from 'common/LightType';
+import { NormalMapType } from 'common/NormalMapType';
+import { Point } from 'common/Point';
 import { Vector3 } from 'common/Vector3';
 
 import { FillWorkerMessageType } from 'polygon-filler/FillWorkerMessageType';
@@ -29,7 +31,10 @@ const state: FillWorkerState = {
   textureVectorsWithLightColor: [],
   normalVectors: [],
   bumpVectors: [],
-  distortedNormalVectors: []
+  distortedNormalVectors: [],
+
+  mousePosition: new Point(0, 0),
+  normalMapType: NormalMapType.Stationary
 };
 
 const vectorMapPreparer = new VectorMapPreparer(state);

@@ -1,3 +1,5 @@
+import { NormalMapType } from 'common/NormalMapType';
+import { Point } from 'common/Point';
 import { Vector3 } from 'common/Vector3';
 
 import { FillWorkerState } from 'workers/polygon-fill-worker/FillWorkerState';
@@ -109,14 +111,33 @@ export class VectorMapPreparer {
 
   public applyBumpVectors() {
     const state = this.state;
+    const normalMap = state.appFillData.normalMap;
     state.distortedNormalVectors = [];
+
+    const normalMapCenter = new Point(normalMap.width / 2, normalMap.height / 2).floor();
 
     for (let x = 0; x < state.canvasWidth; x += 1) {
       state.distortedNormalVectors.push([]);
 
       for (let y = 0; y < state.canvasHeight; y += 1) {
+        let normalVector = state.normalVectors[x][y];
+
+        if (state.normalMapType === NormalMapType.FollowingTheMouse) {
+          let normalVectorX = (x - state.mousePosition.x + normalMapCenter.x) % normalMap.width;
+          let normalVectorY = (y - state.mousePosition.y + normalMapCenter.y) % normalMap.height;
+
+          if (normalVectorX < 0) {
+            normalVectorX += normalMap.width;
+          }
+          if (normalVectorY < 0) {
+            normalVectorY += normalMap.height;
+          }
+
+          normalVector = state.normalVectors[normalVectorX][normalVectorY];
+        }
+
         state.distortedNormalVectors[x].push(
-          Vector3.add(state.normalVectors[x][y], state.bumpVectors[x][y]).normalize()
+          Vector3.add(normalVector, state.bumpVectors[x][y]).normalize()
         );
       }
     }
