@@ -59,7 +59,7 @@ export class NormalMapTypeSelect extends HTMLElement {
   private onSelectChange() {
     let normalMapType = NormalMapType.Stationary;
 
-    if (this.selectElement.value === NormalMapType.FollowingTheMouse.toString()){
+    if (this.selectElement.value === NormalMapType.FollowingTheMouse.toString()) {
       normalMapType = NormalMapType.FollowingTheMouse;
     }
 
