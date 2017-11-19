@@ -6,6 +6,7 @@ import {
   NewLightColorEvent,
   NewLightPositionRadiusEvent,
   NewLightTypeEvent,
+  NewMousePositionEvent,
   NewNormalMapEvent,
   NewNormalMapTypeEvent
 } from 'events/input-data';
@@ -73,6 +74,7 @@ export class InputDataInitializer implements Service {
     );
     this.eventAggregator.dispatchEvent(new NewLightTypeEvent(LightType.Constant));
     this.eventAggregator.dispatchEvent(new NewNormalMapTypeEvent(NormalMapType.Stationary));
+    this.eventAggregator.dispatchEvent(new NewMousePositionEvent({ x: 0, y: 0 }));
     this.eventAggregator.dispatchEvent(new RenderEvent());
   }
 
