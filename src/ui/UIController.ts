@@ -26,8 +26,8 @@ import 'ui/components/dialog-overlay/DialogOverlay';
 import { DialogOverlay } from 'ui/components/dialog-overlay/DialogOverlay';
 import 'ui/components/instructions/InstructionsButton';
 import 'ui/components/instructions/InstructionsDialog';
-import { PolygonClippingService } from 'ui/PolygonClippingService';
 import { MouseFollowingService } from 'ui/MouseFollowingService';
+import { PolygonClippingService } from 'ui/PolygonClippingService';
 
 interface UIControllerDependencies {
   canvas: HTMLCanvasElement;
