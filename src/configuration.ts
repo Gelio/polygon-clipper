@@ -36,6 +36,11 @@ const configuration = {
   ],
   presetLightColor: new Vector3(1, 1, 1),
   presetHeightMapIntensity: 0.05,
+  initialLightingCoefficients: {
+    kD: 1,
+    kS: 1,
+    m: 50
+  },
 
   movingLight: {
     horizontalLapTime: 10 * 1000,

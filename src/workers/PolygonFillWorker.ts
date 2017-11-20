@@ -29,7 +29,12 @@ const state: FillWorkerState = {
   textureVectorsWithLightColor: [],
   normalVectors: [],
   bumpVectors: [],
-  distortedNormalVectors: []
+  distortedNormalVectors: [],
+
+  kD: 1,
+  kS: 0,
+  m: 1,
+  viewerVector: new Vector3(0, 0, 1)
 };
 
 const vectorMapPreparer = new VectorMapPreparer(state);

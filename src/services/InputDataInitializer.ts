@@ -4,6 +4,7 @@ import {
   NewHeightMapEvent,
   NewHeightMapIntensityEvent,
   NewLightColorEvent,
+  NewLightingCoefficientsEvent,
   NewLightPositionRadiusEvent,
   NewLightTypeEvent,
   NewNormalMapEvent
@@ -70,6 +71,13 @@ export class InputDataInitializer implements Service {
       new NewLightPositionRadiusEvent(configuration.movingLight.defaultRadius)
     );
     this.eventAggregator.dispatchEvent(new NewLightTypeEvent(LightType.Constant));
+    this.eventAggregator.dispatchEvent(
+      new NewLightingCoefficientsEvent(
+        configuration.initialLightingCoefficients.kD,
+        configuration.initialLightingCoefficients.kS,
+        configuration.initialLightingCoefficients.m
+      )
+    );
     this.eventAggregator.dispatchEvent(new RenderEvent());
   }
 

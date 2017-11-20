@@ -7,6 +7,7 @@ import {
   NewHeightMapEvent,
   NewHeightMapIntensityEvent,
   NewLightColorEvent,
+  NewLightingCoefficientsEvent,
   NewLightPositionEvent,
   NewLightTypeEvent,
   NewNormalMapEvent
@@ -37,7 +38,8 @@ export class PolygonFiller implements Service {
     NewLightColorEvent,
     NewLightPositionEvent,
     NewLightTypeEvent,
-    NewNormalMapEvent
+    NewNormalMapEvent,
+    NewLightingCoefficientsEvent
   ];
 
   private renderingContext: CanvasRenderingContext2D;

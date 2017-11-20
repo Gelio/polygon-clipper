@@ -20,4 +20,9 @@ export interface FillWorkerState {
   normalVectors: Vector3Map;
   bumpVectors: Vector3Map;
   distortedNormalVectors: Vector3Map;
+
+  viewerVector: Vector3;
+  kD: number;
+  kS: number;
+  m: number;
 }
