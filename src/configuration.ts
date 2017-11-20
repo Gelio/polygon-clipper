@@ -38,7 +38,7 @@ const configuration = {
   presetHeightMapIntensity: 0.05,
   initialLightingCoefficients: {
     kD: 1,
-    kS: 1,
+    kS: 0,
     m: 50
   },
 

@@ -10,6 +10,7 @@ import {
   HeightMapIntensityInput,
   HeightMapSelectButton,
   LightColorSelectButton,
+  LightingCoefficientsPicker,
   LightTypeSelect,
   NormalMapSelectButton
 } from 'ui/components/input-data';
@@ -32,6 +33,7 @@ export class InputDataService implements Service {
   private normalMapSelectButton: NormalMapSelectButton;
   private lightTypeSelect: LightTypeSelect;
   private heightMapIntensityInput: HeightMapIntensityInput;
+  private lightingCoefficientsPicker: LightingCoefficientsPicker;
 
   constructor(dependencies: SerializationServiceDependencies) {
     this.eventAggregator = dependencies.eventAggregator;
@@ -49,6 +51,7 @@ export class InputDataService implements Service {
     this.inputDataContainer.appendChild(this.heightMapSelectButton);
     this.inputDataContainer.appendChild(this.lightTypeSelect);
     this.inputDataContainer.appendChild(this.heightMapIntensityInput);
+    this.inputDataContainer.appendChild(this.lightingCoefficientsPicker);
   }
 
   public destroy() {
@@ -58,6 +61,7 @@ export class InputDataService implements Service {
     this.inputDataContainer.removeChild(this.heightMapSelectButton);
     this.inputDataContainer.removeChild(this.lightTypeSelect);
     this.inputDataContainer.removeChild(this.heightMapIntensityInput);
+    this.inputDataContainer.removeChild(this.lightingCoefficientsPicker);
   }
 
   private findInputDataContainer() {
@@ -81,5 +85,6 @@ export class InputDataService implements Service {
     this.normalMapSelectButton = new NormalMapSelectButton(imageSelectButtonDependencies);
     this.lightTypeSelect = new LightTypeSelect({ eventAggregator });
     this.heightMapIntensityInput = new HeightMapIntensityInput({ eventAggregator });
+    this.lightingCoefficientsPicker = new LightingCoefficientsPicker({ eventAggregator });
   }
 }

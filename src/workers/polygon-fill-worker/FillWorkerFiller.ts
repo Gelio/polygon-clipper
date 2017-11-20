@@ -27,24 +27,27 @@ export class FillWorkerFiller {
 
     const lightVersor = this.getLightVersor(x, y);
 
-    const distributedComponent = this.getDistributedComponent(x, y);
+    const distributedComponent = this.getDistributedComponent(lightVersor, x, y);
     const reflectiveComponent = this.getReflectiveComponent(lightVersor, x, y);
+
+    // if (x === 500) {
+    //   console.log(reflectiveComponent);
+    // }
 
     const result = Vector3.add(distributedComponent, reflectiveComponent).floor();
 
     const index = (x + y * canvasImageData.width) * 4;
-    canvasImageData.data[index] = result.x;
-    canvasImageData.data[index + 1] = result.y;
-    canvasImageData.data[index + 2] = result.z;
+    canvasImageData.data[index] = Math.min(255, result.x);
+    canvasImageData.data[index + 1] = Math.min(255, result.y);
+    canvasImageData.data[index + 2] = Math.min(255, result.z);
     canvasImageData.data[index + 3] = 255;
   }
 
-  private getDistributedComponent(x: number, y: number) {
+  private getDistributedComponent(lightVersor: Vector3, x: number, y: number) {
     const { textureVectorsWithLightColor, distortedNormalVectors, kD } = this.state;
 
     const textureVectorWithLightColor = textureVectorsWithLightColor[x][y];
     const distortedNormalVector = distortedNormalVectors[x][y];
-    const lightVersor = this.getLightVersor(x, y);
 
     // cos theta = v1 * v2 / (norm(v1) * norm(v2))
     // Since lightDirectionVersor and distortedNormalVector are unit vectors, cos theta is just
@@ -68,7 +71,7 @@ export class FillWorkerFiller {
     const cosReflective = Vector3.dotProduct(rVector, viewerVector);
     const clampedCosReflective = Math.max(0, cosReflective);
 
-    return lightColor.multiply(Math.pow(clampedCosReflective, m) * kS);
+    return lightColor.multiply(Math.pow(clampedCosReflective, m) * kS * 255);
   }
 
   private getLightVersor(x: number, y: number): Vector3 {
