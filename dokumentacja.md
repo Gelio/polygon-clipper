@@ -3,7 +3,9 @@
 Autor: Grzegorz Rozdzialik
 Grupa poniedziałkowa, 13-15
 
-Aplikację bez budowania można uruchomić otwierając w przeglądarce plik _index.html_ z katalogu dist.
+Aplikację bez budowania można uruchomić przenosząc katalog _dist_ na serwer i uruchamiając
+plik _index.html_. Nie uda się uruchomienie z katalogu na dysku ponieważ aplikacja
+używa WebWorkerów.
 
 
 ## Klawiszologia
