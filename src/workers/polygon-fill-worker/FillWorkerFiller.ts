@@ -30,10 +30,6 @@ export class FillWorkerFiller {
     const distributedComponent = this.getDistributedComponent(lightVersor, x, y);
     const reflectiveComponent = this.getReflectiveComponent(lightVersor, x, y);
 
-    // if (x === 500) {
-    //   console.log(reflectiveComponent);
-    // }
-
     const result = Vector3.add(distributedComponent, reflectiveComponent).floor();
 
     const index = (x + y * canvasImageData.width) * 4;
