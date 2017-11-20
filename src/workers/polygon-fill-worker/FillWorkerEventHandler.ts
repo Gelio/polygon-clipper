@@ -136,10 +136,6 @@ export class FillWorkerEventHandler {
   private onNewMousePosition(event: NewMousePositionEvent) {
     this.state.mousePosition = new Point(event.payload.x, event.payload.y);
     this.state.initializationValue |= 128;
-
-    if (this.hasInitialized()) {
-      this.vectorMapPreparer.applyBumpVectors();
-    }
   }
 
   private onNewNormalMapType(event: NewNormalMapTypeEvent) {
