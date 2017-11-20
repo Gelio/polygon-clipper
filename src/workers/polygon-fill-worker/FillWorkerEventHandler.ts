@@ -7,6 +7,7 @@ import {
   NewHeightMapEvent,
   NewHeightMapIntensityEvent,
   NewLightColorEvent,
+  NewLightingCoefficientsEvent,
   NewLightPositionEvent,
   NewLightTypeEvent,
   NewNormalMapEvent
@@ -30,7 +31,8 @@ export class FillWorkerEventHandler {
     [NewLightPositionEvent.eventType]: this.onNewLightPosition,
     [NewLightTypeEvent.eventType]: this.onNewLightType,
     [NewNormalMapEvent.eventType]: this.onNewNormalMap,
-    [NewHeightMapIntensityEvent.eventType]: this.onNewHeightMapIntensity
+    [NewHeightMapIntensityEvent.eventType]: this.onNewHeightMapIntensity,
+    [NewLightingCoefficientsEvent.eventType]: this.onNewLightingCoefficients
   };
 
   constructor(dependencies: FillWorkerEventHandlerDependencies) {
@@ -39,8 +41,8 @@ export class FillWorkerEventHandler {
   }
 
   public canInitialize() {
-    if (this.state.initializationValue === 127) {
-      this.state.initializationValue = 255;
+    if (this.state.initializationValue === 255) {
+      this.state.initializationValue = 511;
 
       return true;
     }
@@ -49,7 +51,7 @@ export class FillWorkerEventHandler {
   }
 
   public hasInitialized() {
-    return this.state.initializationValue === 255;
+    return this.state.initializationValue === 511;
   }
 
   public handleEvent(event: AppEvent) {
@@ -125,6 +127,15 @@ export class FillWorkerEventHandler {
       this.vectorMapPreparer.prepareBumpVectors();
       this.vectorMapPreparer.applyBumpVectors();
     }
+  }
+
+  private onNewLightingCoefficients(event: NewLightingCoefficientsEvent) {
+    const { kD, kS, m } = event.payload;
+    this.state.kD = kD;
+    this.state.kS = kS;
+    this.state.m = m;
+
+    this.state.initializationValue |= 128;
   }
   // tslint:enable no-bitwise
 }

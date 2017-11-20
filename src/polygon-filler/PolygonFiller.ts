@@ -7,6 +7,7 @@ import {
   NewHeightMapEvent,
   NewHeightMapIntensityEvent,
   NewLightColorEvent,
+  NewLightingCoefficientsEvent,
   NewLightPositionEvent,
   NewLightTypeEvent,
   NewNormalMapEvent
@@ -37,7 +38,8 @@ export class PolygonFiller implements Service {
     NewLightColorEvent,
     NewLightPositionEvent,
     NewLightTypeEvent,
-    NewNormalMapEvent
+    NewNormalMapEvent,
+    NewLightingCoefficientsEvent
   ];
 
   private renderingContext: CanvasRenderingContext2D;
@@ -49,7 +51,6 @@ export class PolygonFiller implements Service {
     this.canvas = dependencies.canvas;
 
     this.onFillWorkerMessage = this.onFillWorkerMessage.bind(this);
-    this.onFillWorkerError = this.onFillWorkerError.bind(this);
     this.sendAppFillDataEvent = this.sendAppFillDataEvent.bind(this);
   }
 
@@ -69,7 +70,6 @@ export class PolygonFiller implements Service {
       height: this.canvas.height
     });
     this.fillWorker.addEventListener('message', this.onFillWorkerMessage);
-    this.fillWorker.addEventListener('error', this.onFillWorkerError);
   }
 
   public destroy() {
@@ -77,7 +77,6 @@ export class PolygonFiller implements Service {
       this.eventAggregator.removeEventListener(event.eventType, this.sendAppFillDataEvent)
     );
     this.fillWorker.removeEventListener('message', this.onFillWorkerMessage);
-    this.fillWorker.removeEventListener('error', this.onFillWorkerError);
     this.fillWorker.terminate();
   }
 
@@ -102,10 +101,6 @@ export class PolygonFiller implements Service {
     if (this.fillingFinishedCallback) {
       this.fillingFinishedCallback();
     }
-  }
-
-  private onFillWorkerError(event: ErrorEvent) {
-    console.error('Fill worker error', event);
   }
 
   private fillPolygon(polygon: Polygon) {
