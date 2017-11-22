@@ -50,7 +50,7 @@ export class Vector3 {
     const y = g / 255 * 2 - 1;
     const z = b / 255;
 
-    return new Vector3(x, y, z);
+    return new Vector3(x, -y, z);
   }
 
   public static multiplyComponents(v1: Vector3, v2: Vector3) {
